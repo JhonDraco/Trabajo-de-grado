@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Bienvenido trabajador</h1>
+    <h1>Bienvenido administrador</h1>
 </body>
 </html>

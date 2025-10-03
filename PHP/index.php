@@ -9,7 +9,8 @@
 
 <form action="validar.php" method="post">
 
-  <h1>ingresar usuario</h1>
+  <h1 style color="blue">ingresar usuario</h1>
+  
   <hr>
     <label for="user">Usuario:</label>
     <input type="text" name="user">
@@ -20,6 +21,7 @@
     <br>
     <br>
     <button type="submit">Enviar</button>
+    <button type="reset"> limpiar</button>
 </form>
 </body>
 </html>

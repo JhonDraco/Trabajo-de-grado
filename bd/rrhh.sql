@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-09-2025 a las 19:40:19
+-- Tiempo de generación: 03-10-2025 a las 15:43:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,14 +43,21 @@ INSERT INTO `cargo` (`id`, `descripcion`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empleado`
+-- Estructura de tabla para la tabla `empleados`
 --
 
-CREATE TABLE `empleado` (
-  `id_empleado` int(11) NOT NULL,
-  `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
-  `contrato` varchar(500) NOT NULL
+CREATE TABLE `empleados` (
+  `id` int(11) NOT NULL,
+  `cedula` varchar(20) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL,
+  `direccion` text DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `fecha_ingreso` date NOT NULL,
+  `cargo_id` int(11) DEFAULT NULL,
+  `salario_base` decimal(10,2) NOT NULL,
+  `estado` enum('activo','inactivo') DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -86,10 +93,12 @@ ALTER TABLE `cargo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `empleado`
+-- Indices de la tabla `empleados`
 --
-ALTER TABLE `empleado`
-  ADD PRIMARY KEY (`id_empleado`);
+ALTER TABLE `empleados`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `cedula` (`cedula`),
+  ADD KEY `cargo_id` (`cargo_id`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -109,10 +118,10 @@ ALTER TABLE `cargo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `empleado`
+-- AUTO_INCREMENT de la tabla `empleados`
 --
-ALTER TABLE `empleado`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `empleados`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -123,6 +132,12 @@ ALTER TABLE `usuarios`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `empleados`
+--
+ALTER TABLE `empleados`
+  ADD CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`id`);
 
 --
 -- Filtros para la tabla `usuarios`

@@ -1,0 +1,9 @@
+/* Fondo degradado azul */
+body {
+  background: linear-gradient(to bottom, #4a90e2, #a8d0ff);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  height: 100vh;
+
+
+}

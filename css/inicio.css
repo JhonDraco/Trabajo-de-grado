@@ -1,0 +1,75 @@
+/* Fondo degradado azul */
+body {
+  background: linear-gradient(to bottom, #4a90e2, #a8d0ff);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenedor centrado */
+.login-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  width: 300px;
+}
+
+/* Formulario */
+.login-form h1 {
+  text-align: center;
+  color: #4a90e2;
+  margin-bottom: 20px;
+}
+
+.login-form hr {
+  border: 0;
+  border-top: 2px solid #4a90e2;
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.login-form .buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #fff;
+  background-color: #4a90e2;
+}
+
+.login-form button:hover {
+  background-color: #357ABD;
+}

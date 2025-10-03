@@ -61,6 +61,7 @@ $menuItems = [
 </style>
 </head>
 <body>
+<<<<<<< HEAD
   <div class="menu-grid">
     <?php foreach($menuItems as $item): ?>
       <a href="?page=<?= $item['id'] ?>" class="menu-btn">
@@ -69,5 +70,9 @@ $menuItems = [
       </a>
     <?php endforeach; ?>
   </div>
+=======
+    <h1>Bienvenido administrador _</h1>
+    <a href="cerrar_sesion.php">Cerrar sesion</a>
+>>>>>>> 7bc7c3b9168edd5bf440916fafaeb90782f3f2cc
 </body>
 </html>

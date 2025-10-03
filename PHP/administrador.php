@@ -7,6 +7,8 @@
 </head>
 <body>
     <h1>Bienvenido administrador _</h1>
-    
+    <br>
+    <br>
+     <a href="cerrar_sesion.php">Cerrar sesion</a>
 </body>
 </html>

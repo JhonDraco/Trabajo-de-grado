@@ -1,13 +1,20 @@
+<?php
+session_start();
+
+// Verifica que haya sesión y que sea trabajador
+if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 2) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/trabajador.css">
+    <title>Trabajador</title>
 </head>
 <body>
-    <h1>bienvenida</h1>
-      <a href="index.php">Cerrar sesion</a>
+    <h1>Bienvenido Trabajador <?php echo $_SESSION['usuario']; ?></h1>
+    <a href="cerrar_sesion.php">Cerrar sesión</a>
 </body>
 </html>

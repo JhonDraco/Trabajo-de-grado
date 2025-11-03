@@ -1,12 +1,16 @@
 <?php
 session_start();
 
-// Verifica que haya sesión y que sea trabajador
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 2) {
     header("Location: index.php");
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

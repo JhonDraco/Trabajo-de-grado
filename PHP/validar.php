@@ -3,10 +3,10 @@ session_start();
 include('db.php');
 
 $usuario = $_POST['user'];
-$contrasena = $_POST['contraseña']; // evita usar "ñ" en la BD y nombres de columnas si puedes
+$contraseña = $_POST['contraseña']; // evita usar "ñ" en la BD y nombres de columnas si puedes
 
 // Consulta a la base de datos
-$consulta = "SELECT * FROM usuarios WHERE usuario='$usuario' AND contrasena='$contrasena'";
+$consulta = "SELECT * FROM usuarios WHERE usuario='$usuario' AND contraseña='$contraseña'";
 $resultado = mysqli_query($conexion, $consulta) or die("Error en la consulta: " . mysqli_error($conexion));
 
 $filas = mysqli_fetch_array($resultado);
@@ -14,13 +14,13 @@ $filas = mysqli_fetch_array($resultado);
 if ($filas) {
     // Guardamos datos en la sesión
     $_SESSION['usuario'] = $usuario;
-    $_SESSION['cargo'] = $filas['id_cargo']; // 1 = admin, 2 = trabajador
+    $_SESSION['cargo'] = $filas['cargo_id']; // 1 = admin, 2 = trabajador
     $_SESSION['empleado_id'] = $filas['empleado_id']; //  ESTO ES NUEVO
 
     // Redirección según el cargo
-    if ($filas['id_cargo'] == 1) {
+    if ($filas['cargo_id'] == 1) {
         header("Location: administrador.php");
-    } elseif ($filas['id_cargo'] == 2) {
+    } elseif ($filas['cargo_id'] == 2) {
         header("Location: trabajador.php");
     }
 } else {

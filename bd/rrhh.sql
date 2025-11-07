@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-11-2025 a las 19:00:56
+-- Tiempo de generación: 07-11-2025 a las 22:00:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -60,6 +60,14 @@ CREATE TABLE `empleados` (
   `estado` enum('activo','inactivo') DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `empleados`
+--
+
+INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `telefono`, `email`, `fecha_ingreso`, `cargo_id`, `salario_base`, `estado`) VALUES
+(1, '12345678', 'Jhon', 'Administrador', 'Caracas', '04141234567', 'jhon@example.com', '2024-01-01', 1, 15000.00, 'activo'),
+(2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 2, 900.00, 'activo');
+
 -- --------------------------------------------------------
 
 --
@@ -69,10 +77,18 @@ CREATE TABLE `empleados` (
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
-  `contrasena` varchar(100) NOT NULL,
+  `contraseña` varchar(100) NOT NULL,
   `empleado_id` int(11) DEFAULT NULL,
   `cargo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `usuario`, `contraseña`, `empleado_id`, `cargo_id`) VALUES
+(1, 'jhon', '123', 1, 1),
+(2, 'empleado1', '123', 2, 2);
 
 --
 -- Índices para tablas volcadas
@@ -114,13 +130,13 @@ ALTER TABLE `cargo`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas

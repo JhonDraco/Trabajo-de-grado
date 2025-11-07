@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-11-2025 a las 15:44:13
+-- Tiempo de generación: 07-11-2025 a las 19:00:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,15 +28,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `cargo` (
-  `id` int(11) NOT NULL,
-  `descripcion` varchar(250) NOT NULL
+  `cargo_id` int(11) NOT NULL,
+  `nombre_cargo` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `cargo`
 --
 
-INSERT INTO `cargo` (`id`, `descripcion`) VALUES
+INSERT INTO `cargo` (`cargo_id`, `nombre_cargo`) VALUES
 (1, 'administrador'),
 (2, 'trabajador');
 
@@ -68,19 +68,11 @@ CREATE TABLE `empleados` (
 
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
-  `nombre` varchar(250) NOT NULL,
-  `usuario` varchar(250) NOT NULL,
-  `contrasena` varchar(250) NOT NULL,
-  `id_cargo` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id_usuario`, `nombre`, `usuario`, `contrasena`, `id_cargo`) VALUES
-(1, 'Jhoneyker', 'jhon', '123', 1),
-(2, 'Ana', 'Ana', '123', 2);
+  `usuario` varchar(50) NOT NULL,
+  `contrasena` varchar(100) NOT NULL,
+  `empleado_id` int(11) DEFAULT NULL,
+  `cargo_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -90,7 +82,7 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `usuario`, `contrasena`, `id_car
 -- Indices de la tabla `cargo`
 --
 ALTER TABLE `cargo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`cargo_id`);
 
 --
 -- Indices de la tabla `empleados`
@@ -105,7 +97,8 @@ ALTER TABLE `empleados`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id_usuario`),
-  ADD KEY `id_cargo` (`id_cargo`);
+  ADD KEY `empleado_id` (`empleado_id`),
+  ADD KEY `cargo_id` (`cargo_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -115,7 +108,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `cargo`
 --
 ALTER TABLE `cargo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cargo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -127,7 +120,7 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -137,13 +130,14 @@ ALTER TABLE `usuarios`
 -- Filtros para la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  ADD CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`id`);
+  ADD CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`cargo_id`);
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`),
+  ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`cargo_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

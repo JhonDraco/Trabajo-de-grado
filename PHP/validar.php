@@ -15,6 +15,7 @@ if ($filas) {
     // Guardamos datos en la sesión
     $_SESSION['usuario'] = $usuario;
     $_SESSION['cargo'] = $filas['id_cargo']; // 1 = admin, 2 = trabajador
+    $_SESSION['empleado_id'] = $filas['empleado_id']; //  ESTO ES NUEVO
 
     // Redirección según el cargo
     if ($filas['id_cargo'] == 1) {

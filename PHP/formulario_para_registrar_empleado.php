@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="number" step="0.01" name="salario_base" id="salario_base" required>
 
         <button type="submit">enviar</button>
-      <a href="administrador.php">volver</a>
+        <a href="administrador.php">volver</a>
     </form>
 </div>
 

@@ -1,0 +1,71 @@
+    
+        html, body {
+            height: 100%;
+            overflow-y: auto;
+        }
+        body {
+            background: linear-gradient(to bottom, #4a90e2, #a8d0ff);
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .formulario {
+            width: 80%;
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 25px 25px 50px 25px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0 15px 0;
+            border-radius: 5px;
+            border: 1px solid #999;
+            font-size: 14px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        button:hover {
+            background: #2e80c4;
+        }
+        a {
+            background: #c0392b;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        a:hover {
+            background: #a93226;
+        }
+        .mensaje {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: green;
+        }
+        .botones {
+            text-align: center;
+            margin-top: 20px;
+        }
+    

@@ -24,7 +24,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 </header>
 
 <nav class="menu">
-    <a href="formulario_para_empleado.php">➕ Registrar Empleado</a>
+    <a href="formulario_para_registrar_empleado.php">➕ Registrar Empleado</a>
     <a href="listar_empleados.php">📋 Listar Empleados</a>
     <a href="usuarios.php">👥 Gestionar Usuarios</a>
     <a href="cargos.php">🧰 Gestionar Cargos</a>

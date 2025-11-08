@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-11-2025 a las 15:20:58
+-- Tiempo de generación: 07-11-2025 a las 22:00:42
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -77,7 +77,7 @@ INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `tel
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
-  `clave` varchar(20) DEFAULT NULL,
+  `contraseña` varchar(100) NOT NULL,
   `empleado_id` int(11) DEFAULT NULL,
   `cargo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -86,7 +86,7 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `empleado_id`, `cargo_id`) VALUES
+INSERT INTO `usuarios` (`id_usuario`, `usuario`, `contraseña`, `empleado_id`, `cargo_id`) VALUES
 (1, 'jhon', '123', 1, 1),
 (2, 'empleado1', '123', 2, 2);
 

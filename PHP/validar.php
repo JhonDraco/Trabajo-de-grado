@@ -6,7 +6,7 @@ $usuario = $_POST['user'];
 $contraseña = $_POST['contraseña']; // evita usar "ñ" en la BD y nombres de columnas si puedes
 
 // Consulta a la base de datos
-$consulta = "SELECT * FROM usuarios WHERE usuario='$usuario' AND contraseña='$contraseña'";
+$consulta = "SELECT * FROM usuarios WHERE usuario='$usuario' AND clave='$contraseña'";
 $resultado = mysqli_query($conexion, $consulta) or die("Error en la consulta: " . mysqli_error($conexion));
 
 $filas = mysqli_fetch_array($resultado);

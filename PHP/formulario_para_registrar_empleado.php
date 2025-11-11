@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Empleado</title>
     <link rel="stylesheet" href="../css/formulario_para_registrar_empleado.css">
-
 </head>
 <body>
 
 <?php
-include "db.php";
+include "db.php"; // Conexión a la base de datos
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recoger los datos del formulario
     $cedula = $_POST['cedula'];
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
@@ -21,15 +21,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $telefono = $_POST['telefono'];
     $email = $_POST['email'];
     $fecha_ingreso = $_POST['fecha_ingreso'];
-    $cargo_id = $_POST['cargo_id'];
     $salario_base = $_POST['salario_base'];
 
-    $stmt = $conn->prepare("INSERT INTO empleados (cedula, nombre, apellido, direccion, telefono, email, fecha_ingreso, cargo_id, salario_base) 
-                            VALUES (?,?,?,?,?,?,?,?,?)");
-    $stmt->bind_param("sssssssid", $cedula, $nombre, $apellido, $direccion, $telefono, $email, $fecha_ingreso, $cargo_id, $salario_base);
-    $stmt->execute();
+    // Consulta preparada (8 columnas → 8 valores)
+    $stmt = $conexion->prepare("INSERT INTO empleados 
+        (cedula, nombre, apellido, direccion, telefono, email, fecha_ingreso, salario_base) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-    $mensaje = "✅ Empleado registrado con éxito.";
+    // Verifica si la preparación fue exitosa
+    if (!$stmt) {
+        die("❌ Error al preparar la consulta: " . $conexion->error);
+    }
+
+    // Vincular los parámetros
+    // s = string, d = double (número decimal)
+    $stmt->bind_param("sssssssd", 
+        $cedula, 
+        $nombre, 
+        $apellido, 
+        $direccion, 
+        $telefono, 
+        $email, 
+        $fecha_ingreso, 
+        $salario_base
+    );
+
+    // Ejecutar la consulta y verificar errores
+    if ($stmt->execute()) {
+        $mensaje = "✅ Empleado registrado con éxito.";
+    } else {
+        $mensaje = "❌ Error al registrar el empleado: " . $stmt->error;
+    }
+
+    // Cerrar el statement
+    $stmt->close();
 }
 ?>
 
@@ -58,30 +83,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="email" name="email" id="email">
 
         <label for="fecha_ingreso">Fecha de ingreso:</label>
-        <input type="date" name="fecha_ingreso" id="fecha_ingreso" required>
-        
-        <label for="cargo_id">Cargo:</label>
-       <select name="cargo_id" id="cargo_id">
-            
-           /* $result = $conn->query("SELECT * FROM cargo");
-            if ($result) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<option value='{$row['cargo_id']}'>{$row['nombre_cargo']}</option>";
-                }
-            } else {
-                echo "<option>Error al cargar cargos</option>";
-            }
-            ?*/
-        </select>        
+        <input type="date" name="fecha_ingreso" id="fecha_ingreso" required>    
 
         <label for="salario_base">Salario base:</label>
         <input type="number" step="0.01" name="salario_base" id="salario_base" required>
 
-        <button type="submit">enviar</button>
-        <a href="administrador.php">volver</a>
+        <button type="submit">Enviar</button>
+        <a href="administrador.php">Volver</a>
     </form>
 </div>
 
 </body>
 </html>
-

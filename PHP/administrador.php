@@ -32,10 +32,10 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="cargos.php">🧰 Gestionar Cargos</a>
 </nav>
 
+
 <div class="contenido">
     <h3>Bienvenido al Panel de Control</h3>
     <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
 </div>
-
 </body>
 </html>

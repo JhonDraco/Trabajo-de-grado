@@ -38,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telefono = $_POST['telefono'];
     $email = $_POST['email'];
     $fecha_ingreso = $_POST['fecha_ingreso'];
-    $cargo_id = $_POST['cargo_id'];
     $salario_base = $_POST['salario_base'];
     $estado = $_POST['estado'];
 
@@ -51,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             telefono='$telefono',
             email='$email',
             fecha_ingreso='$fecha_ingreso',
-            cargo_id='$cargo_id',
             salario_base='$salario_base',
             estado='$estado'
         WHERE id=$id
@@ -99,16 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <label>Fecha de ingreso:</label>
         <input type="date" name="fecha_ingreso" value="<?php echo $empleado['fecha_ingreso']; ?>">
-
-        <label>Cargo:</label>
-        <select name="cargo_id">
-            <?php while ($cargo = mysqli_fetch_assoc($cargos)) { ?>
-                <option value="<?php echo $cargo['cargo_id']; ?>"
-                    <?php if ($cargo['cargo_id'] == $empleado['cargo_id']) echo 'selected'; ?>>
-                    <?php echo $cargo['nombre_cargo']; ?>
-                </option>
-            <?php } ?>
-        </select>
 
         <label>Salario Base:</label>
         <input type="text" name="salario_base" value="<?php echo $empleado['salario_base']; ?>">

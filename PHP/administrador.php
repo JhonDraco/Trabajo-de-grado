@@ -29,7 +29,11 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="formulario_para_registrar_empleado.php">🧑‍💼 Registrar Empleado</a>
     <a href="listar_empleados.php">📋 Listar Empleados</a>
     <a href="usuarios.php">👥 Gestionar Usuarios</a>
-    <a href="cargos.php">🧰 Gestionar Cargos</a>
+    <a href="">💸 Deducciones</a>
+    <a href="">✔ Asignaciones</a>
+    <a href="">📰 Reportes</a>
+    
+
 </nav>
 
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-11-2025 a las 23:28:44
+-- Tiempo de generación: 08-11-2025 a las 15:20:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -55,6 +55,7 @@ CREATE TABLE `empleados` (
   `telefono` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `fecha_ingreso` date NOT NULL,
+  `cargo_id` int(11) DEFAULT NULL,
   `salario_base` decimal(10,2) NOT NULL,
   `estado` enum('activo','inactivo') DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -63,9 +64,9 @@ CREATE TABLE `empleados` (
 -- Volcado de datos para la tabla `empleados`
 --
 
-INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `telefono`, `email`, `fecha_ingreso`, `salario_base`, `estado`) VALUES
-(1, '12345678', 'Jhon', 'Administrador', 'Caracas', '04141234567', 'jhon@example.com', '2024-01-01', 25000.00, 'activo'),
-(2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 900.00, 'activo');
+INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `telefono`, `email`, `fecha_ingreso`, `cargo_id`, `salario_base`, `estado`) VALUES
+(1, '12345678', 'Jhon', 'Administrador', 'Caracas', '04141234567', 'jhon@example.com', '2024-01-01', 1, 15000.00, 'activo'),
+(2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 2, 900.00, 'activo');
 
 -- --------------------------------------------------------
 
@@ -77,19 +78,17 @@ CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
   `clave` varchar(20) DEFAULT NULL,
-  `cargo_id` int(11) DEFAULT NULL,
-  `nombre_apellido` varchar(50) NOT NULL
+  `empleado_id` int(11) DEFAULT NULL,
+  `cargo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`) VALUES
-(1, 'jhon', '123', 1, 'Jhoneyker Correa'),
-(2, 'empleado1', '123', 2, 'Juan Soto'),
-(7, 'criss', '123', 2, 'cristian castillo'),
-(8, 'ana', '123', 1, 'Ana Hernandez');
+INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `empleado_id`, `cargo_id`) VALUES
+(1, 'jhon', '123', 1, 1),
+(2, 'empleado1', '123', 2, 2);
 
 --
 -- Índices para tablas volcadas
@@ -106,13 +105,15 @@ ALTER TABLE `cargo`
 --
 ALTER TABLE `empleados`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `cedula` (`cedula`);
+  ADD UNIQUE KEY `cedula` (`cedula`),
+  ADD KEY `cargo_id` (`cargo_id`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id_usuario`),
+  ADD KEY `empleado_id` (`empleado_id`),
   ADD KEY `cargo_id` (`cargo_id`);
 
 --
@@ -129,22 +130,29 @@ ALTER TABLE `cargo`
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
+-- Filtros para la tabla `empleados`
+--
+ALTER TABLE `empleados`
+  ADD CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`cargo_id`);
+
+--
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`),
   ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`cargo_id`);
 COMMIT;
 

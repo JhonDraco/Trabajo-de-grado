@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Administrador</title>
-  <link rel="stylesheet" href="../css/inicio.css">
+<link rel="stylesheet" href="../css/inicio.css">
+
 </head>
+
 <body>
 
   <div class="login-container">
@@ -20,11 +22,16 @@
       <input type="password" id="contraseña" name="contraseña" placeholder="Ingresa tu contraseña" required>
 
       <div class="buttons">
-        <button type="submit">Enviar</button>
+        <button type="submit">Ingresar</button>
         <button type="reset">Limpiar</button>
       </div>
     </form>
   </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    © 2025 Sistema de RRHH – Todos los derechos reservados
+  </footer>
 
 </body>
 </html>

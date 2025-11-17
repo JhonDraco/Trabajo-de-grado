@@ -1,215 +1,223 @@
-<!doctype html>
+<?php
+session_start();
+if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
+    header("Location: index.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Menú Lateral Vertical - Ejemplo</title>
-  <style>
-    :root{
-      --bg:#f4f7fb;
-      --card:#ffffff;
-      --accent:#4a90e2;
-      --muted:#8b98a8;
-      --dark:#222831;
-      --shadow: 0 6px 18px rgba(34,40,49,0.08);
-      --radius:12px;
-      --gap:16px;
-      --nav-width:260px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del Administrador</title>
+<style>
+    :root {
+        --blue:#1e4c8f;
+        --blue-dark:#123766;
+        --blue-light:#4a90e2;
+        --white:#ffffff;
+        --gray:#f4f6fb;
+        --shadow:0 8px 20px rgba(0,0,0,0.12);
+        --radius:12px;
+        --sidebar-width:260px;
+        --text-dark:#1a1a1a;
+        --text-muted:#6b7685;
     }
 
-    *{box-sizing:border-box}
+    *{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
+
     body{
-      margin:0;
-      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg,#f7fbff 0%, var(--bg) 100%);
-      color:var(--dark);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      min-height:100vh;
-      display:flex;
+        display:flex;
+        min-height:100vh;
+        background:var(--gray);
+        color:var(--text-dark);
     }
 
-    /* Sidebar */
+    /* ===== SIDEBAR ===== */
     .sidebar{
-      width:var(--nav-width);
-      min-width:220px;
-      background:linear-gradient(180deg, rgba(74,144,226,0.95) 0%, rgba(74,144,226,0.9) 100%);
-      color:#fff;
-      padding:20px;
-      border-radius:0 16px 16px 0;
-      box-shadow: var(--shadow);
-      position:relative;
-      transition:transform .28s ease, width .28s ease;
+        width:var(--sidebar-width);
+        background:linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
+        padding:22px;
+        color:white;
+        box-shadow:var(--shadow);
     }
 
-    .brand{
-      display:flex;align-items:center;gap:12px;margin-bottom:18px;
-    }
-    .brand .logo{
-      height:44px;width:44px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px
-    }
-    .brand h1{font-size:16px;margin:0}
-    .brand p{margin:0;font-size:12px;color:rgba(255,255,255,0.9)}
-
-    .profile{
-      display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.06);border-radius:10px;margin-bottom:18px
-    }
-    .profile img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.12)}
-    .profile .meta{font-size:13px}
-    .profile .meta strong{display:block}
-    .profile .meta span{display:block;color:rgba(255,255,255,0.9);font-size:12px}
-
-    nav{margin-top:6px}
-    .nav-item{
-      display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,0.95);text-decoration:none;margin-bottom:8px;transition:background .18s ease, transform .12s ease;
-    }
-    .nav-item svg{opacity:0.95}
-    .nav-item:hover{background:rgba(255,255,255,0.06);transform:translateY(-2px)}
-    .nav-item.active{background:rgba(0,0,0,0.15)}
-    .nav-item .label{font-size:14px}
-    .badge{margin-left:auto;background:rgba(255,255,255,0.12);padding:4px 8px;border-radius:999px;font-size:12px}
-
-    .divider{height:1px;background:rgba(255,255,255,0.06);margin:12px 0;border-radius:2px}
-
-    .cta{
-      margin-top:18px;padding:12px;background:rgba(255,255,255,0.12);border-radius:10px;text-align:center;font-weight:600;cursor:pointer
+    .sidebar h2{
+        font-size:20px;
+        margin-bottom:20px;
+        text-align:center;
     }
 
-    /* Main content area */
+    .sidebar a{
+        display:block;
+        padding:12px;
+        margin-bottom:10px;
+        color:white;
+        text-decoration:none;
+        border-radius:10px;
+        transition:0.2s;
+    }
+
+    .sidebar a:hover{
+        background:rgba(255,255,255,0.12);
+        transform:translateX(4px);
+    }
+
+    .sidebar a.active{
+        background:rgba(0,0,0,0.18);
+    }
+
+    /* ===== MAIN ===== */
     .main{
-      flex:1;padding:36px;min-height:100vh;display:flex;flex-direction:column;gap:20px
+        flex:1;
+        display:flex;
+        flex-direction:column;
     }
 
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .search{display:flex;align-items:center;gap:8px;background:var(--card);padding:10px;border-radius:10px;box-shadow:var(--shadow);width:420px}
-    .search input{border:0;outline:none;font-size:14px}
+    /* ===== TOP MENU HORIZONTAL ===== */
+    .top-menu{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        gap:12px;
+        box-shadow:var(--shadow);
+        border-bottom:3px solid var(--blue);
+        flex-wrap:wrap;
+    }
 
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:var(--shadow)}
+    .top-button{
+        padding:8px 16px;
+        background:var(--blue);
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+        transition:0.2s;
+    }
 
-    /* Responsive small screens: hide sidebar by default */
+    .top-button:hover{
+        background:var(--blue-light);
+    }
+
+    /* ===== HEADER ===== */
+    header{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        box-shadow:var(--shadow);
+    }
+
+    header h2{
+        font-size:18px;
+        color:var(--blue-dark);
+    }
+
+    header a{
+        color:var(--blue);
+        text-decoration:none;
+        font-weight:600;
+        margin-left:8px;
+    }
+
+    /* ===== CONTENIDO ===== */
+    .contenido{
+        padding:24px;
+        flex:1;
+    }
+
+    .contenido h3{
+        margin-bottom:12px;
+        color:var(--blue-dark);
+    }
+
+    .contenido p{
+        color:var(--text-muted);
+    }
+
+    .cards{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+        gap:20px;
+    }
+
+    .card{
+        background:var(--white);
+        padding:22px;
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width:880px){
-      .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-112%);z-index:40;width:260px}
-      .sidebar.open{transform:translateX(0)}
-      .main{padding:20px}
-      .menu-toggle{display:inline-flex}
+        body{
+            flex-direction:column;
+        }
+        .sidebar{
+            width:100%;
+            display:flex;
+            overflow-x:auto;
+        }
+        .sidebar a{
+            flex-shrink:0;
+            margin-right:10px;
+        }
+        .top-menu{
+            justify-content:flex-start;
+            overflow-x:auto;
+        }
     }
-
-    .menu-toggle{display:none;background:var(--card);border-radius:8px;padding:8px;box-shadow:var(--shadow);cursor:pointer}
-
-    /* Small aesthetic tweaks */
-    a{color:inherit}
-    .small{font-size:13px;color:var(--muted)}
-  </style>
+</style>
 </head>
 <body>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="logo">RH</div>
-      <div>
-        <h1>Portal RRHH</h1>
-        <p>Panel administrativo</p>
-      </div>
-    </div>
+<aside class="sidebar">
+    <h2>RRHH Admin</h2>
+    <a href="administrador.php" class="active">Inicio</a>
+    <a href="nomina.php">Nómina </a>
+    <a href="listar_empleados.php">Empleados</a>
+    <a href="usuarios.php">Usuarios</a>
+      <a href="">Reportes</a>
+</aside>
 
-    <div class="profile">
-      <img src="https://i.pravatar.cc/100?img=12" alt="avatar">
-      <div class="meta">
-        <strong>Admin</strong>
-        <span class="small">Administrador</span>
-      </div>
-    </div>
+<div class="main">
 
-    <nav>
-      <a href="#" class="nav-item active">
-        <!-- icon -->
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" fill="currentColor"/></svg>
-        <span class="label">Dashboard</span>
-        <span class="badge">4</span>
-      </a>
+ 
 
-      <a href="#" class="nav-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" fill="currentColor"/></svg>
-        <span class="label">Empleados</span>
-      </a>
-
-      <a href="#" class="nav-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="currentColor"/></svg>
-        <span class="label">Mensajes</span>
-        <span class="badge">8</span>
-      </a>
-
-      <a href="#" class="nav-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 7L9 19l-5-5 2-2 3 3L19 5l2 2z" fill="currentColor"/></svg>
-        <span class="label">Tareas</span>
-      </a>
-
-      <div class="divider"></div>
-
-      <a href="#" class="nav-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm8-2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h12a2 2 0 012 2z" fill="currentColor"/></svg>
-        <span class="label">Configuración</span>
-      </a>
-
-      <a href="#" class="nav-item">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
-        <span class="label">Usuarios</span>
-      </a>
-
-    </nav>
-
-    <div class="cta">+ Nuevo empleado</div>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
-        <div class="search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#95A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <input placeholder="Buscar..." />
+    <!-- HEADER -->
+    <header>
+        <h2>Panel de Administración - RRHH</h2>
+        <div>
+            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
+            <a href="cerrar_sesion.php">Cerrar sesión</a>
         </div>
-      </div>
+    </header>
 
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="small">Bienvenido, <strong>Admin</strong></div>
-      </div>
+       <!-- TOP MENU HORIZONTAL -->
+    <div class="top-menu">
+        <a href="nomina.php" class="top-button">Nómina</a>
+        <a href="listar_empleados.php" class="top-button">Empleados</a>
+        <a href="usuarios.php" class="top-button">Usuarios</a>
     </div>
+    <!-- CONTENIDO -->
+    <div class="contenido">
+        <h3>Bienvenido al Panel de Control</h3>
+        
 
-    <div class="cards">
-      <div class="card">
-        <h3>Resumen</h3>
-        <p class="small">Panel rápido con estadísticas, accesos y atajos.</p>
-      </div>
-      <div class="card">
-        <h3>Empleados</h3>
-        <p class="small">Lista de empleados, creación y gestión.</p>
-      </div>
-      <div class="card">
-        <h3>Informes</h3>
-        <p class="small">Generar reportes y descargas.</p>
-      </div>
+        <div class="cards">
+            <div class="card">
+                <h4>Empleados</h4>
+                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
+            </div>
+           
+        </div>
+
     </div>
-  </main>
+</div>
 
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggle = document.getElementById('menuToggle');
-
-    // small screen toggle
-    toggle && toggle.addEventListener('click', ()=>{
-      sidebar.classList.toggle('open');
-    });
-
-    // click outside to close on mobile
-    document.addEventListener('click', (e)=>{
-      if(window.innerWidth <= 880){
-        if(!sidebar.contains(e.target) && !toggle.contains(e.target)){
-          sidebar.classList.remove('open');
-        }
-      }
-    });
-  </script>
 </body>
 </html>

@@ -8,38 +8,216 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel del Administrador</title>
-    <link rel="stylesheet" href="../css/administrador.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del Administrador</title>
+<style>
+    :root {
+        --blue:#1e4c8f;
+        --blue-dark:#123766;
+        --blue-light:#4a90e2;
+        --white:#ffffff;
+        --gray:#f4f6fb;
+        --shadow:0 8px 20px rgba(0,0,0,0.12);
+        --radius:12px;
+        --sidebar-width:260px;
+        --text-dark:#1a1a1a;
+        --text-muted:#6b7685;
+    }
 
+    *{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
+
+    body{
+        display:flex;
+        min-height:100vh;
+        background:var(--gray);
+        color:var(--text-dark);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+        width:var(--sidebar-width);
+        background:linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
+        padding:22px;
+        color:white;
+        box-shadow:var(--shadow);
+    }
+
+    .sidebar h2{
+        font-size:20px;
+        margin-bottom:20px;
+        text-align:center;
+    }
+
+    .sidebar a{
+        display:block;
+        padding:12px;
+        margin-bottom:10px;
+        color:white;
+        text-decoration:none;
+        border-radius:10px;
+        transition:0.2s;
+    }
+
+    .sidebar a:hover{
+        background:rgba(255,255,255,0.12);
+        transform:translateX(4px);
+    }
+
+    .sidebar a.active{
+        background:rgba(0,0,0,0.18);
+    }
+
+    /* ===== MAIN ===== */
+    .main{
+        flex:1;
+        display:flex;
+        flex-direction:column;
+    }
+
+    /* ===== TOP MENU HORIZONTAL ===== */
+    .top-menu{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        gap:12px;
+        box-shadow:var(--shadow);
+        border-bottom:3px solid var(--blue);
+        flex-wrap:wrap;
+    }
+
+    .top-button{
+        padding:8px 16px;
+        background:var(--blue);
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+        transition:0.2s;
+    }
+
+    .top-button:hover{
+        background:var(--blue-light);
+    }
+
+    /* ===== HEADER ===== */
+    header{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        box-shadow:var(--shadow);
+    }
+
+    header h2{
+        font-size:18px;
+        color:var(--blue-dark);
+    }
+
+    header a{
+        color:var(--blue);
+        text-decoration:none;
+        font-weight:600;
+        margin-left:8px;
+    }
+
+    /* ===== CONTENIDO ===== */
+    .contenido{
+        padding:24px;
+        flex:1;
+    }
+
+    .contenido h3{
+        margin-bottom:12px;
+        color:var(--blue-dark);
+    }
+
+    .contenido p{
+        color:var(--text-muted);
+    }
+
+    .cards{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+        gap:20px;
+    }
+
+    .card{
+        background:var(--white);
+        padding:22px;
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:880px){
+        body{
+            flex-direction:column;
+        }
+        .sidebar{
+            width:100%;
+            display:flex;
+            overflow-x:auto;
+        }
+        .sidebar a{
+            flex-shrink:0;
+            margin-right:10px;
+        }
+        .top-menu{
+            justify-content:flex-start;
+            overflow-x:auto;
+        }
+    }
+</style>
 </head>
 <body>
 
-<header>
-    <h2>Panel de Administración - RRHH</h2>
-    <div>
-        <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
-        <a href="cerrar_sesion.php">Cerrar sesión</a>
+<aside class="sidebar">
+    <h2>RRHH Admin</h2>
+    <a href="administrador.php" class="active">Inicio</a>
+    <a href="nomina.php">Nómina </a>
+    <a href="listar_empleados.php">Empleados</a>
+    <a href="listar_usuario.php">Usuarios</a>
+      <a href="">Reportes</a>
+</aside>
+
+<div class="main">
+
+ 
+
+    <!-- HEADER -->
+    <header>
+        <h2>Panel de Administración - RRHH</h2>
+        <div>
+            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
+            <a href="cerrar_sesion.php">Cerrar sesión</a>
+        </div>
+    </header>
+
+       <!-- TOP MENU HORIZONTAL -->
+    <div class="top-menu">
+        <a href="" class="top-button">Funcion de nuestro sistema</a>
+        <a href="" class="top-button">Proposito</a>
+        <a href="" class="top-button">Vision</a>
     </div>
-</header>
+    <!-- CONTENIDO -->
+    <div class="contenido">
+        <h3>Bienvenido al Panel de Control</h3>
+        
 
-<nav class="menu">
-    <a href="administrador.php">➖Inicio</a>
-    <a href="nomina.php">💵 Nomina de empleados</a>
-    <a href="formulario_para_registrar_empleado.php">🧑‍💼 Registrar Empleado</a>
-    <a href="listar_empleados.php">📋 Listar Empleados</a>
-    <a href="usuarios.php">👥 Gestionar Usuarios</a>
-    <a href="">💸 Deducciones</a>
-    <a href="">✔ Asignaciones</a>
-    <a href="">📰 Reportes</a>
-    
+        <div class="cards">
+            <div class="card">
+                <h4>Empleados</h4>
+                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
+            </div>
+           
+        </div>
 
-</nav>
-
-
-<div class="contenido">
-    <h3>Bienvenido al Panel de Control</h3>
-    <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
+    </div>
 </div>
+
 </body>
 </html>

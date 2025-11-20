@@ -1,0 +1,137 @@
+/* ==== TU CSS ORIGINAL + CSS DEL FORMULARIO (NO CAMBIADO) ==== */
+:root {
+    --blue:#1e4c8f; --blue-dark:#123766; --blue-light:#4a90e2;
+    --white:#ffffff; --gray:#f4f6fb; --shadow:0 8px 20px rgba(0,0,0,0.12);
+    --radius:12px; --sidebar-width:260px; --text-dark:#1a1a1a; --text-muted:#6b7685;
+}
+
+*{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
+
+body{
+    display:flex;
+    min-height:100vh;
+    background:var(--gray);
+    color:var(--text-dark);
+}
+
+/* SIDEBAR */
+ .sidebar{
+        width:var(--sidebar-width);
+        background:linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
+        padding:22px;
+        color:white;
+        box-shadow:var(--shadow);
+    }
+
+    .sidebar h2{
+        font-size:20px;
+        margin-bottom:20px;
+        text-align:center;
+    }
+
+    .sidebar a{
+        display:block;
+        padding:12px;
+        margin-bottom:10px;
+        color:white;
+        text-decoration:none;
+        border-radius:10px;
+        transition:0.2s;
+    }
+
+    .sidebar a:hover{
+        background:rgba(255,255,255,0.12);
+        transform:translateX(4px);
+    }
+
+    .sidebar a.active{
+        background:rgba(0,0,0,0.18);
+    }
+
+/* MAIN */
+.main{ flex:1; display:flex; flex-direction:column; }
+
+/* TOP MENU */
+.top-menu{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        gap:12px;
+        box-shadow:var(--shadow);
+        border-bottom:3px solid var(--blue);
+        flex-wrap:wrap;
+    }
+
+    .top-button{
+        padding:8px 16px;
+        background:var(--blue);
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+        transition:0.2s;
+    }
+
+    .top-button:hover{
+        background:var(--blue-light);
+    }
+/* HEADER */
+header{
+    background:var(--white);
+    padding:12px 20px;
+    display:flex; justify-content:space-between; align-items:center;
+    box-shadow:var(--shadow);
+}
+
+header h2{ color:var(--blue-dark); }
+
+/* FORMULARIO */
+.nomina-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.nomina-box{
+    background: var(--white);
+    width: 420px;
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.nomina-box h2{
+    color: var(--blue-dark);
+    margin-bottom: 15px;
+}
+
+.nomina-box form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.nomina-box input,
+.nomina-box select{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.nomina-box button{
+    padding: 10px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.nomina-box button:hover{
+    background: var(--blue-light);
+}

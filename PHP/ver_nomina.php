@@ -30,7 +30,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="nomina.php">Nómina</a>
     <a href="listar_empleados.php">Empleados</a>
     <a href="usuarios.php">Usuarios</a>
-    <a href="">Reportes</a>
+    <a href="reportes.php">Reportes</a>
 </aside>
 
 <div class="main">

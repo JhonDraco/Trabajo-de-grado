@@ -1,25 +1,10 @@
-<?php
-session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel del Administrador</title>
-<link rel="stylesheet" href="">
-<style>
     :root {
         --blue:#1e4c8f;
         --blue-dark:#123766;
         --blue-light:#4a90e2;
         --white:#ffffff;
         --gray:#f4f6fb;
-        --shadow:0 8px 20px rgba(0,0,0,0.12);
+        --shadow:0 8px 20px rgba(255, 255, 255, 0.12);
         --radius:12px;
         --sidebar-width:260px;
         --text-dark:#1a1a1a;
@@ -48,6 +33,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         font-size:20px;
         margin-bottom:20px;
         text-align:center;
+        color:white;
     }
 
     .sidebar a{
@@ -113,7 +99,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     }
 
     header h2{
-        font-size:18px;
+       
         color:var(--blue-dark);
     }
 
@@ -172,53 +158,53 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
             overflow-x:auto;
         }
     }
-</style>
-</head>
-<body>
+    /* ===== TABLA MODERNA ===== */
+.table-container {
+    width: 90%;
+    margin: 30px auto;
+    background: var(--white);
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+}
 
-<aside class="sidebar">
-    <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina </a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="usuarios.php">Usuarios</a>
-    <a href="reportes.php">Reportes</a>
-</aside>
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    color: var(--text-dark);
+}
 
-<div class="main">
+table thead {
+    background: var(--blue);
+    color: white;
+}
 
- 
+table th, table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-    <!-- HEADER -->
-    <header>
-        <h2>Panel de Administración - RRHH</h2>
-        <div>
-            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
-            <a href="cerrar_sesion.php">Cerrar sesión</a>
-        </div>
-    </header>
+table tr:hover {
+    background: #f1f5ff;
+}
 
-       <!-- TOP MENU HORIZONTAL -->
-    <div class="top-menu">
-        <a href="nomina.php" class="top-button">Nómina</a>
-        <a href="listar_empleados.php" class="top-button">Empleados</a>
-        <a href="usuarios.php" class="top-button">Usuarios</a>
-    </div>
-    <!-- CONTENIDO -->
-    <div class="contenido">
-        <h3>Bienvenido al Panel de Control</h3>
-        
+table a {
+    color: var(--blue);
+    font-weight: bold;
+    text-decoration: none;
+}
 
-        <div class="cards">
-            <div class="card">
-                <h4>Empleados</h4>
-                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
-            </div>
-           
-        </div>
+table a:hover {
+    text-decoration: underline;
+}
 
-    </div>
-</div>
-
-</body>
-</html>
+/* H2 centrado y estilizado */
+h2 {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--blue-dark);
+    font-size: 22px;
+}

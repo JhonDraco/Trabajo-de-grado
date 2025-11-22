@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: generar_nomina.php?ok=1&id=$id_nomina");
     exit();
-}
+}?>
 
 ?>
 <!DOCTYPE html>

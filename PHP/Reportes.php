@@ -181,7 +181,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="administrador.php" class="active">Inicio</a>
     <a href="nomina.php">Nómina </a>
     <a href="listar_empleados.php">Empleados</a>
-    <a href="usuarios.php">Usuarios</a>
+    <a href="listar_usuario.php">Usuarios</a>
     <a href="reportes.php">Reportes</a>
 </aside>
 
@@ -200,24 +200,11 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
        <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="nomina.php" class="top-button">Nómina</a>
-        <a href="listar_empleados.php" class="top-button">Empleados</a>
-        <a href="usuarios.php" class="top-button">Usuarios</a>
-    </div>
-    <!-- CONTENIDO -->
-    <div class="contenido">
-        <h3>Bienvenido al Panel de Control</h3>
+        <a href="" class="top-button">Cartas de trabajo</a>
+        <a href="" class="top-button">Referencia laboral</a>
         
-
-        <div class="cards">
-            <div class="card">
-                <h4>Empleados</h4>
-                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
-            </div>
-           
-        </div>
-
     </div>
+    
 </div>
 
 </body>

@@ -7,27 +7,29 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-  <link rel="stylesheet" href="../css/administrador.css">
-</head>
+<link rel="stylesheet" href="../css/administrador.css">
+<!-- Iconos RemixIcon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
+
+</head>
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina </a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="listar_usuario.php">Usuarios</a>
-      <a href="reportes.php">Reportes</a>
+    <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
+    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
 </aside>
 
 <div class="main">
-
- 
 
     <!-- HEADER -->
     <header>
@@ -38,23 +40,22 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         </div>
     </header>
 
-       <!-- TOP MENU HORIZONTAL -->
+    <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="" class="top-button">Funcion de nuestro sistema</a>
-        <a href="" class="top-button">Proposito</a>
-        <a href="" class="top-button">Vision</a>
+        <a href="" class="top-button">Función de nuestro sistema</a>
+        <a href="" class="top-button">Propósito</a>
+        <a href="" class="top-button">Visión</a>
     </div>
+
     <!-- CONTENIDO -->
     <div class="contenido">
         <h3>Bienvenido al Panel de Control</h3>
-        
 
         <div class="cards">
             <div class="card">
                 <h4>Empleados</h4>
                 <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
             </div>
-           
         </div>
 
     </div>

@@ -11,183 +11,26 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="">
-<style>
-    :root {
-        --blue:#1e4c8f;
-        --blue-dark:#123766;
-        --blue-light:#4a90e2;
-        --white:#ffffff;
-        --gray:#f4f6fb;
-        --shadow:0 8px 20px rgba(0,0,0,0.12);
-        --radius:12px;
-        --sidebar-width:260px;
-        --text-dark:#1a1a1a;
-        --text-muted:#6b7685;
-    }
 
-    *{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
+<!-- CSS -->
+<link rel="stylesheet" href="../css/administrador.css">
 
-    body{
-        display:flex;
-        min-height:100vh;
-        background:var(--gray);
-        color:var(--text-dark);
-    }
+<!-- Iconos RemixIcon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
-    /* ===== SIDEBAR ===== */
-    .sidebar{
-        width:var(--sidebar-width);
-        background:linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
-        padding:22px;
-        color:white;
-        box-shadow:var(--shadow);
-    }
-
-    .sidebar h2{
-        font-size:20px;
-        margin-bottom:20px;
-        text-align:center;
-    }
-
-    .sidebar a{
-        display:block;
-        padding:12px;
-        margin-bottom:10px;
-        color:white;
-        text-decoration:none;
-        border-radius:10px;
-        transition:0.2s;
-    }
-
-    .sidebar a:hover{
-        background:rgba(255,255,255,0.12);
-        transform:translateX(4px);
-    }
-
-    .sidebar a.active{
-        background:rgba(0,0,0,0.18);
-    }
-
-    /* ===== MAIN ===== */
-    .main{
-        flex:1;
-        display:flex;
-        flex-direction:column;
-    }
-
-    /* ===== TOP MENU HORIZONTAL ===== */
-    .top-menu{
-        background:var(--white);
-        padding:12px 20px;
-        display:flex;
-        gap:12px;
-        box-shadow:var(--shadow);
-        border-bottom:3px solid var(--blue);
-        flex-wrap:wrap;
-    }
-
-    .top-button{
-        padding:8px 16px;
-        background:var(--blue);
-        color:white;
-        border-radius:8px;
-        text-decoration:none;
-        font-size:14px;
-        font-weight:600;
-        transition:0.2s;
-    }
-
-    .top-button:hover{
-        background:var(--blue-light);
-    }
-
-    /* ===== HEADER ===== */
-    header{
-        background:var(--white);
-        padding:12px 20px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        box-shadow:var(--shadow);
-    }
-
-    header h2{
-        font-size:18px;
-        color:var(--blue-dark);
-    }
-
-    header a{
-        color:var(--blue);
-        text-decoration:none;
-        font-weight:600;
-        margin-left:8px;
-    }
-
-    /* ===== CONTENIDO ===== */
-    .contenido{
-        padding:24px;
-        flex:1;
-    }
-
-    .contenido h3{
-        margin-bottom:12px;
-        color:var(--blue-dark);
-    }
-
-    .contenido p{
-        color:var(--text-muted);
-    }
-
-    .cards{
-        margin-top:20px;
-        display:grid;
-        grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-        gap:20px;
-    }
-
-    .card{
-        background:var(--white);
-        padding:22px;
-        border-radius:var(--radius);
-        box-shadow:var(--shadow);
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width:880px){
-        body{
-            flex-direction:column;
-        }
-        .sidebar{
-            width:100%;
-            display:flex;
-            overflow-x:auto;
-        }
-        .sidebar a{
-            flex-shrink:0;
-            margin-right:10px;
-        }
-        .top-menu{
-            justify-content:flex-start;
-            overflow-x:auto;
-        }
-    }
-</style>
 </head>
 <body>
 
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina </a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="listar_usuario.php">Usuarios</a>
-    <a href="reportes.php">Reportes</a>
+    <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
+    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
 </aside>
 
 <div class="main">
-
- 
 
     <!-- HEADER -->
     <header>
@@ -198,11 +41,10 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         </div>
     </header>
 
-       <!-- TOP MENU HORIZONTAL -->
+    <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="" class="top-button">Cartas de trabajo</a>
-        <a href="" class="top-button">Referencia laboral</a>
-        
+        <a href="" class="top-button"><i class="ri-file-text-line"></i> Cartas de trabajo</a>
+        <a href="" class="top-button"><i class="ri-file-paper-2-line"></i> Referencia laboral</a>
     </div>
     
 </div>

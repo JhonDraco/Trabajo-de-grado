@@ -11,62 +11,100 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="../css/listar_empleados.css">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
 <style>
     :root {
-        --blue:#1e4c8f;
-        --blue-dark:#123766;
-        --blue-light:#4a90e2;
-        --white:#ffffff;
-        --gray:#f4f6fb;
-        --shadow:0 8px 20px rgba(0,0,0,0.12);
-        --radius:12px;
-        --sidebar-width:260px;
-        --text-dark:#1a1a1a;
-        --text-muted:#6b7685;
+        --green-dark: #1f3a34;     /* Sidebar */
+        --green-mid: #2b4a42;      /* Botones */
+        --green-hover: #3f6f61;    /* Hover */
+
+        --gray-light-text: #4a4f4e;  /* Texto gris suave */
+        --white: #ffffff;           /* Fondo blanco */
+        --white-soft: #f7f7f7;      /* Secciones */
+        --card-border: #e2e2e2;
+
+        --shadow: 0 6px 18px rgba(0,0,0,0.15);
+        --radius: 12px;
+        --sidebar-width: 260px;
     }
 
-    *{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
+    *{
+        box-sizing:border-box;
+        margin:0;
+        padding:0;
+        font-family:Inter, Arial, sans-serif;
+    }
 
     body{
         display:flex;
         min-height:100vh;
-        background:var(--gray);
-        color:var(--text-dark);
+        background:var(--white);
+        color:var(--gray-light-text);
     }
 
-    /* ===== SIDEBAR ===== */
+    /* ===== SIDEBAR OSCURA ===== */
     .sidebar{
-        width:var(--sidebar-width);
-        background:linear-gradient(180deg,var(--blue) 0%, var(--blue-dark) 100%);
-        padding:22px;
+        width: var(--sidebar-width);
+        background: linear-gradient(180deg, var(--green-dark), var(--green-mid));
+        padding: 30px 20px;
         color:white;
-        box-shadow:var(--shadow);
+        box-shadow: var(--shadow);
+        display:flex;
+        flex-direction:column;
+        border-radius: 0 16px 16px 0;
     }
 
-    .sidebar h2{
-        font-size:20px;
-        margin-bottom:20px;
+    .sidebar-header{
         text-align:center;
+        margin-bottom:35px;
     }
 
-    .sidebar a{
-        display:block;
-        padding:12px;
-        margin-bottom:10px;
+    .logo-icon{
+        font-size:48px;
+        color:white;
+    }
+
+    .sidebar-menu{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .menu-item{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:12px 15px;
         color:white;
         text-decoration:none;
+        font-size:15px;
         border-radius:10px;
-        transition:0.2s;
+        transition:0.25s;
+        font-weight:500;
+        position:relative;
     }
 
-    .sidebar a:hover{
-        background:rgba(255,255,255,0.12);
-        transform:translateX(4px);
+    .menu-item:hover{
+        background:rgba(255,255,255,0.15);
+        transform:translateX(6px);
     }
 
-    .sidebar a.active{
-        background:rgba(0,0,0,0.18);
+    .menu-item.active{
+        background:rgba(0,0,0,0.35);
+    }
+
+    .menu-item.active::before{
+        content:"";
+        position:absolute;
+        left:-10px;
+        top:50%;
+        transform:translateY(-50%);
+        width:6px;
+        height:28px;
+        background:white;
+        border-radius:4px;
     }
 
     /* ===== MAIN ===== */
@@ -74,22 +112,23 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         flex:1;
         display:flex;
         flex-direction:column;
+        background: var(--white);
     }
 
-    /* ===== TOP MENU HORIZONTAL ===== */
+    /* ===== TOP MENU ===== */
     .top-menu{
-        background:var(--white);
+        background:var(--white-soft);
         padding:12px 20px;
         display:flex;
         gap:12px;
         box-shadow:var(--shadow);
-        border-bottom:3px solid var(--blue);
+        border-bottom:3px solid var(--green-mid);
         flex-wrap:wrap;
     }
 
     .top-button{
         padding:8px 16px;
-        background:var(--blue);
+        background:var(--green-mid);
         color:white;
         border-radius:8px;
         text-decoration:none;
@@ -99,7 +138,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     }
 
     .top-button:hover{
-        background:var(--blue-light);
+        background:var(--green-hover);
     }
 
     /* ===== HEADER ===== */
@@ -114,29 +153,25 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     header h2{
         font-size:18px;
-        color:var(--blue-dark);
+        color:var(--green-dark);
     }
 
     header a{
-        color:var(--blue);
+        color:var(--green-mid);
         text-decoration:none;
         font-weight:600;
-        margin-left:8px;
     }
 
     /* ===== CONTENIDO ===== */
     .contenido{
         padding:24px;
         flex:1;
+        background:var(--white);
     }
 
     .contenido h3{
         margin-bottom:12px;
-        color:var(--blue-dark);
-    }
-
-    .contenido p{
-        color:var(--text-muted);
+        color:var(--green-mid);
     }
 
     .cards{
@@ -147,47 +182,52 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     }
 
     .card{
-        background:var(--white);
+        background:var(--white-soft);
         padding:22px;
         border-radius:var(--radius);
         box-shadow:var(--shadow);
+        border:1px solid var(--card-border);
     }
 
-    /* ===== RESPONSIVE ===== */
-    @media (max-width:880px){
-        body{
-            flex-direction:column;
-        }
-        .sidebar{
-            width:100%;
-            display:flex;
-            overflow-x:auto;
-        }
-        .sidebar a{
-            flex-shrink:0;
-            margin-right:10px;
-        }
-        .top-menu{
-            justify-content:flex-start;
-            overflow-x:auto;
-        }
+    .card h4{
+        color:var(--green-dark);
+        margin-bottom:6px;
     }
 </style>
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
-    <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina </a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="usuarios.php">Usuarios</a>
-    <a href="reportes.php">Reportes</a>
+    <div class="sidebar-header">
+        <i class="ri-building-2-fill logo-icon"></i>
+        <h2>RRHH Admin</h2>
+    </div>
+
+    <nav class="sidebar-menu">
+        <a href="administrador.php" class="menu-item active">
+            <i class="ri-home-4-line"></i> Inicio
+        </a>
+
+        <a href="nomina.php" class="menu-item">
+            <i class="ri-money-dollar-circle-line"></i> Nómina
+        </a>
+
+        <a href="listar_empleados.php" class="menu-item">
+            <i class="ri-team-line"></i> Empleados
+        </a>
+
+        <a href="usuarios.php" class="menu-item">
+            <i class="ri-user-settings-line"></i> Usuarios
+        </a>
+
+        <a href="reportes.php" class="menu-item">
+            <i class="ri-bar-chart-line"></i> Reportes
+        </a>
+    </nav>
 </aside>
 
 <div class="main">
-
- 
 
     <!-- HEADER -->
     <header>
@@ -198,23 +238,22 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         </div>
     </header>
 
-       <!-- TOP MENU HORIZONTAL -->
+    <!-- TOP MENU -->
     <div class="top-menu">
         <a href="nomina.php" class="top-button">Nómina</a>
         <a href="listar_empleados.php" class="top-button">Empleados</a>
         <a href="usuarios.php" class="top-button">Usuarios</a>
     </div>
+
     <!-- CONTENIDO -->
     <div class="contenido">
         <h3>Bienvenido al Panel de Control</h3>
-        
 
         <div class="cards">
             <div class="card">
                 <h4>Empleados</h4>
                 <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
             </div>
-           
         </div>
 
     </div>

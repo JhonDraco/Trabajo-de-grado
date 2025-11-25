@@ -1,228 +1,222 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-    <h1>hola mundo</h1>
-
-    <h2>error 411</h2>
-
-
-</body>
-</html>
 <?php
 session_start();
 if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     header("Location: index.php");
     exit();
 }
-
-include("db.php");
-
-$consulta = "SELECT e.*, c.nombre_cargo 
-             FROM empleados e 
-             JOIN cargo c 
-             ON e.cargo_id = c.cargo_id";
-
-$resultado = mysqli_query($conexion, $consulta);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Empleados</title>
-    <style>
-        body {
-            background: linear-gradient(to bottom, #4a90e2, #a8d0ff);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del Administrador</title>
 
-        h2 {
-            text-align: center;
-            color: #fff;
-        }
+<style>
+    :root {
+        --green-dark:#2f4f4f;
+        --green-soft:#70a494;
+        --bone:#f5f2ec;
+        --gray-warm:#e8e4dd;
+        --white:#ffffff;
+        --shadow:0 8px 20px rgba(0,0,0,0.12);
+        --radius:12px;
+        --sidebar-width:260px;
+        --text-dark:#1b1b1b;
+        --text-muted:#6b6b6b;
+    }
 
-        table {
-            width: 90%;
-            margin: auto;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-        }
+    *{box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif;}
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
-        }
+    body{
+        display:flex;
+        min-height:100vh;
+        background:var(--bone);
+        color:var(--text-dark);
+    }
 
-        th {
-            background-color: #2c3e50;
-            color: white;
-        }
+    /* SIDEBAR */
+    .sidebar{
+        width:var(--sidebar-width);
+        background:var(--green-dark);
+        padding:22px;
+        color:white;
+        box-shadow:var(--shadow);
+    }
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+    .sidebar h2{
+        font-size:20px;
+        margin-bottom:20px;
+        text-align:center;
+        color:var(--white);
+    }
 
-        .btn {
-            padding: 6px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-        }
+    .sidebar a{
+        display:block;
+        padding:12px;
+        margin-bottom:10px;
+        color:var(--white);
+        text-decoration:none;
+        border-radius:10px;
+        transition:0.2s;
+    }
 
-        .editar {
-            background: #3498db;
-        }
+    .sidebar a:hover{
+        background:rgba(255,255,255,0.12);
+        transform:translateX(4px);
+    }
 
-        .eliminar {
-            background: #e74c3c;
+    .sidebar a.active{
+        background:rgba(255,255,255,0.18);
+    }
+
+    /* MAIN */
+    .main{
+        flex:1;
+        display:flex;
+        flex-direction:column;
+    }
+
+    /* TOP MENU */
+    .top-menu{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        gap:12px;
+        box-shadow:var(--shadow);
+        border-bottom:3px solid var(--green-soft);
+        flex-wrap:wrap;
+    }
+
+    .top-button{
+        padding:8px 16px;
+        background:var(--green-soft);
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+        transition:0.2s;
+    }
+
+    .top-button:hover{
+        background:#5b8a7f;
+    }
+
+    /* HEADER */
+    header{
+        background:var(--white);
+        padding:12px 20px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        box-shadow:var(--shadow);
+    }
+
+    header h2{
+        font-size:18px;
+        color:var(--green-dark);
+    }
+
+    header a{
+        color:var(--green-dark);
+        text-decoration:none;
+        font-weight:600;
+        margin-left:8px;
+    }
+
+    /* CONTENIDO */
+    .contenido{
+        padding:24px;
+        flex:1;
+    }
+
+    .contenido h3{
+        margin-bottom:12px;
+        color:var(--green-dark);
+    }
+
+    .contenido p{
+        color:var(--text-muted);
+    }
+
+    .cards{
+        margin-top:20px;
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+        gap:20px;
+    }
+
+    .card{
+        background:var(--white);
+        padding:22px;
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+    }
+
+    @media (max-width:880px){
+        body{
+            flex-direction:column;
         }
-    </style>
+        .sidebar{
+            width:100%;
+            display:flex;
+            overflow-x:auto;
+        }
+        .sidebar a{
+            flex-shrink:0;
+            margin-right:10px;
+        }
+        .top-menu{
+            justify-content:flex-start;
+            overflow-x:auto;
+        }
+    }
+</style>
 </head>
+
 <body>
 
-<h2>📋 Lista de Empleados Registrados</h2>
+<aside class="sidebar">
+    <h2>RRHH Admin</h2>
+    <a href="administrador.php" class="active">Inicio</a>
+    <a href="nomina.php">Nómina</a>
+    <a href="listar_empleados.php">Empleados</a>
+    <a href="usuarios.php">Usuarios</a>
+    <a href="reportes.php">Reportes</a>
+</aside>
 
-<table>
-    <tr>
-        <th>Cédula</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Acciones</th>
-    </tr>
+<div class="main">
 
-    <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
-        <tr>
-            <td><?php echo $fila['cedula']; ?></td>
-            <td><?php echo $fila['nombre']; ?></td>
-            <td><?php echo $fila['apellido']; ?></td>
-            <td><?php echo $fila['telefono']; ?></td>
-            <td><?php echo $fila['email']; ?></td>
-            <td>
-                
-            </td>
-        </tr>
-    <?php } ?>
+    <!-- HEADER -->
+    <header>
+        <h2>Panel de Administración - RRHH</h2>
+        <div>
+            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
+            <a href="cerrar_sesion.php">Cerrar sesión</a>
+        </div>
+    </header>
 
-</table>
+    <!-- TOP MENU -->
+    <div class="top-menu">
+        <a href="nomina.php" class="top-button">Nómina</a>
+        <a href="listar_empleados.php" class="top-button">Empleados</a>
+        <a href="usuarios.php" class="top-button">Usuarios</a>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="contenido">
+        <h3>Bienvenido al Panel de Control</h3>
+
+        <div class="cards">
+            <div class="card">
+                <h4>Empleados</h4>
+                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>
-
-<?php
-mysqli_free_result($resultado);
-mysqli_close($conexion);
-?>
-
-
-
-///
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*<?php
-include("db.php"); // incluye la conexión
-
-// Consulta SQL
-$consulta = "SELECT id, cedula, nombre, apellido, email, telefono FROM empleados";
-
-// Ejecutar consulta
-$resultado = mysqli_query($conexion, $consulta);
-
-// Verificar errores
-if (!$resultado) {
-    die("Error en la consulta: " . mysqli_error($conexion));
-}
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Empleados</title>
-  <link rel="stylesheet" href="../css/listar_empleados.css"> 
-</head>
-<body>
-
-<h2> Lista de Empleados Registrados</h2>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Cédula</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Email</th>
-        <th>Teléfono</th>
-        <th>Acciones</th>
-    </tr>
-
-    <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
-        <tr>
-            <td><?php echo $fila['id']; ?></td>
-            <td><?php echo $fila['cedula']; ?></td>
-            <td><?php echo $fila['nombre']; ?></td>
-            <td><?php echo $fila['apellido']; ?></td>
-            <td><?php echo $fila['email']; ?></td>
-            <td><?php echo $fila['telefono']; ?></td>
-            <td class="acciones">
-                <a class="btn editar" href="editar_empleado.php?id=<?php echo $fila['id']; ?>">Editar</a>
-                <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>" onclick="return confirm('¿Eliminar empleado?');">Eliminar</a>
-            </td>
-        </tr>
-    <?php } ?>
-</table>
-
-</body>
-</html>
-
-<?php
-mysqli_free_result($resultado);
-mysqli_close($conexion);
-?>

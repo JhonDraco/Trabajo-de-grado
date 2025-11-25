@@ -3,11 +3,7 @@ include("db.php"); // incluye la conexión
 
 // Consulta SQL
 $consulta = "SELECT id, cedula, nombre, apellido, email, telefono FROM empleados";
-
-// Ejecutar consulta
 $resultado = mysqli_query($conexion, $consulta);
-
-// Verificar errores
 if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
 }
@@ -23,22 +19,30 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel del Administrador</title>
+<title>Lista de Empleados - Panel RRHH</title>
+
+<!-- CSS del panel verde -->
 <link rel="stylesheet" href="../css/listar_empleados.css">
+
+<!-- Iconos RemixIcon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina</a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="listar_usuario.php">Usuarios</a>
-    <a href="reportes.php">Reportes</a>
+    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="listar_empleados.php" class="active"><i class="ri-team-line"></i> Empleados</a>
+    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
+    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
 </aside>
 
 <div class="main">
 
+    <!-- HEADER -->
     <header>
         <h2>Panel de Administración - RRHH</h2>
         <div>
@@ -47,46 +51,54 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         </div>
     </header>
 
+    <!-- TOP MENU -->
     <div class="top-menu">
-    <a href="listar_empleados.php" class="top-button">lista de empleados</a>    
-    <a href="formulario_para_registrar_empleado.php" class="top-button">Registrar Empleado</a>
+        <a href="listar_empleados.php" class="top-button">Lista de Empleados</a>
+        <a href="formulario_para_registrar_empleado.php" class="top-button">Registrar Empleado</a>
     </div>
 
-    <h2>Lista de Empleados Registrados</h2>
+    <!-- CONTENIDO -->
+    <div class="contenido">
+        <h3>Empleados Registrados</h3>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Cédula</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
-        </tr>
-
-        <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
+        <table>
             <tr>
-                <td><?php echo $fila['id']; ?></td>
-                <td><?php echo $fila['cedula']; ?></td>
-                <td><?php echo $fila['nombre']; ?></td>
-                <td><?php echo $fila['apellido']; ?></td>
-                <td><?php echo $fila['email']; ?></td>
-                <td><?php echo $fila['telefono']; ?></td>
-                <td class="acciones">
-                    <a class="btn editar" href="editar_empleado.php?id=<?php echo $fila['id']; ?>">Editar</a>
-                    <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>" onclick="return confirm('¿Eliminar empleado?');">Eliminar</a>
-                </td>
+                <th>ID</th>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
             </tr>
-        <?php } ?>
-    </table>
 
+            <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
+                <tr>
+                    <td><?php echo $fila['id']; ?></td>
+                    <td><?php echo $fila['cedula']; ?></td>
+                    <td><?php echo $fila['nombre']; ?></td>
+                    <td><?php echo $fila['apellido']; ?></td>
+                    <td><?php echo $fila['email']; ?></td>
+                    <td><?php echo $fila['telefono']; ?></td>
+                    <td class="acciones">
+                        <a class="btn editar" href="editar_empleado.php?id=<?php echo $fila['id']; ?>">
+                            <i class="ri-edit-2-line"></i> Editar
+                        </a>
+                        <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>" onclick="return confirm('¿Eliminar empleado?');">
+                            <i class="ri-delete-bin-6-line"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+            <?php } ?>
+        </table>
+
+    </div>
 </div>
-
-</body>
-</html>
 
 <?php
 mysqli_free_result($resultado);
 mysqli_close($conexion);
 ?>
+
+</body>
+</html>

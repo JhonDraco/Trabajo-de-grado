@@ -1,10 +1,10 @@
 :root {
-    --green-dark: #1f3a34;      /* Sidebar */
-    --green-mid: #2b4a42;       /* Botones */
-    --green-hover: #3f6f61;     /* Hover */
-    --white: #ffffff;            /* Fondo principal */
-    --white-soft: #f7f7f7;       /* Tarjetas / secciones */
-    --gray-light-text: #4a4f4e;  /* Texto secundario */
+    --green-dark: #1f3a34;
+    --green-mid: #2b4a42;
+    --green-hover: #3f6f61;
+    --white: #ffffff;
+    --white-soft: #f7f7f7;
+    --gray-light-text: #4a4f4e;
     --card-border: #e2e2e2;
     --shadow: 0 6px 18px rgba(0,0,0,0.15);
     --radius: 12px;
@@ -12,25 +12,20 @@
 }
 
 /* Reset */
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Inter, Arial, sans-serif;
-}
+* { box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif; }
 
-body{
+body {
     display:flex;
     min-height:100vh;
-    background:var(--white);
-    color:var(--gray-light-text);
+    background: var(--white);
+    color: var(--gray-light-text);
 }
 
-/* ===== SIDEBAR ===== */
-.sidebar{
+/* SIDEBAR */
+.sidebar {
     width: var(--sidebar-width);
     background: linear-gradient(180deg, var(--green-dark), var(--green-mid));
-    padding: 30px 20px;
+    padding:30px 20px;
     color:white;
     box-shadow: var(--shadow);
     display:flex;
@@ -38,34 +33,43 @@ body{
     border-radius: 0 16px 16px 0;
 }
 
-.sidebar h2{
+.sidebar h2 {
     text-align:center;
-    margin-bottom:30px;
+    margin-bottom:35px;
     font-size:22px;
+    color:white;
 }
 
-.sidebar a{
-    display:block;
+.sidebar-menu {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu-item {
+    display:flex;
+    align-items:center;
+    gap:12px;
     padding:12px 15px;
-    margin-bottom:10px;
     color:white;
     text-decoration:none;
+    font-size:15px;
     border-radius:10px;
-    font-weight:500;
     transition:0.25s;
+    font-weight:500;
     position:relative;
 }
 
-.sidebar a:hover{
-    background: rgba(255,255,255,0.15);
-    transform: translateX(5px);
+.menu-item:hover {
+    background:rgba(255,255,255,0.15);
+    transform:translateX(6px);
 }
 
-.sidebar a.active{
-    background: rgba(0,0,0,0.35);
+.menu-item.active {
+    background:rgba(0,0,0,0.35);
 }
 
-.sidebar a.active::before{
+.menu-item.active::before {
     content:"";
     position:absolute;
     left:-10px;
@@ -77,39 +81,39 @@ body{
     border-radius:4px;
 }
 
-/* ===== MAIN ===== */
-.main{
+/* MAIN */
+.main {
     flex:1;
     display:flex;
     flex-direction:column;
     background: var(--white);
 }
 
-/* ===== HEADER ===== */
-header{
+/* HEADER */
+header {
     background:var(--white);
     padding:12px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:var(--shadow);
+    box-shadow: var(--shadow);
 }
 
-header h2{
+header h2 {
     font-size:18px;
     color:var(--green-dark);
 }
 
-header a{
+header a {
     color:var(--green-mid);
     text-decoration:none;
     font-weight:600;
     margin-left:8px;
 }
 
-/* ===== TOP MENU ===== */
-.top-menu{
-    background:var(--white-soft);
+/* TOP MENU */
+.top-menu {
+    background: var(--white-soft);
     padding:12px 20px;
     display:flex;
     gap:12px;
@@ -118,7 +122,7 @@ header a{
     flex-wrap:wrap;
 }
 
-.top-button{
+.top-button {
     padding:8px 16px;
     background:var(--green-mid);
     color:white;
@@ -129,78 +133,69 @@ header a{
     transition:0.2s;
 }
 
-.top-button:hover{
+.top-button:hover {
     background:var(--green-hover);
 }
 
-/* ===== FORMULARIO ===== */
-.nomina-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: 25px;
+/* CONTENIDO */
+.contenido {
+    padding:24px;
+    flex:1;
 }
 
-.nomina-box{
+.contenido h2 {
+    margin-bottom:20px;
+    color:var(--green-mid);
+    text-align:center;
+}
+
+/* FORMULARIO */
+.nomina-container {
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.nomina-box {
     background: var(--white-soft);
-    width: 420px;
-    padding: 25px;
+    padding:25px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    text-align: center;
+    width:420px;
 }
 
-.nomina-box h2{
+.nomina-box h2 {
     color: var(--green-dark);
-    margin-bottom: 15px;
+    margin-bottom:15px;
+    text-align:center;
 }
 
-.nomina-box form{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    text-align: left;
+.nomina-box label {
+    display:block;
+    margin-bottom:5px;
+    font-weight:500;
 }
 
 .nomina-box input,
-.nomina-box select{
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
+.nomina-box select {
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-bottom:15px;
 }
 
-.nomina-box button{
-    padding: 10px;
-    background: var(--green-mid);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
+.nomina-box button {
+    width:100%;
+    padding:10px;
+    background:var(--green-mid);
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
 }
 
-.nomina-box button:hover{
-    background: var(--green-hover);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width:880px){
-    body{
-        flex-direction:column;
-    }
-    .sidebar{
-        width:100%;
-        display:flex;
-        overflow-x:auto;
-        border-radius:0;
-    }
-    .sidebar a{
-        flex-shrink:0;
-        margin-right:10px;
-    }
-    .top-menu{
-        justify-content:flex-start;
-        overflow-x:auto;
-    }
+.nomina-box button:hover {
+    background:var(--green-hover);
 }

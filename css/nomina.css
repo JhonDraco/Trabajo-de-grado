@@ -1,10 +1,11 @@
 :root {
-    --green-dark: #1f3a34;      /* Sidebar */
-    --green-mid: #2b4a42;       /* Botones */
-    --green-hover: #3f6f61;     /* Hover */
-    --white: #ffffff;            /* Fondo principal */
-    --white-soft: #f7f7f7;       /* Tarjetas / secciones */
-    --gray-light-text: #4a4f4e;  /* Texto secundario */
+    --green-dark: #1f3a34;      
+    --green-mid: #2b4a42;       
+    --green-hover: #3f6f61;     
+    --white: #ffffff;            
+    --white-soft: #f7f7f7;       
+    --gray-light-text: #4a4f4e;
+
     --card-border: #e2e2e2;
     --shadow: 0 6px 18px rgba(0,0,0,0.15);
     --radius: 12px;
@@ -24,7 +25,7 @@ body{
     min-height:100vh;
     background:var(--white);
     color:var(--gray-light-text);
-}
+} 
 
 /* ===== SIDEBAR ===== */
 .sidebar{
@@ -97,8 +98,11 @@ header{
 }
 
 header h2{
-    font-size:18px;
+    font-size:20px;
     color:var(--green-dark);
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 header a{
@@ -120,6 +124,9 @@ header a{
 }
 
 .top-button{
+    display:flex;
+    align-items:center;
+    gap:8px;
     padding:8px 16px;
     background:var(--green-mid);
     color:white;
@@ -146,6 +153,7 @@ header a{
     color:var(--green-mid);
 }
 
+/* Cards */
 .cards{
     margin-top:20px;
     display:grid;
@@ -164,6 +172,9 @@ header a{
 .card h4{
     color:var(--green-dark);
     margin-bottom:6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -173,9 +184,9 @@ header a{
     }
     .sidebar{
         width:100%;
-        display:flex;
         overflow-x:auto;
         border-radius:0;
+        flex-direction:row;
     }
     .sidebar a{
         flex-shrink:0;

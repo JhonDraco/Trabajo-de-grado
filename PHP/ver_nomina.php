@@ -1,17 +1,15 @@
 <?php
-include("db.php");
-
-// Ordenar por la fecha en que se creó la nómina
-$consulta = "SELECT * FROM nomina ORDER BY fecha_creacion DESC";
-$nominas = mysqli_query($conexion, $consulta);
-?>
-
-<?php
 session_start();
 if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     header("Location: index.php");
     exit();
 }
+
+include("db.php");
+
+// Ordenar por fecha de creación descendente
+$consulta = "SELECT * FROM nomina ORDER BY fecha_creacion DESC";
+$nominas = mysqli_query($conexion, $consulta);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,6 +17,8 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ver Nóminas</title>
+
+<!-- CSS -->
 <link rel="stylesheet" href="../css/ver_nomina.css">
 
 <!-- Iconos RemixIcon -->
@@ -27,15 +27,19 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+
+    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="nomina.php" class="active"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
     <a href="usuarios.php"><i class="ri-user-settings-line"></i> Usuarios</a>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+
 </aside>
 
+<!-- MAIN -->
 <div class="main">
 
     <!-- HEADER -->
@@ -53,6 +57,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
        <a href="crear_deduccion.php" class="top-button"><i class="ri-subtract-line"></i> Crear Deducción</a>
        <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+       
     </div>
 
     <!-- TABLA -->
@@ -60,6 +65,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     <div class="table-container">
         <table>
+            <thead>
             <tr>
                 <th>ID Nómina</th>
                 <th>Período</th>
@@ -69,7 +75,9 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                 <th>Fecha creación</th>
                 <th>Acciones</th>
             </tr>
+            </thead>
 
+            <tbody>
             <?php while ($n = mysqli_fetch_array($nominas)) { ?>
             <tr>
                 <td><?= $n['id_nomina'] ?></td>
@@ -79,15 +87,17 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                 <td><?= $n['creada_por'] ?></td>
                 <td><?= $n['fecha_creacion'] ?></td>
                 <td>
-                    <a href="ver_detalle_nomina.php?id=<?= $n['id_nomina'] ?>"><i class="ri-eye-line"></i> Ver</a> | 
+                    <a href="ver_detalle_nomina.php?id=<?= $n['id_nomina'] ?>"><i class="ri-eye-line"></i> Ver</a> |
                     <a href="eliminar_nomina.php?id=<?= $n['id_nomina'] ?>" onclick="return confirm('¿Eliminar esta nómina?')"><i class="ri-delete-bin-line"></i> Eliminar</a>
                 </td>
             </tr>
             <?php } ?>
+            </tbody>
+
         </table>
     </div>
 
-</div> <!-- CIERRE MAIN -->
+</div>
 
 </body>
 </html>

@@ -23,11 +23,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
     <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+    <a href="reportes.php" class="active"><i class="ri-bar-chart-line"></i> Reportes</a>
+
 </aside>
 
 <div class="main">

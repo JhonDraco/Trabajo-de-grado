@@ -38,60 +38,84 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crear Usuario</title>
+
+<!-- ICONOS REMIX ICON -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+<!-- TU CSS GENERAL -->
+<link rel="stylesheet" href="../css/usuarios.css">
+
+<style>
+    
+
+</style>
 </head>
+
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <h2>RRHH Admin</h2>
-    <a href="administrador.php" class="active">Inicio</a>
-    <a href="nomina.php">Nómina</a>
-    <a href="listar_empleados.php">Empleados</a>
-    <a href="listar_usuario.php">Usuarios</a>
-    <a href="reportes.php">Reportes</a>
+
+    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
+    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+    <a href="listar_usuario.php" class="active"><i class="ri-user-settings-line"></i> Usuarios</a>
+    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
 </aside>
 
+<!-- MAIN -->
 <div class="main">
 
+<!-- HEADER -->
 <header>
-    <h2>Panel de Administración - RRHH</h2>
+    <h2><i class="ri-user-add-line"></i> Crear Usuario</h2>
     <div>
         <span>👤 <?php echo htmlspecialchars($_SESSION['usuario']); ?></span> |
         <a href="cerrar_sesion.php">Cerrar sesión</a>
     </div>
 </header>
 
+<!-- TOP MENU -->
 <div class="top-menu">
-    <a href="listar_usuarios.php" class="top-button">Lista de Usuarios</a>
-    <a href="usuarios.php" class="top-button">Crear Usuario</a>
+    <a href="listar_usuario.php" class="top-button"><i class="ri-file-list-2-line"></i> Lista de Usuarios</a>
+    <a href="usuarios.php" class="top-button"><i class="ri-user-add-line"></i> Crear Usuario</a>
 </div>
 
-<div class="login-container">
+<!-- FORMULARIO -->
+<div class="form-card">
+
     <?php if ($mensaje): ?>
-        <div class="mensaje"><?php echo htmlspecialchars($mensaje); ?></div>
+        <p style="text-align:center; color:green; font-weight:bold;">
+            <?= htmlspecialchars($mensaje); ?>
+        </p>
     <?php endif; ?>
 
-    <form action="" method="post" class="login-form">
-        <h1>Crear un usuario nuevo</h1>
-        <label for="name">Nombre y Apellido:</label>
+    <h2><i class="ri-user-settings-line"></i> Registro de Nuevo Usuario</h2>
+
+    <form action="" method="post">
+        
+        <label>Nombre y Apellido</label>
         <input type="text" id="name" name="name" placeholder="Ingresar nombre y apellido" required>
 
-        <label for="user">Usuario:</label>
-        <input type="text" id="user" name="user" placeholder="Ingresa tu usuario" required>
+        <label>Usuario</label>
+        <input type="text" id="user" name="user" placeholder="Ingresa el usuario" required>
 
-        <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" name="contraseña" placeholder="Ingresa tu contraseña" required>
+        <label>Contraseña</label>
+        <input type="password" id="contraseña" name="contraseña" placeholder="Ingresa la contraseña" required>
 
-        <label for="cargo">Tipo de usuario:</label>
+        <label>Tipo de Usuario</label>
         <select name="cargo" id="cargo">
             <option value="1">Administrador</option>
             <option value="2">Trabajador</option>
         </select>
 
-        <div class="buttons">
-            <button type="submit">Guardar</button>
-            <a href="administrador.php"><button type="button">Cancelar</button></a>
-        </div>
+        <button type="submit"><i class="ri-save-3-line"></i> Guardar Usuario</button>
+
+        <a href="administrador.php" class="cancel-btn"><i class="ri-arrow-left-line"></i> Cancelar</a>
+
     </form>
+
 </div>
 
 </div>

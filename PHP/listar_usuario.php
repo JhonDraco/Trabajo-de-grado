@@ -1,4 +1,9 @@
 <?php
+include("db.php");
+
+$consulta = "SELECT id_usuario, nombre_apellido, usuario, cargo_id FROM usuarios";
+$resultado = mysqli_query($conexion, $consulta);
+
 session_start();
 if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     header("Location: index.php");
@@ -11,13 +16,8 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-
-<!-- CSS -->
 <link rel="stylesheet" href="../css/listar_usuarios.css">
-
-<!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-
 </head>
 <body>
 
@@ -27,7 +27,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
     <a href="listar_usuario.php" class="active"><i class="ri-user-settings-line"></i> Usuarios</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a></a>
+    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
 </aside>
 
 <div class="main">
@@ -41,13 +41,49 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         </div>
     </header>
 
-    <!-- TOP MENU HORIZONTAL -->
+    <!-- TOP MENU -->
     <div class="top-menu">
         <a href="usuarios.php" class="top-button"><i class="ri-user-add-line"></i> Registrar usuario</a>
-        <a href="" class="top-button"><i class="ri-information-line"></i> Información de usuarios</a>
+       
     </div>
 
-</div>
+    <!-- CONTENIDO -->
+    <div class="contenido">
+        <h3>Usuarios Registrados</h3>
 
+        <table>
+            <tr>
+                <th>Nombre y Apellido</th>
+                <th>Usuario</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
+            </tr>
+
+            <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
+                <tr>
+                    <td><?php echo $fila['nombre_apellido']; ?></td>
+                    <td><?php echo $fila['usuario']; ?></td>
+                    <td><?php echo $fila['cargo_id']; ?></td>
+
+                    <td class="acciones">
+                        <a class="btn editar" href="editar_usuario.php?id=<?php echo $fila['id_usuario']; ?>">
+                            <i class="ri-edit-2-line"></i> Editar
+                        </a>
+                        <a class="btn eliminar" href="eliminar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" onclick="return confirm('¿Eliminar empleado?');">
+                            <i class="ri-delete-bin-6-line"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+            <?php } ?>
+        </table>
+
+    </div> <!-- FIN contenido -->
+
+</div> <!-- FIN main -->
+
+<?php
+mysqli_free_result($resultado);
+mysqli_close($conexion);
+?>
 </body>
 </html>

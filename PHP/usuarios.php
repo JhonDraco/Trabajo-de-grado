@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!-- TOP MENU -->
 <div class="top-menu">
     <a href="listar_usuario.php" class="top-button"><i class="ri-file-list-2-line"></i> Lista de Usuarios</a>
-    <a href="usuarios.php" class="top-button"><i class="ri-user-add-line"></i> Crear Usuario</a>
+   
 </div>
 
 <!-- FORMULARIO -->

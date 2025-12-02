@@ -1,28 +1,48 @@
 <?php
 session_start();
+if (!isset($_SESSION['usuario'])) { header("Location: index.php"); exit(); }
+
 include("db.php");
-$res = mysqli_query($conexion, "SELECT n.*, 
-  (SELECT SUM(total_pagar) FROM detalle_nomina d WHERE d.id_nomina = n.id_nomina) as total_nomina
-  FROM nomina n ORDER BY n.fecha_creacion DESC");
+
+// obtener nominas abiertas o cerradas (no pagadas)
+$consulta = "SELECT * FROM nomina WHERE estado != 'pagada' ORDER BY fecha_creacion DESC";
+$nominas = mysqli_query($conexion, $consulta);
 ?>
-<!doctype html><html><head><meta charset="utf-8"><title>Pagos</title></head><body>
-<h2>Nóminas</h2>
-<table border="1" cellpadding="6">
-<tr><th>ID</th><th>Fechas</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Acción</th></tr>
-<?php while($n = mysqli_fetch_assoc($res)) { ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pagos de Nómina</title>
+</head>
+<body>
+
+<h2>💵 Pagos de Nómina</h2>
+
+<table border="1" cellpadding="8">
 <tr>
- <td><?=$n['id_nomina']?></td>
- <td><?=$n['fecha_inicio']?> - <?=$n['fecha_fin']?></td>
- <td><?=$n['tipo']?></td>
- <td><?=number_format($n['total_nomina'],2)?></td>
- <td><?=$n['estado']?></td>
- <td>
-    <a href="ver_nomina.php?id=<?=$n['id_nomina']?>">Ver</a>
-    <?php if($n['estado']!='pagada') { ?>
-      <a href="marcar_pagada.php?id=<?=$n['id_nomina']?>" onclick="return confirm('Marcar como pagada?')">Marcar pagada</a>
-    <?php } ?>
- </td>
+    <th>ID Nómina</th>
+    <th>Periodo</th>
+    <th>Tipo</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+</tr>
+
+<?php while ($n = mysqli_fetch_assoc($nominas)) { ?>
+<tr>
+    <td><?= $n['id_nomina'] ?></td>
+    <td><?= $n['fecha_inicio'] ?> / <?= $n['fecha_fin'] ?></td>
+    <td><?= ucfirst($n['tipo']) ?></td>
+    <td><?= $n['estado'] ?></td>
+    <td>
+        <a href="pagar_nomina.php?id=<?= $n['id_nomina'] ?>">💰 Registrar Pago</a>
+    </td>
 </tr>
 <?php } ?>
+
 </table>
-</body></html>
+
+<br>
+<a href="historial_pagos.php">📜 Ver Historial de Pagos</a>
+
+</body>
+</html>

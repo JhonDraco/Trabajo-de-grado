@@ -63,6 +63,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         <a href="ver_nomina.php" class="top-button">
             <i class="ri-file-list-line"></i> Ver Nóminas
         </a>
+       <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
     </div>
 
     <!-- CONTENIDO -->

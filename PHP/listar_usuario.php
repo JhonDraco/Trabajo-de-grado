@@ -59,22 +59,29 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                 <th>Acciones</th>
             </tr>
 
-            <?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
-                <tr>
-                    <td><?php echo $fila['nombre_apellido']; ?></td>
-                    <td><?php echo $fila['usuario']; ?></td>
-                    <td><?php echo $fila['cargo_id']; ?></td>
+            <?php 
+$cargos = [
+    1 => "Administrador",
+    2 => "Empleado"
+];
+?>
 
-                    <td class="acciones">
-                        <a class="btn editar" href="editar_usuario.php?id=<?php echo $fila['id_usuario']; ?>">
-                            <i class="ri-edit-2-line"></i> Editar
-                        </a>
-                        <a class="btn eliminar" href="eliminar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" onclick="return confirm('¿Eliminar empleado?');">
-                            <i class="ri-delete-bin-6-line"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-            <?php } ?>
+<?php while ($fila = mysqli_fetch_assoc($resultado)) { ?>
+<tr>
+    <td><?php echo $fila['nombre_apellido']; ?></td>
+    <td><?php echo $fila['usuario']; ?></td>
+    <td><?php echo $cargos[$fila['cargo_id']] ?? "Desconocido"; ?></td>
+    <td class="acciones">
+        <a class="btn editar" href="editar_usuario.php?id=<?php echo $fila['id_usuario']; ?>">
+            <i class="ri-edit-2-line"></i> Editar
+        </a>
+        <a class="btn eliminar" href="eliminar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" onclick="return confirm('¿Eliminar usuario?');">
+            <i class="ri-delete-bin-6-line"></i> Eliminar
+        </a>
+    </td>
+</tr>
+<?php } ?>
+
         </table>
 
     </div> <!-- FIN contenido -->

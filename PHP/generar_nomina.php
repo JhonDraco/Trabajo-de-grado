@@ -1,176 +1,197 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) { 
-    header("Location: index.php"); 
-    exit(); 
+    header("Location: index.php");
+    exit();
 }
 
 include("db.php");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// ============================
+// PASO 1: CARGAR ASIGNACIONES Y DEDUCCIONES
+// ============================
+$asignaciones = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
+$deducciones  = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
 
-    $fecha_inicio = $_POST['fecha_inicio'];
-    $fecha_fin    = $_POST['fecha_fin'];
-    $tipo         = $_POST['tipo'];
-    $creada_por   = $_SESSION['usuario'];
+// Guardarlos en arrays
+$arr_asig = [];
+while ($a = mysqli_fetch_assoc($asignaciones)) { $arr_asig[] = $a; }
 
-    // 1. Crear la nómina
-    $sql = "INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
-            VALUES ('$fecha_inicio', '$fecha_fin', '$tipo', '$creada_por')";
-    mysqli_query($conexion, $sql);
+$arr_ded = [];
+while ($d = mysqli_fetch_assoc($deducciones)) { $arr_ded[] = $d; }
 
-    $id_nomina = mysqli_insert_id($conexion);
+// ============================
+// PASO 2: CARGAR EMPLEADOS ACTIVOS
+// ============================
+$empleados = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
 
-    // 2. Obtener tipos de deducción y asignación
-    $deducciones = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
-    $asignaciones = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
+// Pre-cálculo para vista previa
+$preview = [];
+$total_general_asig = 0;
+$total_general_ded  = 0;
+$total_general_neto = 0;
 
-    $arr_deducciones = [];
-    while($d = mysqli_fetch_assoc($deducciones)){
-        $arr_deducciones[] = $d;
+foreach ($empleados as $emp) {
+
+    $salario = floatval($emp['salario_base']);
+    $t_asig = 0;
+    $t_ded = 0;
+
+    foreach ($arr_asig as $as) {
+        if ($as['tipo'] == 'fijo') {
+            $monto = floatval($as['valor']);
+        } else {
+            $monto = $salario * (floatval($as['valor']) / 100);
+        }
+        $t_asig += $monto;
     }
 
-    $arr_asignaciones = [];
-    while($a = mysqli_fetch_assoc($asignaciones)){
-        $arr_asignaciones[] = $a;
+    foreach ($arr_ded as $dd) {
+        $monto = $salario * (floatval($dd['porcentaje']) / 100);
+        $t_ded += $monto;
     }
 
-    // 3. Obtener empleados activos
-    $empleados = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
+    $neto = $salario + $t_asig - $t_ded;
 
-    while ($emp = mysqli_fetch_assoc($empleados)) {
+    $preview[] = [
+        "id" => $emp['id'],
+        "nombre" => $emp['nombre']." ".$emp['apellido'],
+        "salario" => $salario,
+        "asig" => $t_asig,
+        "ded" => $t_ded,
+        "neto" => $neto
+    ];
 
-        $salario = floatval($emp['salario_base']);
-        $total_asig = 0;
-        $total_ded  = 0;
-
-        foreach ($arr_asignaciones as $asig) {
-            if ($asig['tipo'] == 'fijo') {
-                $monto = floatval($asig['valor']);
-            } else {
-                $monto = $salario * (floatval($asig['valor']) / 100);
-            }
-            $total_asig += $monto;
-        }
-
-        foreach ($arr_deducciones as $ded) {
-            $monto = $salario * (floatval($ded['porcentaje']) / 100);
-            $total_ded += $monto;
-        }
-
-        $total_pagar = ($salario + $total_asig) - $total_ded;
-
-        mysqli_query($conexion,
-            "INSERT INTO detalle_nomina (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
-             VALUES ($id_nomina, {$emp['id']}, $salario, $total_asig, $total_ded, $total_pagar)"
-        );
-
-        $id_detalle = mysqli_insert_id($conexion);
-
-        foreach ($arr_asignaciones as $asig) {
-            if ($asig['tipo'] == 'fijo') {
-                $monto = floatval($asig['valor']);
-            } else {
-                $monto = $salario * (floatval($asig['valor']) / 100);
-            }
-            mysqli_query($conexion,
-                "INSERT INTO detalle_asignacion (id_detalle, id_asignacion, monto)
-                 VALUES ($id_detalle, {$asig['id_asignacion']}, $monto)"
-            );
-        }
-
-        foreach ($arr_deducciones as $ded) {
-            $monto = $salario * (floatval($ded['porcentaje']) / 100);
-            mysqli_query($conexion,
-                "INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
-                 VALUES ($id_detalle, {$ded['id_tipo']}, $monto)"
-            );
-        }
-    }
-
-    header("Location: generar_nomina.php?ok=1&id=$id_nomina");
-    exit();
+    $total_general_asig += $t_asig;
+    $total_general_ded  += $t_ded;
+    $total_general_neto += $neto;
 }
-?>
 
+// ============================
+// PASO 3: NÚMERO SIGUIENTE DE NÓMINA
+// ============================
+$ultimo = mysqli_query($conexion, "SELECT id_nomina FROM nomina ORDER BY id_nomina DESC LIMIT 1");
+$next_id = 1;
+if (mysqli_num_rows($ultimo) > 0) {
+    $u = mysqli_fetch_assoc($ultimo);
+    $next_id = $u['id_nomina'] + 1;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generar Nómina</title>
-<link rel="stylesheet" href="../css/generar_nomina.css">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<title>Pre-Nómina</title>
 
+<style>
+body {
+    font-family: Arial;
+    background:#f5f6f7;
+    padding:20px;
+}
+h2 { text-align:center; }
 
+.table {
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    margin-top:10px;
+}
+.table th, .table td {
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+.box {
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+.total-box {
+    background:#d9f5e3;
+    padding:15px;
+    border-radius:10px;
+    margin-top:20px;
+}
+.btn {
+    background:#2b4a42;
+    color:white;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    display:block;
+    margin:20px auto;
+}
+</style>
 </head>
+
 <body>
 
-<aside class="sidebar">
-    <h2>RRHH Admin</h2>
-    <nav class="sidebar-menu">
-        <a href="administrador.php" class="menu-item">
-            <i class="ri-home-4-line"></i> Inicio
-        </a>
-        <a href="nomina.php" class="menu-item active">
-            <i class="ri-money-dollar-circle-line"></i> Nómina
-        </a>
-        <a href="listar_empleados.php" class="menu-item">
-            <i class="ri-team-line"></i> Empleados
-        </a>
-        <a href="usuarios.php" class="menu-item">
-            <i class="ri-user-settings-line"></i> Usuarios
-        </a>
-        <a href="reportes.php" class="menu-item">
-            <i class="ri-bar-chart-line"></i> Reportes
-        </a>
-    </nav>
-</aside>
+<h2>🧮 Pre-Nómina</h2>
 
-<div class="main">
-    <header>
-        <h2>Panel de Administración - RRHH</h2>
-        <div>
-            <span>👤 <?= $_SESSION['usuario'] ?></span> |
-            <a href="cerrar_sesion.php">Cerrar sesión</a>
+<div class="box">
+    <h3>Datos del Período</h3>
+
+    <form method="POST" action="procesar_nomina.php">
+
+        <label>Número de Nómina:</label>
+        <input type="text" value="<?= $next_id ?>" disabled style="padding:8px; width:120px;">
+
+        <br><br>
+
+        <label>Fecha Inicio:</label>
+        <input type="date" name="fecha_inicio" required style="padding:8px;">  
+
+        <label style="margin-left:20px;">Fecha Fin:</label>
+        <input type="date" name="fecha_fin" required style="padding:8px;">
+
+        <br><br>
+
+        <label>Tipo de Nómina:</label>
+        <select name="tipo" style="padding:8px;">
+            <option value="mensual">Mensual</option>
+            <option value="quincenal">Quincenal</option>
+            <option value="semanal">Semanal</option>
+        </select>
+
+        <br><br>
+
+        <h3>Vista Previa de Empleados</h3>
+
+        <table class="table">
+            <tr>
+                <th>Empleado</th>
+                <th>Salario</th>
+                <th>Asignaciones</th>
+                <th>Deducciones</th>
+                <th>Neto a Pagar</th>
+            </tr>
+
+            <?php foreach ($preview as $p): ?>
+            <tr>
+                <td><?= $p['nombre'] ?></td>
+                <td><?= number_format($p['salario'],2) ?></td>
+                <td><?= number_format($p['asig'],2) ?></td>
+                <td><?= number_format($p['ded'],2) ?></td>
+                <td><?= number_format($p['neto'],2) ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+
+        <div class="total-box">
+            <h3>Totales Generales</h3>
+            <p><b>Total Asignaciones:</b> <?= number_format($total_general_asig,2) ?></p>
+            <p><b>Total Deducciones:</b> <?= number_format($total_general_ded,2) ?></p>
+            <p><b>Total Neto a Pagar:</b> <?= number_format($total_general_neto,2) ?></p>
         </div>
-    </header>
 
-    <div class="top-menu">
-        <a href="crear_asignacion.php" class="top-button"><i class="ri-add-circle-line"></i> Crear Asignación</a>
-        <a href="crear_deduccion.php" class="top-button"><i class="ri-subtract-line"></i> Crear Deducción</a>
-        <a href="generar_nomina.php" class="top-button"><i class="ri-file-list-line"></i> Generar Nómina</a>
-        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
-    </div>
-
-    <div class="contenido">
-        <h2>🧾 Generar Nómina</h2>
-        <?php if (isset($_GET['ok'])) { ?>
-            <p style="color:green; text-align:center;">Nómina generada exitosamente. ID: <?= $_GET['id'] ?></p>
-        <?php } ?>
-
-        <div class="nomina-container">
-            <div class="nomina-box">
-                <h2>Formulario de Nómina</h2>
-                <form method="post">
-                    <label>Fecha Inicio:</label>
-                    <input type="date" name="fecha_inicio" required>
-
-                    <label>Fecha Fin:</label>
-                    <input type="date" name="fecha_fin" required>
-
-                    <label>Tipo de Nómina:</label>
-                    <select name="tipo">
-                        <option value="mensual">Mensual</option>
-                        <option value="quincenal">Quincenal</option>
-                        <option value="semanal">Semanal</option>
-                    </select>
-
-                    <button type="submit"><i class="ri-file-text-line"></i> Generar Nómina</button>
-                </form>
-            </div>
-        </div>
-    </div>
+        <button class="btn" type="submit">✔ Generar Nómina</button>
+    </form>
 </div>
 
 </body>

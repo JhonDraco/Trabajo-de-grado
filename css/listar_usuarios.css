@@ -84,6 +84,7 @@ body{
     display:flex;
     flex-direction:column;
     background: var(--white);
+    padding:20px;
 }
 
 /* ===== HEADER ===== */
@@ -94,6 +95,7 @@ header{
     justify-content:space-between;
     align-items:center;
     box-shadow:var(--shadow);
+    margin-bottom:20px;
 }
 
 header h2{
@@ -117,6 +119,7 @@ header a{
     box-shadow:var(--shadow);
     border-bottom:3px solid var(--green-mid);
     flex-wrap:wrap;
+    margin-bottom:20px;
 }
 
 .top-button{
@@ -134,39 +137,78 @@ header a{
     background:var(--green-hover);
 }
 
-/* ===== CONTENIDO ===== */
-.contenido{
-    padding:24px;
-    flex:1;
+/* ===== TABLA ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
     background:var(--white);
-}
-
-.contenido h3{
-    margin-bottom:12px;
-    color:var(--green-mid);
-}
-
-.cards{
-    margin-top:20px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:var(--white-soft);
-    padding:22px;
     border-radius:var(--radius);
     box-shadow:var(--shadow);
-    border:1px solid var(--card-border);
+    overflow:hidden;
+    margin-top:20px;
 }
 
-.card h4{
-    color:var(--green-dark);
-    margin-bottom:6px;
+table th, table td{
+    padding:12px 15px;
+    text-align:left;
 }
 
-/* ===== RESPONSIVE ===== */
+table th{
+    background:var(--green-mid);
+    color:white;
+    font-weight:600;
+}
+
+table tr:nth-child(even){
+    background:var(--white-soft);
+}
+
+table tr:hover{
+    background:#d9e6e0;
+}
+
+/* BOTONES DE ACCION */
+.acciones{
+    display:flex;
+    gap:6px;
+}
+
+.acciones .btn{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    text-decoration:none;
+    color:white;
+    font-size:13px;
+    font-weight:500;
+    transition:0.2s;
+    cursor:pointer;
+}
+
+.acciones .editar{
+    background:var(--green-mid);
+}
+
+.acciones .editar:hover{
+    background:var(--green-hover);
+}
+
+.acciones .eliminar{
+    background:#e74c3c;
+}
+
+.acciones .eliminar:hover{
+    background:#c0392b;
+}
+
+.acciones i{
+    font-size:14px;
+}
+
+/* RESPONSIVE */
 @media (max-width:880px){
     body{
         flex-direction:column;
@@ -184,5 +226,8 @@ header a{
     .top-menu{
         justify-content:flex-start;
         overflow-x:auto;
+    }
+    table th, table td{
+        padding:8px 10px;
     }
 }

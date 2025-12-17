@@ -2,7 +2,7 @@
 include("db.php"); // incluye la conexión
 
 // Consulta SQL
-$consulta = "SELECT id, cedula, nombre, apellido, email, telefono FROM empleados";
+$consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado FROM empleados";
 $resultado = mysqli_query($conexion, $consulta);
 if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
@@ -69,6 +69,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                 <th>Apellido</th>
                 <th>Email</th>
                 <th>Teléfono</th>
+                <th>Statu</th>
                 <th>Acciones</th>
             </tr>
 
@@ -80,6 +81,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                     <td><?php echo $fila['apellido']; ?></td>
                     <td><?php echo $fila['email']; ?></td>
                     <td><?php echo $fila['telefono']; ?></td>
+                    <td><?php echo $fila['estado']; ?></td>
                     <td class="acciones">
                         <a class="btn editar" href="editar_empleado.php?id=<?php echo $fila['id']; ?>">
                             <i class="ri-edit-2-line"></i> Editar

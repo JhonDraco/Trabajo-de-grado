@@ -64,6 +64,8 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
             <i class="ri-file-list-line"></i> Ver Nóminas
         </a>
        <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
+       
+        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
     </div>
 
     <!-- CONTENIDO -->

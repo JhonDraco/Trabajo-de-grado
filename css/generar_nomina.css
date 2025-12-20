@@ -1,10 +1,10 @@
 :root {
-    --green-dark: #1f3a34;
-    --green-mid: #2b4a42;
-    --green-hover: #3f6f61;
-    --white: #ffffff;
-    --white-soft: #f7f7f7;
-    --gray-light-text: #4a4f4e;
+    --green-dark: #1f3a34;      /* Sidebar */
+    --green-mid: #2b4a42;       /* Botones */
+    --green-hover: #3f6f61;     /* Hover */
+    --white: #ffffff;            /* Fondo principal */
+    --white-soft: #f7f7f7;       /* Tarjetas / secciones */
+    --gray-light-text: #4a4f4e;  /* Texto secundario */
     --card-border: #e2e2e2;
     --shadow: 0 6px 18px rgba(0,0,0,0.15);
     --radius: 12px;
@@ -12,20 +12,25 @@
 }
 
 /* Reset */
-* { box-sizing:border-box; margin:0; padding:0; font-family:Inter, Arial, sans-serif; }
-
-body {
-    display:flex;
-    min-height:100vh;
-    background: var(--white);
-    color: var(--gray-light-text);
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Inter, Arial, sans-serif;
 }
 
-/* SIDEBAR */
-.sidebar {
+body{
+    display:flex;
+    min-height:100vh;
+    background:var(--white);
+    color:var(--gray-light-text);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
     width: var(--sidebar-width);
     background: linear-gradient(180deg, var(--green-dark), var(--green-mid));
-    padding:30px 20px;
+    padding: 30px 20px;
     color:white;
     box-shadow: var(--shadow);
     display:flex;
@@ -33,43 +38,35 @@ body {
     border-radius: 0 16px 16px 0;
 }
 
-.sidebar h2 {
+.sidebar h2{
     text-align:center;
-    margin-bottom:35px;
+    margin-bottom:30px;
     font-size:22px;
-    color:white;
 }
 
-.sidebar-menu {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.menu-item {
+.sidebar a{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
     padding:12px 15px;
     color:white;
     text-decoration:none;
-    font-size:15px;
     border-radius:10px;
-    transition:0.25s;
     font-weight:500;
+    transition:0.25s;
     position:relative;
 }
 
-.menu-item:hover {
+.sidebar a:hover{
     background:rgba(255,255,255,0.15);
-    transform:translateX(6px);
+    transform:translateX(5px);
 }
 
-.menu-item.active {
+.sidebar a.active{
     background:rgba(0,0,0,0.35);
 }
 
-.menu-item.active::before {
+.sidebar a.active::before{
     content:"";
     position:absolute;
     left:-10px;
@@ -81,39 +78,39 @@ body {
     border-radius:4px;
 }
 
-/* MAIN */
-.main {
+/* ===== MAIN ===== */
+.main{
     flex:1;
     display:flex;
     flex-direction:column;
     background: var(--white);
 }
 
-/* HEADER */
-header {
+/* ===== HEADER ===== */
+header{
     background:var(--white);
     padding:12px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow: var(--shadow);
+    box-shadow:var(--shadow);
 }
 
-header h2 {
+header h2{
     font-size:18px;
     color:var(--green-dark);
 }
 
-header a {
+header a{
     color:var(--green-mid);
     text-decoration:none;
     font-weight:600;
     margin-left:8px;
 }
 
-/* TOP MENU */
-.top-menu {
-    background: var(--white-soft);
+/* ===== TOP MENU ===== */
+.top-menu{
+    background:var(--white-soft);
     padding:12px 20px;
     display:flex;
     gap:12px;
@@ -122,7 +119,7 @@ header a {
     flex-wrap:wrap;
 }
 
-.top-button {
+.top-button{
     padding:8px 16px;
     background:var(--green-mid);
     color:white;
@@ -133,69 +130,154 @@ header a {
     transition:0.2s;
 }
 
-.top-button:hover {
+.top-button:hover{
     background:var(--green-hover);
 }
-
-/* CONTENIDO */
+/* ===== CONTENIDO (COMPACTO) ===== */
 .contenido {
-    padding:24px;
-    flex:1;
-}
-
-.contenido h2 {
-    margin-bottom:20px;
-    color:var(--green-mid);
-    text-align:center;
-}
-
-/* FORMULARIO */
-.nomina-container {
-    display:flex;
-    justify-content:center;
-    margin-top:20px;
-}
-
-.nomina-box {
+    padding: 18px;
+    flex: 1;
     background: var(--white-soft);
-    padding:25px;
+}
+
+.card-container {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    gap: 14px;
+}
+
+.card-container h2 {
+    text-align: center;
+    font-size: 20px;
+    color: var(--green-mid);
+    margin-bottom: 6px;
+}
+
+/* ===== CARDS ===== */
+.card {
+    background: var(--white);
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+/* INFO */
+.info-box {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.info-box p {
+    font-size: 14px;
+}
+
+/* FORM PERÍODO */
+.periodo-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.periodo-form label {
+    font-size: 13px;
+}
+
+.periodo-form input {
+    padding: 7px 9px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.periodo-form button {
+    padding: 9px 14px;
+    font-size: 13px;
+    background: var(--green-mid);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* TABLA */
+.table-container {
+    background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    width:420px;
+    overflow-x: auto;
 }
 
-.nomina-box h2 {
-    color: var(--green-dark);
-    margin-bottom:15px;
-    text-align:center;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
 }
 
-.nomina-box label {
-    display:block;
-    margin-bottom:5px;
-    font-weight:500;
+table thead {
+    background: var(--green-mid);
+    color: white;
 }
 
-.nomina-box input,
-.nomina-box select {
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    margin-bottom:15px;
+table th,
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.nomina-box button {
-    width:100%;
-    padding:10px;
-    background:var(--green-mid);
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
+table tbody tr:nth-child(even) {
+    background: var(--white-soft);
 }
 
-.nomina-box button:hover {
-    background:var(--green-hover);
+/* TOTALES */
+.totales-box {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.totales-box p {
+    font-size: 14px;
+}
+
+/* BOTÓN FINAL */
+.btn-generar {
+    padding: 12px;
+    font-size: 14px;
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-hover));
+    color: white;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+/* ===== AJUSTE FINAL: COMPACTO + CENTRADO ===== */
+
+/* CONTENIDO GENERAL */
+.contenido {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+/* BLOQUE PRINCIPAL */
+.card-container {
+    width: 100%;
+    max-width: 720px; /* AQUÍ está la clave del compacto */
+    margin: 0 auto;
+}
+
+/* TÍTULO CENTRADO REAL */
+.card-container h2 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* TARJETAS MÁS JUNTAS */
+.card {
+    margin: 0;
 }

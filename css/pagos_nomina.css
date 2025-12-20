@@ -134,61 +134,84 @@ header a{
     background:var(--green-hover);
 }
 
-/* ===== TABLA ===== */
-.table-container {
-    width: 94%;
-    margin: 25px auto;
-    background: var(--white);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow-x: auto;
+/* ===== CONTENIDO ===== */
+.contenido{
+    padding:24px;
+    flex:1;
+    background:var(--white);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
+.contenido h3{
+    margin-bottom:12px;
+    color:var(--green-mid);
 }
 
-table thead {
-    background: var(--green-mid);
-    color: white;
+.cards{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:20px;
 }
 
-table th, table td {
-    padding: 12px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--card-border);
+.card{
+    background:var(--white-soft);
+    padding:22px;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid var(--card-border);
 }
 
-table tr:hover {
-    background: var(--white-soft);
-}
-
-table a {
-    color: var(--green-mid);
-    font-weight: bold;
-    text-decoration: none;
-}
-
-table a:hover {
-    text-decoration: underline;
+.card h4{
+    color:var(--green-dark);
+    margin-bottom:6px;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width:880px){
     body{
-        flex-direction: column;
+        flex-direction:column;
     }
     .sidebar{
-        width: 100%;
-        display: flex;
-        overflow-x: auto;
-        border-radius: 0;
+        width:100%;
+        display:flex;
+        overflow-x:auto;
+        border-radius:0;
     }
     .sidebar a{
-        flex-shrink: 0;
-        margin-right: 10px;
+        flex-shrink:0;
+        margin-right:10px;
     }
+    .top-menu{
+        justify-content:flex-start;
+        overflow-x:auto;
+    }
+}
+/* ===== TABLA ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    margin-top:20px;
+}
+
+table th, table td{
+    padding:12px 15px;
+    text-align:left;
+}
+
+table th{
+    background:var(--green-mid);
+    color:white;
+    font-weight:600;
+}
+
+table tr:nth-child(even){
+    background:var(--white-soft);
+}
+
+table tr:hover{
+    background:#d9e6e0;
 }

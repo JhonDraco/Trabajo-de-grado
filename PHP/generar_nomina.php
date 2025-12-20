@@ -150,77 +150,155 @@ if (isset($_POST['generar_nomina'])) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Generar Nómina</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Nómina</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="../css/generar_nomina.css">
 </head>
+
 <body>
 
-<div class="main-container">
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+    <h2>RRHH Admin</h2>
 
-<h1>🧾 Pre-Nómina — Vista Previa</h1>
+    <nav class="sidebar-menu">
+        <a href="administrador.php" class="menu-item">
+            <i class="ri-home-4-line"></i> Inicio
+        </a>
+        <a href="nomina.php" class="menu-item active">
+            <i class="ri-money-dollar-circle-line"></i> Nómina
+        </a>
+        <a href="listar_empleados.php" class="menu-item">
+            <i class="ri-team-line"></i> Empleados
+        </a>
+        <a href="usuarios.php" class="menu-item">
+            <i class="ri-user-settings-line"></i> Usuarios
+        </a>
+        <a href="reportes.php" class="menu-item">
+            <i class="ri-bar-chart-line"></i> Reportes
+        </a>
+    </nav>
+</aside>
 
-<!-- 🔹 Información General -->
-<div class="info-box">
-    <p><strong>Nómina #:</strong> <?= $siguiente_nomina ?></p>
-    <p><strong>Período:</strong> <?= $fecha_inicio ?> → <?= $fecha_fin ?></p>
-    <p><strong>Generada por:</strong> <?= $_SESSION['usuario'] ?></p>
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+    <!-- HEADER -->
+    <header>
+        <h2>Panel de Administración - RRHH</h2>
+        <div>
+            <span>👤 <?= $_SESSION['usuario'] ?></span> |
+            <a href="cerrar_sesion.php">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <!-- TOP MENU -->
+   <div class="top-menu">
+        <a href="crear_asignacion.php" class="top-button">
+            <i class="ri-add-circle-line"></i> Crear Asignación
+        </a>
+
+        <a href="crear_deduccion.php" class="top-button">
+            <i class="ri-subtract-line"></i> Crear Deducción
+        </a>
+
+        <a href="generar_nomina.php" class="top-button">
+            <i class="ri-calculator-line"></i> Generar Nómina
+        </a>
+
+        <a href="ver_nomina.php" class="top-button">
+            <i class="ri-file-list-line"></i> Ver Nóminas
+        </a>
+       <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
+        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+    </div>
+
+    <!-- ===== CONTENIDO ===== -->
+<!-- ===== CONTENIDO ===== -->
+<div class="contenido">
+    <div class="card-container">
+
+        <h2>🧾 Pre-Nómina — Vista Previa</h2>
+
+        <!-- INFO GENERAL -->
+        <div class="card info-box">
+            <p><strong>Nómina #:</strong> <?= $siguiente_nomina ?></p>
+            <p><strong>Período:</strong> <?= $fecha_inicio ?> → <?= $fecha_fin ?></p>
+            <p><strong>Generada por:</strong> <?= $_SESSION['usuario'] ?></p>
+        </div>
+
+        <!-- FORM PERÍODO -->
+        <div class="card">
+            <form method="GET" class="periodo-form">
+                <label>Fecha Inicio</label>
+                <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
+
+                <label>Fecha Fin</label>
+                <input type="date" name="fin" value="<?= $fecha_fin ?>">
+
+                <button type="submit">
+                    <i class="ri-refresh-line"></i> Actualizar Período
+                </button>
+            </form>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Salario Base</th>
+                        <th>Asignaciones</th>
+                        <th>Deducciones</th>
+                        <th>Total a Pagar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($lista_empleados as $emp) { ?>
+                    <tr>
+                        <td><?= $emp['nombre'] ?></td>
+                        <td><?= number_format($emp['salario'],2) ?> Bs</td>
+                        <td><?= number_format($emp['asig'],2) ?> Bs</td>
+                        <td><?= number_format($emp['ded'],2) ?> Bs</td>
+                        <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TOTALES -->
+        <div class="card totales-box">
+            <p>🟢 Total Asignaciones: <strong><?= number_format($total_general_asig,2) ?> Bs</strong></p>
+            <p>🔴 Total Deducciones: <strong><?= number_format($total_general_ded,2) ?> Bs</strong></p>
+            <p>💰 Total Neto a Pagar: <strong><?= number_format($total_general_pagar,2) ?> Bs</strong></p>
+        </div>
+
+        <!-- GENERAR -->
+        <div class="card">
+            <form method="POST">
+                <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
+                <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
+
+                <label><b>Tipo de Nómina</b></label>
+                <select name="tipo">
+                    <option value="semanal">Semanal</option>
+                    <option value="quincenal">Quincenal</option>
+                    <option value="mensual">Mensual</option>
+                </select>
+
+                <button class="btn-generar">
+                    <i class="ri-check-double-line"></i> Generar Nómina Definitiva
+                </button>
+            </form>
+        </div>
+
+    </div>
 </div>
 
-<!-- 🔹 Formulario de Ajuste de Período -->
-<form method="GET" class="periodo-form">
-    <label>Fecha Inicio:</label>
-    <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
-
-    <label>Fecha Fin:</label>
-    <input type="date" name="fin" value="<?= $fecha_fin ?>">
-
-    <button type="submit">Actualizar Período</button>
-</form>
-
-<!-- 🔹 Tabla Pre-Nómina -->
-<table class="tabla-nomina">
-    <tr>
-        <th>Empleado</th>
-        <th>Salario Base</th>
-        <th>Asignaciones</th>
-        <th>Deducciones</th>
-        <th>Total a Pagar</th>
-    </tr>
-
-    <?php foreach ($lista_empleados as $emp) { ?>
-    <tr>
-        <td><?= $emp['nombre'] ?></td>
-        <td><?= number_format($emp['salario'],2) ?> Bs</td>
-        <td><?= number_format($emp['asig'],2) ?> Bs</td>
-        <td><?= number_format($emp['ded'],2) ?> Bs</td>
-        <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
-    </tr>
-    <?php } ?>
-</table>
-
-<!-- 🔹 Totales Generales -->
-<div class="totales-box">
-    <p>🟢 Total Asignaciones: <strong><?= number_format($total_general_asig,2) ?> Bs</strong></p>
-    <p>🔴 Total Deducciones: <strong><?= number_format($total_general_ded,2) ?> Bs</strong></p>
-    <p>💰 Total Neto a Pagar: <strong><?= number_format($total_general_pagar,2) ?> Bs</strong></p>
-</div>
-
-<!-- 🔹 Botón Generar Nómina -->
-<form method="POST">
-    <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
-    <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
-
-    <label><b>Tipo de Nómina:</b></label>
-    <select name="tipo">
-        <option value="semanal">Semanal</option>
-        <option value="quincenal">Quincenal</option>
-        <option value="mensual">Mensual</option>
-    </select>
-
-    <button name="generar_nomina" class="btn-generar">✔ Generar Nómina Definitiva</button>
-</form>
-
-</div>
 
 </body>
 </html>

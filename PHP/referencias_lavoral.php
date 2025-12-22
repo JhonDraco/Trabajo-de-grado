@@ -53,9 +53,9 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
 
 
-    <h2><i class="ri-user-settings-line"></i> Carta Lavoral</h2>
+    <h2><i class="ri-user-settings-line"></i> Referencia lavoral</h2>
 
-    <form action="carta_de trabajo_pdf.php" method="post" target="_blank">
+    <form action="referencia_laboral_pdf.php" method="post" target="_blank">
         <label>Numero de Cedula</label>
         <input type="number" id="cedula" name="cedula" placeholder="Ingresar Numero de cedula" required>
 

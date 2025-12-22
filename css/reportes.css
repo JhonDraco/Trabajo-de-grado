@@ -186,3 +186,58 @@ header a{
         overflow-x:auto;
     }
 }
+
+/* TARJETA DEL FORMULARIO */
+.form-card {
+    width: 550px;
+    background: var(--white-soft);
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-card h2 {
+    text-align: center;
+    color: var(--green-dark);
+    margin-bottom: 20px;
+}
+
+form label {
+    font-weight: 600;
+    color: var(--green-mid);
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: var(--green-mid);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--green-hover);
+}
+
+.cancel-btn {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: var(--green-mid);
+    font-weight: 600;
+    text-decoration: none;
+}

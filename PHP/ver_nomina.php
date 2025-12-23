@@ -89,10 +89,21 @@ $nominas = mysqli_query($conexion, $consulta);
                 <td><?= $n['creada_por'] ?></td>
                 <td><?= $n['fecha_creacion'] ?></td>
                 <td>
-                    <a href="ver_detalle_nomina.php?id=<?= $n['id_nomina'] ?>"><i class="ri-eye-line"></i> Ver</a> |
+                  <a href="#" onclick="toggleDetalle(<?= $n['id_nomina'] ?>); return false;">
+                     <i class="ri-eye-line"></i> Ver
+                    </a>
+|
                     <a href="eliminar_nomina.php?id=<?= $n['id_nomina'] ?>" onclick="return confirm('¿Eliminar esta nómina?')"><i class="ri-delete-bin-line"></i> Eliminar</a>
                 </td>
             </tr>
+            <tr id="detalle-<?= $n['id_nomina'] ?>" style="display:none;">
+    <td colspan="7">
+        <div id="contenido-detalle-<?= $n['id_nomina'] ?>">
+            Cargando...
+        </div>
+    </td>
+</tr>
+
             <?php } ?>
             </tbody>
 
@@ -100,6 +111,37 @@ $nominas = mysqli_query($conexion, $consulta);
     </div>
 
 </div>
+<script>
+function toggleDetalle(idNomina) {
+
+    const fila = document.getElementById('detalle-' + idNomina);
+    const contenedor = document.getElementById('contenido-detalle-' + idNomina);
+
+    // Si ya está visible, ocultar
+    if (fila.style.display === 'table-row') {
+        fila.style.display = 'none';
+        return;
+    }
+
+    // Mostrar fila
+    fila.style.display = 'table-row';
+
+    // Si ya se cargó antes, no volver a pedir
+    if (contenedor.dataset.cargado) {
+        return;
+    }
+
+    fetch('ajax_detalle_nomina.php?id=' + idNomina)
+        .then(response => response.text())
+        .then(data => {
+            contenedor.innerHTML = data;
+            contenedor.dataset.cargado = true;
+        })
+        .catch(() => {
+            contenedor.innerHTML = 'Error al cargar el detalle.';
+        });
+}
+</script>
 
 </body>
 </html>

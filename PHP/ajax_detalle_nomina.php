@@ -21,7 +21,7 @@ $detalles = mysqli_query($conexion, $sql);
     <th>Asignaciones</th>
     <th>Deducciones</th>
     <th>Total a Pagar</th>
-    <th>Ver Detalle</th>
+    <th>Ver Detalle PDF</th>
 </tr>
 
 <?php while ($d = mysqli_fetch_assoc($detalles)) { ?>
@@ -34,7 +34,7 @@ $detalles = mysqli_query($conexion, $sql);
     <td><strong><?= number_format($d['total_pagar'],2) ?></strong></td>
     <td>
         <a href="ver_detalle_individual.php?id_detalle=<?= $d['id_detalle'] ?>" target="_blank">
-            🔍 Ver
+            📰 Ver
         </a>
     </td>
 </tr>

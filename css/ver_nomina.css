@@ -192,3 +192,13 @@ table a:hover {
         margin-right: 10px;
     }
 }
+/* Estilo para la fila de detalle desplegable */
+tr[id^="detalle-"] td {
+    border: 2px solid black;  /* Borde negro */
+    background-color: #f0f0f0; /* Fondo suave para contraste */
+    padding: 15px;
+}
+
+tr[id^="detalle-"] td div {
+    color: #000; /* Texto negro para mejor lectura */
+}

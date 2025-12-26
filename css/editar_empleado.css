@@ -77,6 +77,13 @@ body{
     background:white;
     border-radius:4px;
 }
+.logo-icon {
+    font-size: 48px;
+    color: white;
+    margin-bottom: 6px;
+    display: block;
+    text-align: center;
+}
 
 /* ===== MAIN ===== */
 .main{

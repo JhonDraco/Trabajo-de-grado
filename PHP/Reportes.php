@@ -22,7 +22,11 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <body>
 
 <aside class="sidebar">
-    <h2>RRHH Admin</h2>
+    <div class="sidebar-header">
+       
+        <h2>RRHH Admin</h2>
+         <i class="ri-building-2-fill logo-icon"></i>
+    </div>
     <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
     <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
@@ -53,7 +57,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
 
 
-    <h2><i class="ri-user-settings-line"></i> Carta Lavoral</h2>
+    <h2><i class="ri-user-settings-line"></i> Carta Laboral</h2>
 
     <form action="carta_de trabajo_pdf.php" method="post" target="_blank">
         <label>Numero de Cedula</label>
@@ -64,10 +68,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
         <label>Apellido</label>
         <input type="text" id="apellido" name="apellido" placeholder="Ingresa el usuario" required>
-
-         <label>Email</label>
-        <input type="text" id="email" name= "email" placeholder="Ingresar correo">
-
        
         <button type="submit"><i class="ri-save-3-line"></i> Generar pdf</button>
 

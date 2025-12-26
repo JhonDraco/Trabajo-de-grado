@@ -78,6 +78,20 @@ body{
     border-radius:4px;
 }
 
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.logo-icon {
+    font-size: 48px;
+    color: white;
+    margin-bottom: 6px;
+    display: block;
+    text-align: center;
+}
+
+
 /* ===== MAIN ===== */
 .main{
     flex:1;

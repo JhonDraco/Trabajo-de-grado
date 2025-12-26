@@ -26,6 +26,7 @@ body{
     color:var(--gray-light-text);
 }
 
+
 /* ===== SIDEBAR ===== */
 .sidebar{
     width: var(--sidebar-width);
@@ -77,6 +78,20 @@ body{
     background:white;
     border-radius:4px;
 }
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.logo-icon {
+    font-size: 48px;
+    color: white;
+    margin-bottom: 6px;
+    display: block;
+    text-align: center;
+}
+
 
 /* ===== MAIN ===== */
 .main{
@@ -194,11 +209,74 @@ table a:hover {
 }
 /* Estilo para la fila de detalle desplegable */
 tr[id^="detalle-"] td {
-    border: 2px solid black;  /* Borde negro */
+    border: 2px solid #1f3a34;  /* Borde negro */
     background-color: #f0f0f0; /* Fondo suave para contraste */
     padding: 15px;
 }
 
 tr[id^="detalle-"] td div {
     color: #000; /* Texto negro para mejor lectura */
+}
+/* ===== DETALLE DE NÓMINA DESPLEGABLE ===== */
+tr[id^="detalle-"] td {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+/* Contenedor interno del detalle */
+tr[id^="detalle-"] td > div {
+    margin: 15px 0;
+    padding: 20px;
+    background: #ffffff;
+    border: 2px solid #000000;              /* Remarque negro */
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    color: #000;
+    animation: fadeInDetalle 0.3s ease-in-out;
+}
+
+/* Animación suave al desplegar */
+@keyframes fadeInDetalle {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Títulos dentro del detalle */
+tr[id^="detalle-"] h3,
+tr[id^="detalle-"] h4 {
+    color: #1f3a34;
+    margin-bottom: 10px;
+}
+
+/* Tablas internas del detalle */
+tr[id^="detalle-"] table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+tr[id^="detalle-"] table th {
+    background: #1f3a34;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+tr[id^="detalle-"] table td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Separador visual */
+tr[id^="detalle-"] hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid #ccc;
 }

@@ -64,13 +64,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
-    <h2>RRHH Admin</h2>
-    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
-    <a href="listar_empleados.php" class="active"><i class="ri-team-line"></i> Empleados</a>
-    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+     <div class="sidebar-header">
+       
+        <h2>RRHH Admin</h2>
+         <i class="ri-building-2-fill logo-icon"></i>
+    </div>
+    <a href="administrador.php" class="active">
+        <i class="ri-home-4-line"></i> Inicio
+    </a>
+    <a href="nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <a href="listar_empleados.php">
+        <i class="ri-team-line"></i> Empleados
+    </a>
+    <a href="listar_usuario.php">
+        <i class="ri-user-settings-line"></i> Usuarios
+    </a>
+    <a href="reportes.php">
+        <i class="ri-bar-chart-line"></i> Reportes
+    </a>
 </aside>
 
 <div class="main">

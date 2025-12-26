@@ -30,7 +30,11 @@ $nominas = mysqli_query($conexion, $consulta);
 
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar">
-    <h2>RRHH Admin</h2>
+     <div class="sidebar-header">
+       
+        <h2>RRHH Admin</h2>
+         <i class="ri-building-2-fill logo-icon"></i>
+    </div>
 
     <nav class="sidebar-menu">
         <a href="administrador.php" class="menu-item">

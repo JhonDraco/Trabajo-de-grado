@@ -165,7 +165,11 @@ button:hover {
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-    <h2>RRHH Admin</h2>
+    <div class="sidebar-header">
+       
+        <h2>RRHH Admin</h2>
+         <i class="ri-building-2-fill logo-icon"></i>
+    </div>
 
     <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
     <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>

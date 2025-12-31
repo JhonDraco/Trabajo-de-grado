@@ -41,6 +41,10 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+    <a href="feriados.php">
+        <i class="ri-bar-chart-line"></i> Feriados
+    </a>
+    <a href="vacaciones.php">  <i class="ri-bar-chart-line"></i> Vacaciones</a>
 </aside>
 
 

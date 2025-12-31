@@ -36,8 +36,12 @@ $res = mysqli_query($conexion, $sql);
         <a href="administrador.php" class="menu-item"><i class="ri-home-4-line"></i> Inicio</a>
         <a href="nomina.php" class="menu-item active"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
         <a href="listar_empleados.php" class="menu-item"><i class="ri-team-line"></i> Empleados</a>
+        <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
         <a href="usuarios.php" class="menu-item"><i class="ri-user-settings-line"></i> Usuarios</a>
         <a href="reportes.php" class="menu-item"><i class="ri-bar-chart-line"></i> Reportes</a>
+        <a href="contactar.php">
+         <i class="ri-mail-line"></i> Agendar entrevistas 
+        </a>
     </nav>
 </aside>
 

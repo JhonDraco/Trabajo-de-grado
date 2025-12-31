@@ -35,12 +35,18 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Usuarios
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+             
+    <a href="contactar.php">
+      <i class="ri-mail-line"></i> Agendar entrevistas 
+    </a>
+    
 </aside>
 
 

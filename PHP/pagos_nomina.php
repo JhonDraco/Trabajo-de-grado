@@ -46,11 +46,15 @@ $nominas = mysqli_query($conexion, $consulta);
         <a href="listar_empleados.php" class="menu-item">
             <i class="ri-team-line"></i> Empleados
         </a>
+           <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
         <a href="usuarios.php" class="menu-item">
             <i class="ri-user-settings-line"></i> Usuarios
         </a>
         <a href="reportes.php" class="menu-item">
             <i class="ri-bar-chart-line"></i> Reportes
+        </a>
+        <a href="contactar.php">
+         <i class="ri-mail-line"></i> Agendar entrevistas 
         </a>
     </nav>
 </aside>

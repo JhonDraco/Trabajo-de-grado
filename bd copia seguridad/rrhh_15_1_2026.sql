@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-01-2026 a las 16:00:56
+-- Tiempo de generación: 31-12-2025 a las 14:42:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -475,14 +475,6 @@ CREATE TABLE `vacaciones` (
   `creada_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `vacaciones`
---
-
-INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_fin`, `dias_solicitados`, `dias_habiles`, `dias_feriados`, `estado`, `observaciones`, `creada_por`, `creada_en`) VALUES
-(1, 1, '2026-01-05', '2026-01-18', 14, 14, 0, 'aprobada', '', 'jhon', '2026-01-15 15:08:23'),
-(2, 2, '2026-01-05', '2026-01-11', 7, 7, 0, 'aprobada', 'se le daran sus vacaciones att: jhon administrador', 'jhon', '2026-01-16 14:22:34');
-
 -- --------------------------------------------------------
 
 --
@@ -510,14 +502,6 @@ CREATE TABLE `vacaciones_saldo` (
   `dias_pendientes` int(11) NOT NULL,
   `actualizado_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `vacaciones_saldo`
---
-
-INSERT INTO `vacaciones_saldo` (`id_saldo`, `empleado_id`, `anio`, `dias_acumulados`, `dias_disfrutados`, `dias_pendientes`, `actualizado_en`) VALUES
-(1, 1, 2026, 15, 14, 1, '2026-01-15 18:25:50'),
-(2, 2, 2026, 15, 7, 8, '2026-01-16 14:22:58');
 
 --
 -- Índices para tablas volcadas
@@ -719,7 +703,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `vacaciones`
 --
 ALTER TABLE `vacaciones`
-  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `vacaciones_feriados`
@@ -731,7 +715,7 @@ ALTER TABLE `vacaciones_feriados`
 -- AUTO_INCREMENT de la tabla `vacaciones_saldo`
 --
 ALTER TABLE `vacaciones_saldo`
-  MODIFY `id_saldo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_saldo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas

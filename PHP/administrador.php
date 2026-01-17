@@ -42,11 +42,18 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+<<<<<<< HEAD
              
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Agendar entrevistas 
     </a>
     
+=======
+    <a href="feriados.php">
+        <i class="ri-bar-chart-line"></i> Feriados
+    </a>
+    <a href="vacaciones.php">  <i class="ri-bar-chart-line"></i> Vacaciones</a>
+>>>>>>> 88faffd49399a5d53b27771bf3f7583cc1530bdf
 </aside>
 
 

@@ -8,33 +8,29 @@ if (!isset($_SESSION['usuario'])) {
 include("db.php");
 
 /* --------------------------------------------------------
-   1. CALCULAR FECHA AUTOMÁTICA DE PERÍODO (SEMANA ACTUAL)
+   1. FECHA AUTOMÁTICA (SEMANA ACTUAL)
 ---------------------------------------------------------*/
 $hoy = date("Y-m-d");
 $lunes = date("Y-m-d", strtotime('monday this week'));
 $domingo = date("Y-m-d", strtotime('sunday this week'));
 
-/* --------------------------------------------------------
-   2. SI SE AJUSTA EL PERÍODO, RECALCULAR PRE-NÓMINA
----------------------------------------------------------*/
 $fecha_inicio = $_GET['inicio'] ?? $lunes;
-$fecha_fin     = $_GET['fin']     ?? $domingo;
+$fecha_fin    = $_GET['fin'] ?? $domingo;
 
 /* --------------------------------------------------------
-   3. OBTENER SIGUIENTE NÚMERO DE NÓMINA
+   2. SIGUIENTE NÚMERO DE NÓMINA
 ---------------------------------------------------------*/
 $res_nom = mysqli_query($conexion, "SELECT MAX(id_nomina) AS maximo FROM nomina");
 $data_nom = mysqli_fetch_assoc($res_nom);
-$siguiente_nomina = $data_nom['maximo'] + 1;
+$siguiente_nomina = ($data_nom['maximo'] ?? 0) + 1;
 
 /* --------------------------------------------------------
-   4. CARGAR TABLAS NECESARIAS
+   3. CARGAR TABLAS
 ---------------------------------------------------------*/
-$empleados      = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
-$asignaciones   = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
-$deducciones    = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
+$empleados    = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
+$asignaciones = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
+$deducciones  = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
 
-/* Convertir a arrays para reusar */
 $arr_asig = [];
 while ($a = mysqli_fetch_assoc($asignaciones)) $arr_asig[] = $a;
 
@@ -42,52 +38,49 @@ $arr_ded = [];
 while ($d = mysqli_fetch_assoc($deducciones)) $arr_ded[] = $d;
 
 /* --------------------------------------------------------
-   5. CALCULAR PRE-NÓMINA COMPLETA
+   4. CALCULAR PRE-NÓMINA
 ---------------------------------------------------------*/
 $lista_empleados = [];
 $total_general_asig = 0;
-$total_general_ded  = 0;
+$total_general_ded = 0;
 $total_general_pagar = 0;
 
 while ($emp = mysqli_fetch_assoc($empleados)) {
 
     $salario = floatval($emp['salario_base']);
     $total_asig = 0;
-    $total_ded  = 0;
+    $total_ded = 0;
 
-    // Cálculo de asignaciones
     foreach ($arr_asig as $asig) {
         $monto = ($asig['tipo'] == 'fijo')
             ? floatval($asig['valor'])
-            : $salario * (floatval($asig['valor']) / 100);
-
+            : $salario * ($asig['valor'] / 100);
         $total_asig += $monto;
     }
 
-    // Cálculo de deducciones
     foreach ($arr_ded as $ded) {
-        $monto = $salario * (floatval($ded['porcentaje']) / 100);
+        $monto = $salario * ($ded['porcentaje'] / 100);
         $total_ded += $monto;
     }
 
     $total_pago = ($salario + $total_asig) - $total_ded;
 
     $lista_empleados[] = [
-        "id"        => $emp['id'],
-        "nombre"    => $emp['nombre'] . " " . $emp['apellido'],
-        "salario"   => $salario,
-        "asig"      => $total_asig,
-        "ded"       => $total_ded,
-        "pagar"     => $total_pago,
+        "id"      => $emp['id'],
+        "nombre"  => $emp['nombre']." ".$emp['apellido'],
+        "salario" => $salario,
+        "asig"    => $total_asig,
+        "ded"     => $total_ded,
+        "pagar"   => $total_pago
     ];
 
     $total_general_asig += $total_asig;
-    $total_general_ded  += $total_ded;
+    $total_general_ded += $total_ded;
     $total_general_pagar += $total_pago;
 }
 
 /* --------------------------------------------------------
-   6. SI EL USUARIO PRESIONA "GENERAR NOMINA"
+   5. GENERAR NÓMINA DEFINITIVA
 ---------------------------------------------------------*/
 if (isset($_POST['generar_nomina'])) {
 
@@ -96,56 +89,74 @@ if (isset($_POST['generar_nomina'])) {
     $tipo         = $_POST['tipo'];
     $creada_por   = $_SESSION['usuario'];
 
-    // Crear la nómina
-    mysqli_query($conexion,
-        "INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
-         VALUES ('$fecha_inicio', '$fecha_fin', '$tipo', '$creada_por')"
-    );
+    mysqli_begin_transaction($conexion);
 
-    $id_nomina = mysqli_insert_id($conexion);
+    try {
 
-    // Insertar detalle por empleado
-    foreach ($lista_empleados as $emp) {
-
-        mysqli_query($conexion,
-            "INSERT INTO detalle_nomina
-            (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
-            VALUES (
-                $id_nomina,
-                {$emp['id']},
-                {$emp['salario']},
-                {$emp['asig']},
-                {$emp['ded']},
-                {$emp['pagar']}
-            )"
+        $insert_nomina = mysqli_query($conexion,
+            "INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
+             VALUES ('$fecha_inicio', '$fecha_fin', '$tipo', '$creada_por')"
         );
 
-        $id_detalle = mysqli_insert_id($conexion);
-
-        // Detalle asignación
-        foreach ($arr_asig as $asig){
-            $monto = ($asig['tipo']=='fijo') ? $asig['valor'] : $emp['salario'] * ($asig['valor']/100);
-            mysqli_query($conexion,
-                "INSERT INTO detalle_asignacion (id_detalle, id_asignacion, monto)
-                 VALUES ($id_detalle, {$asig['id_asignacion']}, $monto)"
-            );
+        if (!$insert_nomina) {
+            throw new Exception(mysqli_error($conexion));
         }
 
-        // Detalle deducción
-        foreach ($arr_ded as $ded){
-            $monto = $emp['salario'] * ($ded['porcentaje']/100);
-            mysqli_query($conexion,
-                "INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
-                 VALUES ($id_detalle, {$ded['id_tipo']}, $monto)"
+        $id_nomina = mysqli_insert_id($conexion);
+
+        foreach ($lista_empleados as $emp) {
+
+            $insert_detalle = mysqli_query($conexion,
+                "INSERT INTO detalle_nomina
+                (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
+                VALUES (
+                    $id_nomina,
+                    {$emp['id']},
+                    {$emp['salario']},
+                    {$emp['asig']},
+                    {$emp['ded']},
+                    {$emp['pagar']}
+                )"
             );
+
+            if (!$insert_detalle) {
+                throw new Exception(mysqli_error($conexion));
+            }
+
+            $id_detalle = mysqli_insert_id($conexion);
+
+            foreach ($arr_asig as $asig) {
+                $monto = ($asig['tipo'] == 'fijo')
+                    ? $asig['valor']
+                    : $emp['salario'] * ($asig['valor'] / 100);
+
+                mysqli_query($conexion,
+                    "INSERT INTO detalle_asignacion (id_detalle, id_asignacion, monto)
+                     VALUES ($id_detalle, {$asig['id_asignacion']}, $monto)"
+                );
+            }
+
+            foreach ($arr_ded as $ded) {
+                $monto = $emp['salario'] * ($ded['porcentaje'] / 100);
+
+                mysqli_query($conexion,
+                    "INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
+                     VALUES ($id_detalle, {$ded['id_tipo']}, $monto)"
+                );
+            }
         }
+
+        mysqli_commit($conexion);
+        header("Location: ver_nomina.php?id=$id_nomina");
+        exit();
+
+    } catch (Exception $e) {
+        mysqli_rollback($conexion);
+        die("❌ Error al generar nómina: " . $e->getMessage());
     }
-
-    header("Location: ver_nomina.php?id=$id_nomina");
-    exit();
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -177,12 +188,16 @@ if (isset($_POST['generar_nomina'])) {
         <a href="listar_empleados.php" class="menu-item">
             <i class="ri-team-line"></i> Empleados
         </a>
+           <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
         <a href="usuarios.php" class="menu-item">
             <i class="ri-user-settings-line"></i> Usuarios
         </a>
         <a href="reportes.php" class="menu-item">
             <i class="ri-bar-chart-line"></i> Reportes
         </a>
+            <a href="contactar.php" >
+      <i class="ri-mail-line"></i> Agendar entrevistas 
+    </a>
     </nav>
 </aside>
 
@@ -217,6 +232,8 @@ if (isset($_POST['generar_nomina'])) {
         </a>
        <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
         <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+        
+   
     </div>
 
     <!-- ===== CONTENIDO ===== -->
@@ -294,9 +311,10 @@ if (isset($_POST['generar_nomina'])) {
                     <option value="mensual">Mensual</option>
                 </select>
 
-                <button class="btn-generar">
-                    <i class="ri-check-double-line"></i> Generar Nómina Definitiva
+                <button type="submit" name="generar_nomina" class="btn-generar">
+                      <i class="ri-check-double-line"></i> Generar Nómina Definitiva
                 </button>
+
             </form>
         </div>
 

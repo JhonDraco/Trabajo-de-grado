@@ -1,27 +1,307 @@
-<form action="contactar_por_correos.php" method="post" enctype="multipart/form-data">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pre-Nómina | RRHH</title>
 
-    <label>
-        <i class="ri-user-line"></i> Nombre del destinatario
-    </label>
-    <input type="text" name="destinatario" required>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
-    <label>
-        <i class="ri-user-3-line"></i> Nombre del emisor
-    </label>
-    <input type="text" name="emisor" required>
+<style>
+:root{
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --primary:#1f4fd8;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+}
 
-    <label>
-        <i class="ri-mail-line"></i> Correo electrónico
-    </label>
-    <input type="email" name="email" required>
+*{box-sizing:border-box;font-family:system-ui, sans-serif}
 
-    <label>
-        <i class="ri-file-pdf-line"></i> Adjuntar archivo (PDF)
-    </label>
-    <input type="file" name="archivo" accept="application/pdf" required>
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+}
 
-    <button type="submit">
-        <i class="ri-send-plane-line"></i> Enviar correo
-    </button>
+/* ===== LAYOUT ===== */
+.wrapper{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    min-height:100vh;
+}
 
-</form>
+/* ===== SIDEBAR ===== */
+aside{
+    background:#0f172a;
+    color:#fff;
+    padding:24px;
+}
+
+aside h2{
+    margin:0 0 30px;
+    font-size:20px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#cbd5f5;
+    text-decoration:none;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:6px;
+}
+
+.menu a.active,
+.menu a:hover{
+    background:#1e293b;
+    color:#fff;
+}
+
+/* ===== MAIN ===== */
+main{
+    padding:30px;
+}
+
+/* ===== HEADER ===== */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+}
+
+.header h1{
+    font-size:22px;
+}
+
+.user{
+    font-size:14px;
+    color:var(--muted);
+}
+
+/* ===== CARDS ===== */
+.card{
+    background:var(--card);
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.04);
+    margin-bottom:20px;
+}
+
+/* ===== STEP BAR ===== */
+.steps{
+    display:flex;
+    gap:16px;
+}
+
+.step{
+    flex:1;
+    padding:14px;
+    border-radius:10px;
+    background:#eef2ff;
+    font-weight:600;
+    color:#3730a3;
+}
+
+/* ===== PERIOD ===== */
+.period{
+    display:flex;
+    gap:16px;
+    align-items:end;
+}
+
+.period input,
+.period select{
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+}
+
+.period button{
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* ===== TABLE ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#f1f5f9;
+}
+
+th,td{
+    padding:14px;
+    border-bottom:1px solid var(--border);
+    text-align:right;
+}
+
+th:first-child,
+td:first-child{
+    text-align:left;
+}
+
+tbody tr:hover{
+    background:#f9fafb;
+}
+
+/* ===== TOTALS ===== */
+.totals{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.total{
+    padding:18px;
+    border-radius:12px;
+    background:#f8fafc;
+}
+
+.total.success{color:var(--success)}
+.total.danger{color:var(--danger)}
+.total.primary{color:var(--primary)}
+
+.total span{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+}
+
+.total strong{
+    font-size:20px;
+}
+
+/* ===== ACTION ===== */
+.action{
+    display:flex;
+    justify-content:flex-end;
+}
+
+.action button{
+    background:var(--success);
+    color:#fff;
+    border:none;
+    padding:14px 26px;
+    font-size:16px;
+    border-radius:12px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- SIDEBAR -->
+    <aside>
+        <h2>RRHH Admin</h2>
+        <nav class="menu">
+            <a class="active"><i class="ri-calculator-line"></i> Pre-Nómina</a>
+            <a><i class="ri-file-list-line"></i> Nóminas</a>
+            <a><i class="ri-team-line"></i> Empleados</a>
+            <a><i class="ri-bar-chart-line"></i> Reportes</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+        <div class="header">
+            <h1>🧾 Pre-Nómina</h1>
+            <div class="user">👤 admin</div>
+        </div>
+
+        <!-- STEPS -->
+        <div class="card steps">
+            <div class="step">1️⃣ Seleccionar período</div>
+            <div class="step">2️⃣ Revisar cálculos</div>
+            <div class="step">3️⃣ Confirmar nómina</div>
+        </div>
+
+        <!-- PERIOD -->
+        <div class="card">
+            <div class="period">
+                <div>
+                    <label>Fecha inicio</label><br>
+                    <input type="date">
+                </div>
+                <div>
+                    <label>Fecha fin</label><br>
+                    <input type="date">
+                </div>
+                <div>
+                    <label>Tipo</label><br>
+                    <select>
+                        <option>Semanal</option>
+                        <option>Quincenal</option>
+                        <option>Mensual</option>
+                    </select>
+                </div>
+                <button><i class="ri-refresh-line"></i> Calcular</button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Salario</th>
+                        <th>Asignaciones</th>
+                        <th>Deducciones</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Carlos Pérez</td>
+                        <td>3.000</td>
+                        <td class="success">+500</td>
+                        <td class="danger">-200</td>
+                        <td><strong>3.300</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TOTALS -->
+        <div class="card totals">
+            <div class="total success">
+                <span>Total Asignaciones</span>
+                <strong>5.200 Bs</strong>
+            </div>
+            <div class="total danger">
+                <span>Total Deducciones</span>
+                <strong>1.800 Bs</strong>
+            </div>
+            <div class="total primary">
+                <span>Total Neto</span>
+                <strong>18.400 Bs</strong>
+            </div>
+        </div>
+
+        <!-- ACTION -->
+        <div class="card action">
+            <button><i class="ri-check-double-line"></i> Generar Nómina</button>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -32,10 +32,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+
+    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
-    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
+
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Usuarios
     </a>
@@ -47,10 +51,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
       <i class="ri-mail-line"></i> Agendar entrevistas 
     </a>
     
-    <a href="feriados.php">
-        <i class="ri-bar-chart-line"></i> Feriados
-    </a>
-    <a href="vacaciones.php">  <i class="ri-bar-chart-line"></i> Vacaciones</a>
+   
 </aside>
 
 

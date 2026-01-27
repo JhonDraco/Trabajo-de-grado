@@ -245,3 +245,60 @@ table tr:hover{
         padding:8px 10px;
     }
 }
+/* ===== BUSCADOR EMPLEADOS ===== */
+.buscador {
+    background: var(--white-soft);
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    max-width: 520px;
+}
+
+.buscador input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    font-size: 14px;
+    color: var(--gray-light-text);
+    outline: none;
+    transition: 0.2s;
+}
+
+.buscador input::placeholder {
+    color: #9aa3a1;
+}
+
+.buscador input:focus {
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 2px rgba(43, 74, 66, 0.15);
+}
+
+.buscador button {
+    background: var(--green-mid);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.buscador button i {
+    font-size: 18px;
+}
+
+.buscador button:hover {
+    background: var(--green-hover);
+    transform: translateY(-1px);
+}

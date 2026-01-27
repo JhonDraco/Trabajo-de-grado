@@ -2,7 +2,26 @@
 include("db.php"); // incluye la conexión
 
 // Consulta SQL
-$consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado FROM empleados";
+$buscar = "";
+
+if (isset($_GET['buscar']) && $_GET['buscar'] != "") {
+    $buscar = mysqli_real_escape_string($conexion, $_GET['buscar']);
+
+    $consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado 
+                 FROM empleados
+                 WHERE nombre LIKE '%$buscar%'
+                 OR apellido LIKE '%$buscar%'
+                 OR cedula LIKE '%$buscar%'";
+} else {
+    $consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado 
+                 FROM empleados";
+}
+
+$resultado = mysqli_query($conexion, $consulta);
+if (!$resultado) {
+    die("Error en la consulta: " . mysqli_error($conexion));
+}
+
 $resultado = mysqli_query($conexion, $consulta);
 if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
@@ -85,6 +104,18 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <!-- CONTENIDO -->
     <div class="contenido">
         <h3>Empleados Registrados</h3>
+     <form method="GET" class="buscador">
+     <input
+        type="text"
+        name="buscar"
+        placeholder="Buscar por nombre, apellido o cédula"
+        value="<?php echo isset($_GET['buscar']) ? $_GET['buscar'] : ''; ?>">
+      <button type="submit">
+        <i class="ri-search-line"></i>
+        Buscar
+      </button>
+    </form>
+
 
         <table>
             <tr>

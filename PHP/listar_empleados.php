@@ -2,7 +2,26 @@
 include("db.php"); // incluye la conexión
 
 // Consulta SQL
-$consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado FROM empleados";
+$buscar = "";
+
+if (isset($_GET['buscar']) && $_GET['buscar'] != "") {
+    $buscar = mysqli_real_escape_string($conexion, $_GET['buscar']);
+
+    $consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado 
+                 FROM empleados
+                 WHERE nombre LIKE '%$buscar%'
+                 OR apellido LIKE '%$buscar%'
+                 OR cedula LIKE '%$buscar%'";
+} else {
+    $consulta = "SELECT id, cedula, nombre, apellido, email, telefono, estado 
+                 FROM empleados";
+}
+
+$resultado = mysqli_query($conexion, $consulta);
+if (!$resultado) {
+    die("Error en la consulta: " . mysqli_error($conexion));
+}
+
 $resultado = mysqli_query($conexion, $consulta);
 if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
@@ -32,20 +51,37 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-    <div class="sidebar-header">
+     <div class="sidebar-header">
        
         <h2>RRHH Admin</h2>
          <i class="ri-building-2-fill logo-icon"></i>
     </div>
-    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
-    <a href="listar_empleados.php" class="active"><i class="ri-team-line"></i> Empleados</a>
+    <a href="administrador.php" >
+        <i class="ri-home-4-line"></i> Inicio
+    </a>
+    <a href="nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+
     <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Usuarios</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-    <a href="contactar.php" >
+    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    
+    <a href="listar_empleados.php"  class="active">
+        <i class="ri-team-line"></i> Empleados
+    </a>
+
+    <a href="listar_usuario.php">
+        <i class="ri-user-settings-line"></i> Usuarios
+    </a>
+    <a href="reportes.php">
+        <i class="ri-bar-chart-line"></i> Reportes
+    </a>
+             
+    <a href="contactar.php">
       <i class="ri-mail-line"></i> Agendar entrevistas 
     </a>
+    
+   
 </aside>
 
 <div class="main">
@@ -68,6 +104,18 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <!-- CONTENIDO -->
     <div class="contenido">
         <h3>Empleados Registrados</h3>
+     <form method="GET" class="buscador">
+     <input
+        type="text"
+        name="buscar"
+        placeholder="Buscar por nombre, apellido o cédula"
+        value="<?php echo isset($_GET['buscar']) ? $_GET['buscar'] : ''; ?>">
+      <button type="submit">
+        <i class="ri-search-line"></i>
+        Buscar
+      </button>
+    </form>
+
 
         <table>
             <tr>

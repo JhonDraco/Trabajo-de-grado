@@ -1,307 +1,278 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Pre-Nómina | RRHH</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RRHH | Admin Panel</title>
 
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
 <style>
 :root{
-    --bg:#f4f6f9;
-    --card:#ffffff;
-    --primary:#1f4fd8;
-    --success:#16a34a;
-    --danger:#dc2626;
-    --text:#1f2937;
-    --muted:#6b7280;
-    --border:#e5e7eb;
+    --bg-main:#020617;
+    --sidebar:#0f172a;
+    --sidebar-soft:#1e293b;
+    --accent:#6366f1;
+    --accent-soft:#22d3ee;
+    --white:rgba(255,255,255,.88);
+    --text:#cbd5f5;
+    --shadow:0 25px 50px rgba(0,0,0,.45);
+    --radius:18px;
 }
 
-*{box-sizing:border-box;font-family:system-ui, sans-serif}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter, system-ui, Arial;
+}
 
 body{
-    margin:0;
-    background:var(--bg);
+    min-height:100vh;
+    display:flex;
+    background:
+        radial-gradient(circle at top left,#1e1b4b,transparent 40%),
+        radial-gradient(circle at bottom right,#0e7490,transparent 45%),
+        var(--bg-main);
     color:var(--text);
 }
 
-/* ===== LAYOUT ===== */
-.wrapper{
-    display:grid;
-    grid-template-columns:260px 1fr;
-    min-height:100vh;
-}
-
 /* ===== SIDEBAR ===== */
-aside{
-    background:#0f172a;
-    color:#fff;
-    padding:24px;
+.sidebar{
+    width:270px;
+    background:linear-gradient(180deg,var(--sidebar),var(--sidebar-soft));
+    padding:30px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    box-shadow:var(--shadow);
 }
 
-aside h2{
-    margin:0 0 30px;
+.sidebar-header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.sidebar-header i{
+    font-size:52px;
+    color:var(--accent-soft);
+}
+
+.sidebar-header h2{
+    font-size:20px;
+    margin-top:8px;
+}
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 18px;
+    color:var(--text);
+    text-decoration:none;
+    border-radius:14px;
+    transition:.3s;
+}
+
+.sidebar a i{
     font-size:20px;
 }
 
-.menu a{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:#cbd5f5;
-    text-decoration:none;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:6px;
+.sidebar a:hover{
+    background:rgba(255,255,255,.08);
+    transform:translateX(6px);
 }
 
-.menu a.active,
-.menu a:hover{
-    background:#1e293b;
+.sidebar a.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent-soft));
     color:#fff;
 }
 
 /* ===== MAIN ===== */
-main{
-    padding:30px;
+.main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
 }
 
 /* ===== HEADER ===== */
-.header{
+header{
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(14px);
+    padding:20px 30px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:24px;
+    box-shadow:var(--shadow);
 }
 
-.header h1{
-    font-size:22px;
-}
-
-.user{
-    font-size:14px;
-    color:var(--muted);
-}
-
-/* ===== CARDS ===== */
-.card{
-    background:var(--card);
-    border-radius:14px;
-    padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.04);
-    margin-bottom:20px;
-}
-
-/* ===== STEP BAR ===== */
-.steps{
-    display:flex;
-    gap:16px;
-}
-
-.step{
-    flex:1;
-    padding:14px;
-    border-radius:10px;
-    background:#eef2ff;
-    font-weight:600;
-    color:#3730a3;
-}
-
-/* ===== PERIOD ===== */
-.period{
-    display:flex;
-    gap:16px;
-    align-items:end;
-}
-
-.period input,
-.period select{
-    padding:10px;
-    border:1px solid var(--border);
-    border-radius:8px;
-}
-
-.period button{
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:12px 18px;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-/* ===== TABLE ===== */
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-thead{
-    background:#f1f5f9;
-}
-
-th,td{
-    padding:14px;
-    border-bottom:1px solid var(--border);
-    text-align:right;
-}
-
-th:first-child,
-td:first-child{
-    text-align:left;
-}
-
-tbody tr:hover{
-    background:#f9fafb;
-}
-
-/* ===== TOTALS ===== */
-.totals{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-}
-
-.total{
-    padding:18px;
-    border-radius:12px;
-    background:#f8fafc;
-}
-
-.total.success{color:var(--success)}
-.total.danger{color:var(--danger)}
-.total.primary{color:var(--primary)}
-
-.total span{
-    display:block;
-    font-size:13px;
-    color:var(--muted);
-}
-
-.total strong{
+header h2{
     font-size:20px;
-}
-
-/* ===== ACTION ===== */
-.action{
-    display:flex;
-    justify-content:flex-end;
-}
-
-.action button{
-    background:var(--success);
     color:#fff;
-    border:none;
-    padding:14px 26px;
-    font-size:16px;
-    border-radius:12px;
-    cursor:pointer;
+}
+
+header a{
+    color:var(--accent-soft);
+    text-decoration:none;
+    font-weight:600;
+    margin-left:10px;
+}
+
+/* ===== TOP MENU ===== */
+.top-menu{
+    padding:22px 30px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.top-button{
+    padding:10px 22px;
+    border-radius:999px;
+    background:rgba(255,255,255,.1);
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+    border:1px solid rgba(255,255,255,.2);
+}
+
+.top-button:hover{
+    background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+    transform:translateY(-3px);
+}
+
+/* ===== CONTENT ===== */
+.contenido{
+    padding:30px;
+}
+
+.contenido h3{
+    font-size:22px;
+    margin-bottom:20px;
+    color:#fff;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:24px;
+}
+
+.card{
+    background:var(--white);
+    color:#020617;
+    padding:26px;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    transition:.35s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(99,102,241,.15));
+    opacity:0;
+    transition:.3s;
+}
+
+.card:hover::before{
+    opacity:1;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.02);
+}
+
+.card i{
+    font-size:40px;
+    color:var(--accent);
+}
+
+.card h4{
+    margin:12px 0 6px;
+    font-size:18px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+    body{flex-direction:column;}
+    .sidebar{
+        width:100%;
+        flex-direction:row;
+        overflow-x:auto;
+    }
+    .sidebar a{flex-shrink:0;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
-
-    <!-- SIDEBAR -->
-    <aside>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <i class="ri-building-2-fill"></i>
         <h2>RRHH Admin</h2>
-        <nav class="menu">
-            <a class="active"><i class="ri-calculator-line"></i> Pre-Nómina</a>
-            <a><i class="ri-file-list-line"></i> Nóminas</a>
-            <a><i class="ri-team-line"></i> Empleados</a>
-            <a><i class="ri-bar-chart-line"></i> Reportes</a>
-        </nav>
-    </aside>
+    </div>
 
-    <!-- MAIN -->
-    <main>
+    <a class="active" href="#"><i class="ri-home-4-line"></i>Inicio</a>
+    <a href="#"><i class="ri-team-line"></i>Empleados</a>
+    <a href="#"><i class="ri-money-dollar-circle-line"></i>Nómina</a>
+    <a href="#"><i class="ri-sun-line"></i>Vacaciones</a>
+    <a href="#"><i class="ri-bar-chart-line"></i>Reportes</a>
+    <a href="#"><i class="ri-mail-line"></i>Entrevistas</a>
+</aside>
 
-        <div class="header">
-            <h1>🧾 Pre-Nómina</h1>
-            <div class="user">👤 admin</div>
-        </div>
+<div class="main">
 
-        <!-- STEPS -->
-        <div class="card steps">
-            <div class="step">1️⃣ Seleccionar período</div>
-            <div class="step">2️⃣ Revisar cálculos</div>
-            <div class="step">3️⃣ Confirmar nómina</div>
-        </div>
+<header>
+    <h2>Panel Administrativo RRHH</h2>
+    <div>
+        👤 <?php echo $_SESSION['usuario']; ?> |
+        <a href="cerrar_sesion.php">Cerrar sesión</a>
+    </div>
+</header>
 
-        <!-- PERIOD -->
-        <div class="card">
-            <div class="period">
-                <div>
-                    <label>Fecha inicio</label><br>
-                    <input type="date">
-                </div>
-                <div>
-                    <label>Fecha fin</label><br>
-                    <input type="date">
-                </div>
-                <div>
-                    <label>Tipo</label><br>
-                    <select>
-                        <option>Semanal</option>
-                        <option>Quincenal</option>
-                        <option>Mensual</option>
-                    </select>
-                </div>
-                <button><i class="ri-refresh-line"></i> Calcular</button>
-            </div>
-        </div>
-
-        <!-- TABLE -->
-        <div class="card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Empleado</th>
-                        <th>Salario</th>
-                        <th>Asignaciones</th>
-                        <th>Deducciones</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Carlos Pérez</td>
-                        <td>3.000</td>
-                        <td class="success">+500</td>
-                        <td class="danger">-200</td>
-                        <td><strong>3.300</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- TOTALS -->
-        <div class="card totals">
-            <div class="total success">
-                <span>Total Asignaciones</span>
-                <strong>5.200 Bs</strong>
-            </div>
-            <div class="total danger">
-                <span>Total Deducciones</span>
-                <strong>1.800 Bs</strong>
-            </div>
-            <div class="total primary">
-                <span>Total Neto</span>
-                <strong>18.400 Bs</strong>
-            </div>
-        </div>
-
-        <!-- ACTION -->
-        <div class="card action">
-            <button><i class="ri-check-double-line"></i> Generar Nómina</button>
-        </div>
-
-    </main>
-
+<div class="top-menu">
+    <a class="top-button" href="#">Sistema</a>
+    <a class="top-button" href="#">Propósito</a>
+    <a class="top-button" href="#">Visión</a>
 </div>
 
+<div class="contenido">
+    <h3>Bienvenido de nuevo 👋</h3>
+
+    <div class="cards">
+        <div class="card">
+            <i class="ri-team-line"></i>
+            <h4>Empleados</h4>
+            <p>Gestiona personal, cargos y perfiles de usuario.</p>
+        </div>
+
+        <div class="card">
+            <i class="ri-money-dollar-circle-line"></i>
+            <h4>Nómina</h4>
+            <p>Pagos, liquidaciones y control financiero.</p>
+        </div>
+
+        <div class="card">
+            <i class="ri-bar-chart-line"></i>
+            <h4>Reportes</h4>
+            <p>Visualiza métricas y estadísticas clave.</p>
+        </div>
+    </div>
+</div>
+
+</div>
 </body>
 </html>

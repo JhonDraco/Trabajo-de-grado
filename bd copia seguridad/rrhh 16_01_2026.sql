@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-01-2026 a las 21:09:50
+-- Tiempo de generación: 16-01-2026 a las 16:00:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -60,32 +60,6 @@ CREATE TABLE `configuracion_vacaciones` (
 
 INSERT INTO `configuracion_vacaciones` (`id_config`, `dias_por_ano`, `dias_adicionales_por_ano`, `max_dias_acumulables`, `activo`) VALUES
 (1, 15, 1, 30, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `deduccion_empleado`
---
-
-CREATE TABLE `deduccion_empleado` (
-  `id_deduccion_emp` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `tipo` enum('fijo','porcentaje') DEFAULT 'fijo',
-  `monto` decimal(12,2) NOT NULL,
-  `cuotas` int(11) DEFAULT 1,
-  `cuota_actual` int(11) DEFAULT 0,
-  `activa` tinyint(1) DEFAULT 1,
-  `creada_en` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `deduccion_empleado`
---
-
-INSERT INTO `deduccion_empleado` (`id_deduccion_emp`, `empleado_id`, `nombre`, `tipo`, `monto`, `cuotas`, `cuota_actual`, `activa`, `creada_en`) VALUES
-(1, 2, 'Prestamo Telefono', 'fijo', 500.00, 1, 1, 0, '2026-01-24 14:01:16'),
-(2, 1, 'prestamo carro', 'fijo', 100.00, 1, 1, 0, '2026-01-24 17:18:27');
 
 -- --------------------------------------------------------
 
@@ -164,37 +138,7 @@ INSERT INTO `detalle_asignacion` (`id_detalle_asig`, `id_detalle`, `id_asignacio
 (57, 19, 3, 0.00),
 (58, 20, 1, 0.00),
 (59, 20, 2, 90.00),
-(60, 20, 3, 0.00),
-(70, 24, 1, 0.00),
-(71, 24, 2, 2500.00),
-(72, 24, 3, 0.00),
-(73, 25, 1, 0.00),
-(74, 25, 2, 1000.00),
-(75, 25, 3, 0.00),
-(76, 26, 1, 0.00),
-(77, 26, 2, 2500.00),
-(78, 26, 3, 0.00),
-(79, 27, 1, 0.00),
-(80, 27, 2, 1000.00),
-(81, 27, 3, 0.00),
-(82, 28, 1, 0.00),
-(83, 28, 2, 2500.00),
-(84, 28, 3, 0.00),
-(85, 29, 1, 0.00),
-(86, 29, 2, 1000.00),
-(87, 29, 3, 0.00),
-(124, 42, 1, 0.00),
-(125, 42, 2, 2500.00),
-(126, 42, 3, 0.00),
-(127, 43, 1, 0.00),
-(128, 43, 2, 1000.00),
-(129, 43, 3, 0.00),
-(157, 53, 1, 0.00),
-(158, 53, 2, 625.00),
-(159, 53, 3, 0.00),
-(160, 54, 1, 0.00),
-(161, 54, 2, 250.00),
-(162, 54, 3, 0.00);
+(60, 20, 3, 0.00);
 
 -- --------------------------------------------------------
 
@@ -205,7 +149,7 @@ INSERT INTO `detalle_asignacion` (`id_detalle_asig`, `id_detalle`, `id_asignacio
 CREATE TABLE `detalle_deduccion` (
   `id_detalle_ded` int(11) NOT NULL,
   `id_detalle` int(11) NOT NULL,
-  `id_tipo` int(11) DEFAULT NULL,
+  `id_tipo` int(11) NOT NULL,
   `monto` decimal(12,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -273,39 +217,7 @@ INSERT INTO `detalle_deduccion` (`id_detalle_ded`, `id_detalle`, `id_tipo`, `mon
 (57, 19, 3, 125.00),
 (58, 20, 1, 36.00),
 (59, 20, 2, 9.00),
-(60, 20, 3, 4.50),
-(70, 24, 1, 1000.00),
-(71, 24, 2, 250.00),
-(72, 24, 3, 125.00),
-(73, 25, 1, 400.00),
-(74, 25, 2, 100.00),
-(75, 25, 3, 50.00),
-(76, 26, 1, 1000.00),
-(77, 26, 2, 250.00),
-(78, 26, 3, 125.00),
-(79, 27, 1, 400.00),
-(80, 27, 2, 100.00),
-(81, 27, 3, 50.00),
-(82, 28, 1, 1000.00),
-(83, 28, 2, 250.00),
-(84, 28, 3, 125.00),
-(85, 29, 1, 400.00),
-(86, 29, 2, 100.00),
-(87, 29, 3, 50.00),
-(124, 42, 1, 1000.00),
-(125, 42, 2, 250.00),
-(126, 42, 3, 125.00),
-(127, 42, NULL, 100.00),
-(128, 43, 1, 400.00),
-(129, 43, 2, 100.00),
-(130, 43, 3, 50.00),
-(131, 43, NULL, 500.00),
-(159, 53, 1, 250.00),
-(160, 53, 2, 62.50),
-(161, 53, 3, 31.25),
-(162, 54, 1, 100.00),
-(163, 54, 2, 25.00),
-(164, 54, 3, 12.50);
+(60, 20, 3, 4.50);
 
 -- --------------------------------------------------------
 
@@ -347,17 +259,7 @@ INSERT INTO `detalle_nomina` (`id_detalle`, `id_nomina`, `empleado_id`, `salario
 (17, 12, 1, 25000.00, 2500.00, 1375.00, 26125.00),
 (18, 12, 2, 900.00, 90.00, 49.50, 940.50),
 (19, 13, 1, 25000.00, 2500.00, 1375.00, 26125.00),
-(20, 13, 2, 900.00, 90.00, 49.50, 940.50),
-(24, 17, 1, 25000.00, 2500.00, 1375.00, 26125.00),
-(25, 17, 2, 10000.00, 1000.00, 550.00, 10450.00),
-(26, 18, 1, 25000.00, 2500.00, 1375.00, 26125.00),
-(27, 18, 2, 10000.00, 1000.00, 550.00, 10450.00),
-(28, 19, 1, 25000.00, 2500.00, 1375.00, 26125.00),
-(29, 19, 2, 10000.00, 1000.00, 1050.00, 9950.00),
-(42, 32, 1, 25000.00, 0.00, 1475.00, 23525.00),
-(43, 32, 2, 10000.00, 0.00, 1050.00, 8950.00),
-(53, 42, 1, 6250.00, 0.00, 343.75, 5906.25),
-(54, 42, 2, 2500.00, 0.00, 137.50, 2362.50);
+(20, 13, 2, 900.00, 90.00, 49.50, 940.50);
 
 -- --------------------------------------------------------
 
@@ -444,33 +346,7 @@ INSERT INTO `nomina` (`id_nomina`, `fecha_inicio`, `fecha_fin`, `tipo`, `estado`
 (10, '2025-11-10', '2025-11-16', 'semanal', 'abierta', 'jhon', '2025-11-30 01:54:22'),
 (11, '2025-11-10', '2025-11-16', 'semanal', 'abierta', 'jhon', '2025-11-30 02:23:00'),
 (12, '2025-12-01', '2025-12-31', 'mensual', 'abierta', 'jhon', '2025-12-05 14:45:59'),
-(13, '2025-11-28', '2025-12-05', 'semanal', 'pagada', 'jhon', '2025-12-05 19:15:10'),
-(17, '2026-01-19', '2026-01-25', 'semanal', 'abierta', 'jhon', '2026-01-21 19:49:39'),
-(18, '2026-01-19', '2026-01-25', 'semanal', 'pagada', 'jhon', '2026-01-24 15:09:27'),
-(19, '2026-01-19', '2026-01-25', 'semanal', 'pagada', 'jhon', '2026-01-24 15:42:00'),
-(32, '2026-01-26', '2026-02-01', 'semanal', 'abierta', 'jhon', '2026-01-27 02:58:02'),
-(42, '2026-01-12', '2026-01-18', 'semanal', 'abierta', 'jhon', '2026-01-30 19:39:53');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `nomina_vacaciones`
---
-
-CREATE TABLE `nomina_vacaciones` (
-  `id` int(11) NOT NULL,
-  `id_nomina` int(11) NOT NULL,
-  `id_vacacion` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `dias_pagados` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `nomina_vacaciones`
---
-
-INSERT INTO `nomina_vacaciones` (`id`, `id_nomina`, `id_vacacion`, `empleado_id`, `dias_pagados`) VALUES
-(1, 42, 1, 1, 14);
+(13, '2025-11-28', '2025-12-05', 'semanal', 'pagada', 'jhon', '2025-12-05 19:15:10');
 
 -- --------------------------------------------------------
 
@@ -493,9 +369,7 @@ CREATE TABLE `pagos` (
 
 INSERT INTO `pagos` (`id_pago`, `id_nomina`, `fecha_pago`, `total_pagado`, `metodo`, `notas`) VALUES
 (1, 8, '2025-11-29', 27065.50, 'pago móvil', ''),
-(2, 13, '2006-11-11', 27065.50, 'transferencia', ''),
-(3, 19, '2026-01-25', 36075.00, 'transferencia', ''),
-(4, 18, '2026-01-25', 36575.00, 'transferencia', '');
+(2, 13, '2006-11-11', 27065.50, 'transferencia', '');
 
 -- --------------------------------------------------------
 
@@ -543,12 +417,8 @@ INSERT INTO `tipo_asignacion` (`id_asignacion`, `nombre`, `tipo`, `valor`, `desc
 CREATE TABLE `tipo_deduccion` (
   `id_tipo` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `tipo` enum('legal','interna') DEFAULT 'legal',
   `porcentaje` decimal(6,2) NOT NULL DEFAULT 0.00,
-  `forma` enum('porcentaje','fijo') DEFAULT 'porcentaje',
-  `monto_fijo` decimal(10,2) DEFAULT 0.00,
   `obligatorio` tinyint(1) DEFAULT 1,
-  `activo` tinyint(1) DEFAULT 1,
   `descripcion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -556,10 +426,10 @@ CREATE TABLE `tipo_deduccion` (
 -- Volcado de datos para la tabla `tipo_deduccion`
 --
 
-INSERT INTO `tipo_deduccion` (`id_tipo`, `nombre`, `tipo`, `porcentaje`, `forma`, `monto_fijo`, `obligatorio`, `activo`, `descripcion`) VALUES
-(1, 'IVSS', 'legal', 4.00, 'porcentaje', 0.00, 1, 1, 'Seguro social - 4%'),
-(2, 'FAOV', 'legal', 1.00, 'porcentaje', 0.00, 1, 1, 'Fondo de Ahorro para la Vivienda - 1%'),
-(3, 'Paro Forzoso', 'legal', 0.50, 'porcentaje', 0.00, 1, 1, 'Paro Forzoso - 0.5%');
+INSERT INTO `tipo_deduccion` (`id_tipo`, `nombre`, `porcentaje`, `obligatorio`, `descripcion`) VALUES
+(1, 'IVSS', 4.00, 1, 'Seguro social - 4%'),
+(2, 'FAOV', 1.00, 1, 'Fondo de Ahorro para la Vivienda - 1%'),
+(3, 'Paro Forzoso', 0.50, 1, 'Paro Forzoso - 0.5%');
 
 -- --------------------------------------------------------
 
@@ -666,13 +536,6 @@ ALTER TABLE `configuracion_vacaciones`
   ADD PRIMARY KEY (`id_config`);
 
 --
--- Indices de la tabla `deduccion_empleado`
---
-ALTER TABLE `deduccion_empleado`
-  ADD PRIMARY KEY (`id_deduccion_emp`),
-  ADD KEY `empleado_id` (`empleado_id`);
-
---
 -- Indices de la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
@@ -714,15 +577,6 @@ ALTER TABLE `feriados`
 --
 ALTER TABLE `nomina`
   ADD PRIMARY KEY (`id_nomina`);
-
---
--- Indices de la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_nomina` (`id_nomina`),
-  ADD KEY `id_vacacion` (`id_vacacion`),
-  ADD KEY `empleado_id` (`empleado_id`);
 
 --
 -- Indices de la tabla `pagos`
@@ -796,28 +650,22 @@ ALTER TABLE `configuracion_vacaciones`
   MODIFY `id_config` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `deduccion_empleado`
---
-ALTER TABLE `deduccion_empleado`
-  MODIFY `id_deduccion_emp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT de la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
-  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_deduccion`
 --
 ALTER TABLE `detalle_deduccion`
-  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_nomina`
 --
 ALTER TABLE `detalle_nomina`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -835,19 +683,13 @@ ALTER TABLE `feriados`
 -- AUTO_INCREMENT de la tabla `nomina`
 --
 ALTER TABLE `nomina`
-  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
-
---
--- AUTO_INCREMENT de la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `saldo_vacaciones`
@@ -896,12 +738,6 @@ ALTER TABLE `vacaciones_saldo`
 --
 
 --
--- Filtros para la tabla `deduccion_empleado`
---
-ALTER TABLE `deduccion_empleado`
-  ADD CONSTRAINT `deduccion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
-
---
 -- Filtros para la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
@@ -921,14 +757,6 @@ ALTER TABLE `detalle_deduccion`
 ALTER TABLE `detalle_nomina`
   ADD CONSTRAINT `detalle_nomina_ibfk_1` FOREIGN KEY (`id_nomina`) REFERENCES `nomina` (`id_nomina`) ON DELETE CASCADE,
   ADD CONSTRAINT `detalle_nomina_ibfk_2` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_1` FOREIGN KEY (`id_nomina`) REFERENCES `nomina` (`id_nomina`) ON DELETE CASCADE,
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_2` FOREIGN KEY (`id_vacacion`) REFERENCES `vacaciones` (`id_vacacion`) ON DELETE CASCADE,
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_3` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `pagos`

@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 if (!isset($_SESSION['usuario'])) { 
     header("Location: index.php"); 
@@ -10,8 +10,7 @@ include("db.php");
 /* --------------------------------------------------------
    1. FECHA AUTOMÁTICA (SEMANA ACTUAL)
 ---------------------------------------------------------*/
-$hoy = date("Y-m-d");
-$lunes = date("Y-m-d", strtotime('monday this week'));
+$lunes   = date("Y-m-d", strtotime('monday this week'));
 $domingo = date("Y-m-d", strtotime('sunday this week'));
 
 $fecha_inicio = $_GET['inicio'] ?? $lunes;
@@ -37,32 +36,81 @@ while ($a = mysqli_fetch_assoc($asignaciones)) $arr_asig[] = $a;
 $arr_ded = [];
 while ($d = mysqli_fetch_assoc($deducciones)) $arr_ded[] = $d;
 
+
 /* --------------------------------------------------------
-   4. CALCULAR PRE-NÓMINA
+   division de el salario base
+---------------------------------------------------------*/
+$tipo_nomina = $_GET['tipo'] ?? 'mensual';
+
+switch ($tipo_nomina) {
+    case 'semanal':
+        $factor = 1 / 4;
+        break;
+    case 'quincenal':
+        $factor = 1 / 2;
+        break;
+    default:
+        $factor = 1;
+}
+
+
+/* --------------------------------------------------------
+   4. CALCULAR PRE-NÓMINA (CON VACACIONES)
 ---------------------------------------------------------*/
 $lista_empleados = [];
 $total_general_asig = 0;
 $total_general_ded = 0;
 $total_general_pagar = 0;
 
+mysqli_data_seek($empleados, 0);
 while ($emp = mysqli_fetch_assoc($empleados)) {
 
-    $salario = floatval($emp['salario_base']);
+    $salario_mensual = floatval($emp['salario_base']);
+    $salario = round($salario_mensual * $factor, 2);
+
     $total_asig = 0;
     $total_ded = 0;
 
-    foreach ($arr_asig as $asig) {
-        $monto = ($asig['tipo'] == 'fijo')
-            ? floatval($asig['valor'])
-            : $salario * ($asig['valor'] / 100);
-        $total_asig += $monto;
+    /* ===============================
+   DEDUCCIONES GENERALES
+===============================*/
+foreach ($arr_ded as $ded) {
+    $monto = $salario * ($ded['porcentaje'] / 100);
+    $total_ded += $monto;
+}
+
+
+/* DEDUCCIONES POR EMPLEADO (SOLO CALCULAR) */
+$qDedEmp = mysqli_query($conexion, "
+    SELECT * FROM deduccion_empleado
+    WHERE empleado_id = {$emp['id']}
+      AND activa = 1
+      AND cuota_actual < cuotas
+");
+
+    while ($de = mysqli_fetch_assoc($qDedEmp)) {
+    $cuota_mensual = $de['monto'] / $de['cuotas'];
+    $total_ded += round($cuota_mensual * $factor, 2);
     }
 
-    foreach ($arr_ded as $ded) {
-        $monto = $salario * ($ded['porcentaje'] / 100);
-        $total_ded += $monto;
+
+
+    /* ===== VACACIONES APROBADAS EN EL PERÍODO ===== */
+    $vacaciones = mysqli_query($conexion, "
+        SELECT id_vacacion, dias_habiles
+        FROM vacaciones
+        WHERE empleado_id = {$emp['id']}
+          AND estado = 'aprobada'
+          AND fecha_inicio <= '$fecha_fin'
+          AND fecha_fin >= '$fecha_inicio'
+    ");
+
+    $dias_vacaciones = 0;
+    while ($v = mysqli_fetch_assoc($vacaciones)) {
+        $dias_vacaciones += intval($v['dias_habiles']);
     }
 
+    // Vacaciones NO descuentan salario (solo informativo)
     $total_pago = ($salario + $total_asig) - $total_ded;
 
     $lista_empleados[] = [
@@ -71,7 +119,8 @@ while ($emp = mysqli_fetch_assoc($empleados)) {
         "salario" => $salario,
         "asig"    => $total_asig,
         "ded"     => $total_ded,
-        "pagar"   => $total_pago
+        "pagar"   => $total_pago,
+        "vac"     => $dias_vacaciones
     ];
 
     $total_general_asig += $total_asig;
@@ -93,21 +142,17 @@ if (isset($_POST['generar_nomina'])) {
 
     try {
 
-        $insert_nomina = mysqli_query($conexion,
-            "INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
-             VALUES ('$fecha_inicio', '$fecha_fin', '$tipo', '$creada_por')"
-        );
-
-        if (!$insert_nomina) {
-            throw new Exception(mysqli_error($conexion));
-        }
+        mysqli_query($conexion, "
+            INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
+            VALUES ('$fecha_inicio', '$fecha_fin', '$tipo', '$creada_por')
+        ");
 
         $id_nomina = mysqli_insert_id($conexion);
 
         foreach ($lista_empleados as $emp) {
 
-            $insert_detalle = mysqli_query($conexion,
-                "INSERT INTO detalle_nomina
+              $insert_detalle = mysqli_query($conexion, "
+                INSERT INTO detalle_nomina
                 (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
                 VALUES (
                     $id_nomina,
@@ -116,33 +161,94 @@ if (isset($_POST['generar_nomina'])) {
                     {$emp['asig']},
                     {$emp['ded']},
                     {$emp['pagar']}
-                )"
-            );
+                )
+                ");
 
-            if (!$insert_detalle) {
-                throw new Exception(mysqli_error($conexion));
-            }
+                if (!$insert_detalle) {
+                throw new Exception("Error detalle_nomina: " . mysqli_error($conexion));
+                }
 
-            $id_detalle = mysqli_insert_id($conexion);
+                $id_detalle = mysqli_insert_id($conexion);
 
+                if ($id_detalle <= 0) {
+                    throw new Exception("No se pudo obtener id_detalle");
+                }
+
+
+            /* Asignaciones */
             foreach ($arr_asig as $asig) {
                 $monto = ($asig['tipo'] == 'fijo')
                     ? $asig['valor']
                     : $emp['salario'] * ($asig['valor'] / 100);
 
-                mysqli_query($conexion,
-                    "INSERT INTO detalle_asignacion (id_detalle, id_asignacion, monto)
-                     VALUES ($id_detalle, {$asig['id_asignacion']}, $monto)"
-                );
+                mysqli_query($conexion, "
+                    INSERT INTO detalle_asignacion (id_detalle, id_asignacion, monto)
+                    VALUES ($id_detalle, {$asig['id_asignacion']}, $monto)
+                ");
             }
 
+            /* Deducciones */
             foreach ($arr_ded as $ded) {
                 $monto = $emp['salario'] * ($ded['porcentaje'] / 100);
 
-                mysqli_query($conexion,
-                    "INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
-                     VALUES ($id_detalle, {$ded['id_tipo']}, $monto)"
-                );
+                mysqli_query($conexion, "
+                    INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
+                    VALUES ($id_detalle, {$ded['id_tipo']}, $monto)
+                ");
+            }
+
+             /* Deducciones por empleado por cuotas */
+               $qDedEmp = mysqli_query($conexion, "
+                SELECT * FROM deduccion_empleado
+                WHERE empleado_id = {$emp['id']}
+                AND activa = 1
+                AND cuota_actual < cuotas
+            ");
+
+            while ($de = mysqli_fetch_assoc($qDedEmp)) {
+
+                $monto_cuota = $de['monto'] / $de['cuotas'];
+
+                // Insertar como deducción personalizada
+                mysqli_query($conexion, "
+                    INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
+                    VALUES ($id_detalle, NULL, $monto_cuota)
+                ");
+
+                // Avanzar cuota
+                mysqli_query($conexion, "
+                    UPDATE deduccion_empleado
+                    SET cuota_actual = cuota_actual + 1
+                    WHERE id_deduccion_emp = {$de['id_deduccion_emp']}
+                ");
+
+                // Finalizar deducción
+                mysqli_query($conexion, "
+                    UPDATE deduccion_empleado
+                    SET activa = 0
+                    WHERE id_deduccion_emp = {$de['id_deduccion_emp']}
+                    AND cuota_actual >= cuotas
+                ");
+            }
+
+
+    
+            /* Vacaciones → vincular con nómina */
+            $resVac = mysqli_query($conexion, "
+                SELECT id_vacacion, dias_habiles
+                FROM vacaciones
+                WHERE empleado_id = {$emp['id']}
+                  AND estado = 'aprobada'
+                  AND fecha_inicio <= '$fecha_fin'
+                  AND fecha_fin >= '$fecha_inicio'
+            ");
+
+            while ($v = mysqli_fetch_assoc($resVac)) {
+                mysqli_query($conexion, "
+                    INSERT INTO nomina_vacaciones
+                    (id_nomina, id_vacacion, empleado_id, dias_pagados)
+                    VALUES ($id_nomina, {$v['id_vacacion']}, {$emp['id']}, {$v['dias_habiles']})
+                ");
             }
         }
 
@@ -156,6 +262,7 @@ if (isset($_POST['generar_nomina'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -253,6 +360,13 @@ if (isset($_POST['generar_nomina'])) {
         <!-- FORM PERÍODO -->
         <div class="card">
             <form method="GET" class="periodo-form">
+
+            <select name="tipo">
+    <option value="semanal" <?= $tipo_nomina=='semanal'?'selected':'' ?>>Semanal</option>
+    <option value="quincenal" <?= $tipo_nomina=='quincenal'?'selected':'' ?>>Quincenal</option>
+    <option value="mensual" <?= $tipo_nomina=='mensual'?'selected':'' ?>>Mensual</option>
+</select>
+
                 <label>Fecha Inicio</label>
                 <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
 

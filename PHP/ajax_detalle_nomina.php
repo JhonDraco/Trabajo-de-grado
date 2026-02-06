@@ -33,9 +33,11 @@ $detalles = mysqli_query($conexion, $sql);
     <td><?= number_format($d['total_deducciones'],2) ?></td>
     <td><strong><?= number_format($d['total_pagar'],2) ?></strong></td>
     <td>
-        <a href="ver_detalle_individual.php?id_detalle=<?= $d['id_detalle'] ?>" target="_blank">
-            📰 Ver
-        </a>
+<a href="ver_detalle_individual.php?id_detalle=<?= $d['id_detalle'] ?>" target="_blank">
+    📄 PDF Individual
+</a>
+
+
     </td>
 </tr>
 <?php } ?>

@@ -51,6 +51,11 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
       <i class="ri-mail-line"></i> Agendar entrevistas 
     </a>
     
+    <!-- boton prueba -->
+     <a href="generar_pdf.php?id=1" target="_blank">
+    Ver Recibo PDF
+</a>
+
    
 </aside>
 

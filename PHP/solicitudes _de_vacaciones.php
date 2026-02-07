@@ -1,4 +1,28 @@
 <?php
+
+
+include("db.php");
+
+
+/* ===========================
+   DATOS PARA VISTA
+=========================== */
+$empleados = mysqli_query($conexion, "
+    SELECT id, nombre, apellido 
+    FROM empleados 
+    WHERE estado='activo'
+");
+
+$vacaciones = mysqli_query($conexion, "
+    SELECT v.*, e.nombre, e.apellido
+    FROM vacaciones v
+    JOIN empleados e ON v.empleado_id = e.id
+    ORDER BY v.creada_en DESC
+");
+
+?>
+
+<?php
 session_start();
 if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     header("Location: index.php");
@@ -11,7 +35,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/administrador.css">
+<link rel="stylesheet" href="../css/solicitudes _de_vacaciones.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -26,7 +50,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         <h2>RRHH Admin</h2>
          <i class="ri-building-2-fill logo-icon"></i>
     </div>
-    <a href="administrador.php" class="active">
+    <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
     <a href="nomina.php">
@@ -34,7 +58,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     </a>
 
     <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    <a href="vacaciones.php" class="active">  <i class="ri-sun-line"></i></i> Vacaciones</a>
     
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
@@ -71,25 +95,47 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="" class="top-button">Función de nuestro sistema</a>
-        <a href="" class="top-button">Propósito</a>
-        <a href="" class="top-button">Visión</a>
+        <a href="vacaciones.php" class="top-button">Gestion de vacasiones</a>
+
     </div>
 
     <!-- CONTENIDO -->
     <div class="contenido">
-        <h3>Bienvenido al Panel de Control</h3>
+     
+<!-- LISTADO -->
+<h3> Solicitudes</h3>
+<table border="1" cellpadding="8">
+<tr>
+    <th>Empleado</th>
+    <th>Periodo</th>
+    <th>Días</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+</tr>
 
-        <div class="cards">
-            <div class="card">
-                <h4>Empleados</h4>
-                <p>Desde aquí puedes gestionar los empleados, usuarios y cargos del sistema RRHH.</p>
-            </div>
-        </div>
+<?php while ($v = mysqli_fetch_assoc($vacaciones)) { ?>
+<tr>
+    <td><?= $v['nombre']." ".$v['apellido'] ?></td>
+    <td><?= $v['fecha_inicio']." al ".$v['fecha_fin'] ?></td>
+    <td><?= $v['dias_habiles'] ?></td>
+    <td><?= ucfirst($v['estado']) ?></td>
+<td>
+    <div class="celda-acciones">
+        <a href="aprobar_vacaciones.php?id=<?= $v['id_vacacion'] ?>" class="btn-accion btn-aprobar">
+            <i class="ri-checkbox-circle-line"></i> Aprobar
+        </a>
+
+        <a href="rechazar_vacaciones.php?id=<?= $v['id_vacacion'] ?>" class="btn-accion btn-rechazar">
+            <i class="ri-close-circle-line"></i> Rechazar
+        </a>
+    </div>
+</td>
+</tr>
+<?php } ?>
+</table>
 
     </div>
 </div>
 
 </body>
 </html>
-

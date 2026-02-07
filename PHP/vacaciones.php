@@ -1,9 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: index.php");
-    exit();
-}
+
 
 include("db.php");
 
@@ -128,21 +124,36 @@ $vacaciones = mysqli_query($conexion, "
 ");
 ?>
 
+
+<?php
+session_start();
+if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Vacaciones</title>
-<link rel="stylesheet" href="../css/vacaciones.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel del Administrador</title>
+<link rel="stylesheet" href="../css/vacasiones.css">
+<!-- Iconos RemixIcon -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+
 </head>
 <body>
-    <aside class="sidebar">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
      <div class="sidebar-header">
        
         <h2>RRHH Admin</h2>
          <i class="ri-building-2-fill logo-icon"></i>
     </div>
-    <a href="administrador.php" class="active">
+    <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
     <a href="nomina.php">
@@ -150,14 +161,12 @@ $vacaciones = mysqli_query($conexion, "
     </a>
 
     <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    <a href="vacaciones.php" class="active">  <i class="ri-sun-line"></i></i> Vacaciones</a>
     
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
-     <a href="listar_empleados.php">
-        <i class="ri-team-line"></i> Empleados
-    </a>
+
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Usuarios
     </a>
@@ -170,10 +179,73 @@ $vacaciones = mysqli_query($conexion, "
     </a>
     
    
+</a>
+
+   
 </aside>
 
-<h2>🏖️ Gestión de Vacaciones</h2>
 
+<div class="main">
+
+    <!-- HEADER -->
+    <header>
+        <h2>Panel de Administración - RRHH</h2>
+        <div>
+            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
+            <a href="cerrar_sesion.php">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <!-- TOP MENU HORIZONTAL -->
+    <div class="top-menu">
+        <a href="solicitudes _de_vacaciones.php" class="top-button">sulicitudes de vacaciones</a>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="contenido">
+       <h2> Gestión de Vacaciones</h2>
+
+       
+<div class="form-compacto">
+    <h3><i class="ri-calendar-check-fill"></i> Nueva Solicitud de Vacaciones</h3>
+    <form method="post">
+        
+        <div class="form-group">
+            <label><i class="ri-user-3-fill"></i> EMPLEADO</label>
+            <select name="empleado_id" required>
+                <option value="">Seleccionar...</option>
+                <?php 
+                mysqli_data_seek($empleados, 0); 
+                while ($e = mysqli_fetch_assoc($empleados)) { ?>
+                    <option value="<?= $e['id'] ?>">
+                        <?= $e['nombre']." ".$e['apellido'] ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label><i class="ri-calendar-line"></i> FECHA INICIO</label>
+            <input type="date" name="fecha_inicio" required>
+        </div>
+
+        <div class="form-group">
+            <label><i class="ri-calendar-line"></i> FECHA FIN</label>
+            <input type="date" name="fecha_fin" required>
+        </div>
+
+        <div class="form-group">
+            <label><i class="ri-edit-2-line"></i> OBSERVACIONES</label>
+            <input type="text" name="observaciones" placeholder="Ej: Motivos personales...">
+        </div>
+
+        <button type="submit" class="btn-registrar">
+            <i class="ri-save-3-fill"></i> GUARDAR
+        </button>
+        
+    </form>
+<br>
+<br>
 <?php if (isset($_GET['ok'])) { ?>
 <p style="color:green;">Solicitud registrada correctamente</p>
 <?php } ?>
@@ -187,7 +259,7 @@ $vacaciones = mysqli_query($conexion, "
 <?php } ?>
 
 <!-- SALDOS -->
-<h3>📊 Saldo de Vacaciones <?= $anio_actual ?></h3>
+<h3> Saldo de Vacaciones <?= $anio_actual ?></h3>
 <table border="1" cellpadding="8">
 <tr>
     <th>Empleado</th>
@@ -208,57 +280,6 @@ $vacaciones = mysqli_query($conexion, "
 
 <hr>
 
-<!-- FORMULARIO -->
-<h3>📝 Solicitar Vacaciones</h3>
-<form method="post">
-    <label>Empleado</label>
-    <select name="empleado_id" required>
-        <option value="">Seleccione</option>
-        <?php while ($e = mysqli_fetch_assoc($empleados)) { ?>
-            <option value="<?= $e['id'] ?>">
-                <?= $e['nombre']." ".$e['apellido'] ?>
-            </option>
-        <?php } ?>
-    </select>
-
-    <label>Fecha Inicio</label>
-    <input type="date" name="fecha_inicio" required>
-
-    <label>Fecha Fin</label>
-    <input type="date" name="fecha_fin" required>
-
-    <label>Observaciones</label>
-    <textarea name="observaciones"></textarea>
-
-    <button type="submit">Solicitar Vacaciones</button>
-</form>
-
-<hr>
-
-<!-- LISTADO -->
-<h3>📋 Solicitudes</h3>
-<table border="1" cellpadding="8">
-<tr>
-    <th>Empleado</th>
-    <th>Periodo</th>
-    <th>Días</th>
-    <th>Estado</th>
-    <th>Acciones</th>
-</tr>
-
-<?php while ($v = mysqli_fetch_assoc($vacaciones)) { ?>
-<tr>
-    <td><?= $v['nombre']." ".$v['apellido'] ?></td>
-    <td><?= $v['fecha_inicio']." al ".$v['fecha_fin'] ?></td>
-    <td><?= $v['dias_habiles'] ?></td>
-    <td><?= ucfirst($v['estado']) ?></td>
-    <td>
-        <a href="aprobar_vacaciones.php?id=<?= $v['id_vacacion'] ?>">Aprobar</a> |
-        <a href="rechazar_vacaciones.php?id=<?= $v['id_vacacion'] ?>">Rechazar</a>
-    </td>
-</tr>
-<?php } ?>
-</table>
-
 </body>
 </html>
+

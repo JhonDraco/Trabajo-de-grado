@@ -26,7 +26,6 @@ body{
     color:var(--gray-light-text);
 }
 
-
 /* ===== SIDEBAR ===== */
 .sidebar{
     width: var(--sidebar-width);
@@ -91,7 +90,6 @@ body{
     display: block;
     text-align: center;
 }
-
 
 /* ===== MAIN ===== */
 .main{
@@ -201,9 +199,8 @@ header a{
         overflow-x:auto;
     }
 }
-/* ===== TABLA ===== */
 table{
-    width:94%;
+    width:100%;
     border-collapse:collapse;
     background:var(--white);
     border-radius:var(--radius);
@@ -230,15 +227,48 @@ table tr:nth-child(even){
 table tr:hover{
     background:#d9e6e0;
 }
+/* ===== DISEÑO DE BOTONES DE ACCIÓN ===== */
+.btn-accion {
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
 
-
-
-/* Estilo específico para Registrar Pago */
-.btn-pagar {
-    background-color: #e7f5ef; /* Fondo verde éxito muy claro */
-    color: #1f5c41; /* Texto verde oscuro */
+/* Botón Aprobar */
+.btn-aprobar {
+    background-color: #e7f5ef; /* Verde muy claro */
+    color: #1f5c41; /* Verde oscuro */
     border: 1px solid #c3e6d8;
 }
 
+.btn-aprobar:hover {
+    background-color: #1f5c41;
+    color: white;
+}
 
+/* Botón Rechazar */
+.btn-rechazar {
+    background-color: #fdeaea; /* Rojo muy claro */
+    color: #9b2c2c; /* Rojo oscuro */
+    border: 1px solid #f5c6c6;
+    margin-left: 5px;
+}
+
+.btn-rechazar:hover {
+    background-color: #9b2c2c;
+    color: white;
+}
+
+/* Ajuste para la celda de acciones */
+.celda-acciones {
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+}
 

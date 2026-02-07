@@ -72,12 +72,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     <!-- TOP MENU -->
     <div class="top-menu">
-        <a href="crear_asignacion.php" class="top-button">
-            <i class="ri-add-circle-line"></i> Crear Asignación
+        <a href="asignaciones.php" class="top-button">
+            <i class="ri-add-circle-line"></i> Asignaciónes
         </a>
 
-        <a href="crear_deduccion.php" class="top-button">
-            <i class="ri-subtract-line"></i> Crear Deducción
+        <a href="deducciones.php" class="top-button">
+            <i class="ri-subtract-line"></i>  Deducciónes
         </a>
 
         <a href="generar_nomina.php" class="top-button">

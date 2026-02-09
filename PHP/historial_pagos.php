@@ -33,16 +33,41 @@ $res = mysqli_query($conexion, $sql);
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-    <div class="sidebar-header">
+     <div class="sidebar-header">
+       
         <h2>RRHH Admin</h2>
-        <i class="ri-building-2-fill logo-icon"></i>
+         <i class="ri-building-2-fill logo-icon"></i>
     </div>
+    <a href="administrador.php" >
+        <i class="ri-home-4-line"></i> Inicio
+    </a>
+    <a href="nomina.php"class="active">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
 
-    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php" class="active"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
-    <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-</aside>
+    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    
+    <a href="listar_empleados.php">
+        <i class="ri-team-line"></i> Empleados
+    </a>
+
+    <a href="listar_usuario.php">
+        <i class="ri-user-settings-line"></i> Usuarios
+    </a>
+    <a href="reportes.php">
+        <i class="ri-bar-chart-line"></i> Reportes
+    </a>
+             
+    <a href="contactar.php">
+      <i class="ri-mail-line"></i> Agendar entrevistas 
+    </a>
+    
+   
+</a>
+
+   
+</aside>>
 
 <!-- MAIN -->
 <div class="main">
@@ -55,10 +80,15 @@ $res = mysqli_query($conexion, $sql);
     </div>
 </header>
 
-<div class="top-menu">
-    <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
-    <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
-</div>
+    <div class="top-menu">
+       <a href="asignaciones.php" class="top-button"><i class="ri-add-circle-line"></i> Asignaciones</a>
+       <a href="deducciones.php" class="top-button"><i class="ri-subtract-line"></i> Deducciónes</a>
+       <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
+       <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+       <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
+        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+
+    </div>
 
 <div class="contenido">
     <div class="card-container">

@@ -199,6 +199,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
         <a href="solicitudes _de_vacaciones.php" class="top-button">sulicitudes de vacaciones</a>
+        
     </div>
 
     <!-- CONTENIDO -->

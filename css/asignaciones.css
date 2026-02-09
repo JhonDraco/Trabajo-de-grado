@@ -26,7 +26,6 @@ body{
     color:var(--gray-light-text);
 }
 
-
 /* ===== SIDEBAR ===== */
 .sidebar{
     width: var(--sidebar-width);
@@ -91,7 +90,6 @@ body{
     display: block;
     text-align: center;
 }
-
 
 /* ===== MAIN ===== */
 .main{
@@ -201,7 +199,6 @@ header a{
         overflow-x:auto;
     }
 }
-/* ===== TABLA ===== */
 table{
     width:94%;
     border-collapse:collapse;
@@ -230,82 +227,76 @@ table tr:nth-child(even){
 table tr:hover{
     background:#d9e6e0;
 }
-
-
-
-/* Estilo específico para Registrar Pago */
-.btn-pagar {
-    background-color: #e7f5ef; /* Fondo verde éxito muy claro */
-    color: #1f5c41; /* Texto verde oscuro */
-    border: 1px solid #c3e6d8;
+/* ===== DISEÑO COMPACTO DEL FORMULARIO ===== */
+.form-container-compact {
+    background: var(--white-soft);
+    padding: 15px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--card-border);
+    margin-bottom: 25px;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 2fr; /* Nombre mas ancho, otros mas pequeños */
+    gap: 15px;
+    align-items: end; /* Alinea los inputs con el botón */
+}
 
+.form-group-compact {
+    display: flex;
+    flex-direction: column;
+}
 
-        /* Estilos para el efecto desplegable */
-        .fila-pago { 
-            display: none; /* Oculto por defecto */
-            background-color: #f9fdfc !important; 
-        }
-        
-        .form-pago-container { 
-            padding: 15px; 
-            border: 2px solid var(--green-mid); 
-            border-radius: 8px; 
-            margin: 10px auto; 
-            background: white;
-            max-width: 95%;
-        }
+.form-group-compact label {
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
 
-        .form-flex { 
-            display: flex; 
-            gap: 15px; 
-            align-items: flex-end; 
-            flex-wrap: wrap; 
-        }
+.form-group-compact input, 
+.form-group-compact select, 
+.form-group-compact textarea {
+    padding: 8px 10px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    height: 38px; /* Altura estándar para todos */
+}
 
-        .input-mini {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
-            min-width: 140px;
-        }
+/* El textarea en modo compacto no debería ser tan alto */
+.form-group-compact textarea {
+    height: 38px;
+    resize: none;
+}
 
-        .input-mini label {
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--green-dark);
-            text-transform: uppercase;
-        }
+.btn-guardar-compact {
+    background: var(--green-mid);
+    color: white;
+    height: 38px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
 
-        .input-mini input, .input-mini select {
-            padding: 8px;
-            border: 1px solid var(--card-border);
-            border-radius: 5px;
-            outline: none;
-            height: 38px;
-        }
+.btn-guardar-compact:hover {
+    background: var(--green-hover);
+}
 
-        .btn-confirmar { 
-            background: #28a745; 
-            color: white; 
-            border: none; 
-            padding: 0 20px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            height: 38px; 
-            transition: 0.3s;
-        }
-
-        .btn-confirmar:hover { background: #218838; transform: scale(1.02); }
-
-        .badge-pendiente { 
-            background: #fff3cd; 
-            color: #856404; 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 11px; 
-            font-weight: bold; 
-        }
+/* Responsive para pantallas pequeñas */
+@media (max-width: 1024px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

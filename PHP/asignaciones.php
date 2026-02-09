@@ -27,7 +27,7 @@ $res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/administrador.css">
+<link rel="stylesheet" href="../css/asignaciones.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -97,24 +97,41 @@ $res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
     </div>
 
     <!-- CONTENIDO -->
-    <div class="contenido">
-       <h2>Gestionar Asignaciones</h2>
+<div class="contenido">
+    <h3><i class="ri-add-box-line"></i> Nueva Asignación</h3>
 
-<form method="post">
-    <label>Nombre: <input name="nombre" required></label><br>
-    <label>Tipo:
-        <select name="tipo">
-            <option value="fijo">Fijo</option>
-            <option value="porcentaje">Porcentaje</option>
-        </select>
-    </label><br>
-    <label>Valor (monto o %): <input name="valor" step="0.01" value="0.00"></label><br>
-    <label>Descripción:<br><textarea name="descripcion"></textarea></label><br>
-    <button type="submit">Guardar</button>
-</form>
+    <div class="form-container-compact">
+        <form method="post" class="form-grid">
+            <div class="form-group-compact">
+                <label>Nombre</label>
+                <input type="text" name="nombre" placeholder="Nombre de asignación" required>
+            </div>
 
-<h3>Lista</h3>
-<table border="1" cellpadding="6">
+            <div class="form-group-compact">
+                <label>Tipo</label>
+                <select name="tipo">
+                    <option value="fijo">Fijo (Bs)</option>
+                    <option value="porcentaje">Porcentaje (%)</option>
+                </select>
+            </div>
+
+            <div class="form-group-compact">
+                <label>Valor</label>
+                <input type="number" name="valor" step="0.01" value="0.00" required>
+            </div>
+
+            <div class="form-group-compact">
+                <label>Descripción corta</label>
+                <input type="text" name="descripcion" placeholder="Opcional...">
+            </div>
+
+            <button type="submit" class="btn-guardar-compact" style="grid-column: span 1;">
+                <i class="ri-save-3-line"></i> Guardar
+            </button>
+        </form>
+    </div>
+    <h3>Lista de Asignaciones</h3>
+    <table border="1" cellpadding="5">
 <tr><th>Nombre</th><th>Tipo</th><th>Valor</th><th>Acción</th></tr>
 <?php while($d = mysqli_fetch_assoc($res)) { ?>
 <tr>
@@ -125,6 +142,8 @@ $res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
 </tr>
 <?php } ?>
 </table>
+    </div>
+
 
 </div>
 

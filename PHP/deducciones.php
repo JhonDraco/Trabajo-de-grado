@@ -66,7 +66,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/administrador.css">
+<link rel="stylesheet" href="../css/deducciones.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -136,139 +136,131 @@ if (isset($_POST['crear_deduccion_empleado'])) {
     </div>
 
     <!-- CONTENIDO -->
-    <div class="contenido">
+<div class="contenido">
+        
+        <h3><i class="ri-shield-star-line"></i> Deducciones Generales (Ley)</h3>
+        <div class="form-compact-row">
+            <form method="POST" class="form-inline">
+                <input type="hidden" name="crear_deduccion_general" value="1">
+                <div class="input-group" style="flex: 2;">
+                    <label>Nombre del Concepto</label>
+                    <input type="text" name="nombre" placeholder="Ej: IVSS, LPH..." required>
+                </div>
+                <div class="input-group">
+                    <label>Porcentaje (%)</label>
+                    <input type="number" step="0.01" name="porcentaje" required>
+                </div>
+                <div class="input-group" style="min-width: 100px;">
+                    <label class="check-group">
+                        <input type="checkbox" name="obligatorio" checked> Obligatoria
+                    </label>
+                </div>
+                <div class="input-group" style="flex: 2;">
+                    <label>Descripción</label>
+                    <input type="text" name="descripcion" placeholder="Opcional...">
+                </div>
+                <button type="submit" class="btn-accion">Guardar</button>
+            </form>
+        </div>
 
-<h2>➖ Módulo de Deducciones</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Porcentaje</th>
+                    <th>Obligatoria</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $generales = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
+                while ($d = mysqli_fetch_assoc($generales)) {
+                    echo "<tr>
+                            <td>{$d['nombre']}</td>
+                            <td>{$d['porcentaje']}%</td>
+                            <td>" . ($d['obligatorio'] ? 'Sí' : 'No') . "</td>
+                            <td>{$d['descripcion']}</td>
+                          </tr>";
+                }
+                ?>
+            </tbody>
+        </table>
 
-<!-- ===============================
-     DEDUCCIONES GENERALES
-================================ -->
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid var(--card-border);">
 
-<h3>📌 Crear Deducción General</h3>
+        <h3><i class="ri-user-shared-line"></i> Asignar Deducción Individual</h3>
+        <div class="form-compact-row">
+            <form method="POST" class="form-inline">
+                <input type="hidden" name="crear_deduccion_empleado" value="1">
+                <div class="input-group">
+                    <label>Empleado</label>
+                    <select name="empleado_id" required>
+                        <option value="">Seleccione...</option>
+                        <?php
+                        $emps = mysqli_query($conexion, "SELECT id, nombre, apellido FROM empleados WHERE estado='activo' ORDER BY nombre");
+                        while ($e = mysqli_fetch_assoc($emps)) {
+                            echo "<option value='{$e['id']}'>{$e['nombre']} {$e['apellido']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Concepto</label>
+                    <input type="text" name="nombre" required placeholder="Ej: Préstamo">
+                </div>
+                <div class="input-group">
+                    <label>Tipo</label>
+                    <select name="tipo">
+                        <option value="fijo">Monto fijo</option>
+                        <option value="porcentaje">Porcentaje</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Monto Total</label>
+                    <input type="number" step="0.01" name="monto" required>
+                </div>
+                <div class="input-group" style="min-width: 80px;">
+                    <label>Cuotas</label>
+                    <input type="number" name="cuotas" value="1" min="1">
+                </div>
+                <button type="submit" class="btn-accion">Asignar</button>
+            </form>
+        </div>
 
-<form method="POST">
-    <input type="hidden" name="crear_deduccion_general" value="1">
-
-    <label>Nombre</label>
-    <input type="text" name="nombre" required>
-
-    <label>Porcentaje (%)</label>
-    <input type="number" step="0.01" name="porcentaje" required>
-
-    <label>
-        <input type="checkbox" name="obligatorio" checked>
-        Obligatoria
-    </label>
-
-    <label>Descripción</label>
-    <textarea name="descripcion"></textarea>
-
-    <button type="submit">Guardar</button>
-</form>
-
-<br>
-
-<h3>📄 Deducciones Generales</h3>
-
-<table border="1" cellpadding="5">
-<tr>
-    <th>Nombre</th>
-    <th>%</th>
-    <th>Obligatoria</th>
-    <th>Descripción</th>
-</tr>
-
-<?php
-$generales = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
-while ($d = mysqli_fetch_assoc($generales)) {
-?>
-<tr>
-    <td><?= $d['nombre'] ?></td>
-    <td><?= $d['porcentaje'] ?>%</td>
-    <td><?= $d['obligatorio'] ? 'Sí' : 'No' ?></td>
-    <td><?= $d['descripcion'] ?></td>
-</tr>
-<?php } ?>
-</table>
-
-<hr>
-
-<!-- ===============================
-     DEDUCCIONES POR EMPLEADO
-================================ -->
-
-<h3>👤 Asignar Deducción a Empleado</h3>
-
-<form method="POST">
-    <input type="hidden" name="crear_deduccion_empleado" value="1">
-
-    <label>Empleado</label>
-    <select name="empleado_id" required>
-        <option value="">Seleccione</option>
-        <?php
-        $emps = mysqli_query($conexion, "
-            SELECT id, nombre, apellido
-            FROM empleados
-            WHERE estado='activo'
-            ORDER BY nombre
-        ");
-        while ($e = mysqli_fetch_assoc($emps)) {
-            echo "<option value='{$e['id']}'>{$e['nombre']} {$e['apellido']}</option>";
-        }
-        ?>
-    </select>
-
-    <label>Concepto</label>
-    <input type="text" name="nombre" required placeholder="Ej: Préstamo">
-
-    <label>Tipo</label>
-    <select name="tipo">
-        <option value="fijo">Monto fijo</option>
-        <option value="porcentaje">Porcentaje</option>
-    </select>
-
-    <label>Monto</label>
-    <input type="number" step="0.01" name="monto" required>
-
-    <label>Cuotas</label>
-    <input type="number" name="cuotas" value="1" min="1">
-
-    <button type="submit">Asignar</button>
-</form>
-
-<br>
-
-<h3>📋 Deducciones por Empleado</h3>
-
-<table border="1" cellpadding="5">
-<tr>
-    <th>Empleado</th>
-    <th>Deducción</th>
-    <th>Monto</th>
-    <th>Cuotas</th>
-    <th>Estado</th>
-</tr>
-
-<?php
-$listado = mysqli_query($conexion, "
-    SELECT d.*, e.nombre AS emp_nombre, e.apellido
-    FROM deduccion_empleado d
-    INNER JOIN empleados e ON d.empleado_id = e.id
-    ORDER BY d.activa DESC
-");
-
-while ($d = mysqli_fetch_assoc($listado)) {
-?>
-<tr>
-    <td><?= $d['emp_nombre'] ?> <?= $d['apellido'] ?></td>
-    <td><?= $d['nombre'] ?></td>
-    <td><?= number_format($d['monto'],2) ?></td>
-    <td><?= $d['cuota_actual'] ?> / <?= $d['cuotas'] ?></td>
-    <td><?= $d['activa'] ? 'Activa' : 'Finalizada' ?></td>
-</tr>
-<?php } ?>
-</table>
-
+        <h3><i class="ri-list-ordered"></i> Registro de Deducciones por Empleado</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Deducción</th>
+                    <th>Monto</th>
+                    <th>Progreso Cuotas</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $listado = mysqli_query($conexion, "
+                    SELECT d.*, e.nombre AS emp_nombre, e.apellido
+                    FROM deduccion_empleado d
+                    INNER JOIN empleados e ON d.empleado_id = e.id
+                    ORDER BY d.activa DESC
+                ");
+                while ($d = mysqli_fetch_assoc($listado)) {
+                    $clase = $d['activa'] ? 'status-active' : 'status-off';
+                    $texto = $d['activa'] ? 'Activa' : 'Finalizada';
+                    echo "<tr>
+                            <td><strong>{$d['emp_nombre']} {$d['apellido']}</strong></td>
+                            <td>{$d['nombre']}</td>
+                            <td>" . number_format($d['monto'], 2) . "</td>
+                            <td>{$d['cuota_actual']} / {$d['cuotas']}</td>
+                            <td><span class='status-badge $clase'>$texto</span></td>
+                          </tr>";
+                }
+                ?>
+            </tbody>
+        </table>
 
     </div>
 </div>

@@ -7,18 +7,38 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel del Administrador</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="../css/administrador.css">
-<!-- Iconos RemixIcon -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Prestaciones - RRHH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/administrador.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --green-dark: #1f3a34;
+            --green-mid: #2b4a42;
+        }
+        .bg-custom-dark { background-color: var(--green-dark); }
+        .text-custom-dark { color: var(--green-dark); }
+        
+        /* Inputs más compactos */
+        .liq-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e2e2e2;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .liq-input:focus { border-color: var(--green-mid); box-shadow: 0 0 0 2px rgba(43, 74, 66, 0.1); }
+    </style>
 
 
 </head>
-<body class="bg-gray-100 p-4">
+<body>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -72,121 +92,123 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="" class="top-button">Función de nuestro sistema</a>
-        <a href="" class="top-button">Propósito</a>
-        <a href="" class="top-button">Visión</a>
+       
     </div>
 
     <!-- CONTENIDO -->
-    <div class="contenido">
-        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-gray-300">
-        
-        <div class="bg-yellow-500 p-4 border-b-4 border-blue-600">
-            <h1 class="text-center text-xl font-extrabold text-blue-900 uppercase tracking-tighter">
-                Cálculo de Prestaciones Sociales (Art. 142 LOTTT)
-            </h1>
-        </div>
-
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="space-y-4 bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-gray-700 border-b">Datos del Trabajador</h3>
-                    
-                    <div>
-                        <label class="block text-sm font-medium">Último Salario Integral (Bs.)</label>
-                        <input type="number" id="salario_integral" class="w-full p-2 border rounded" value="5000" oninput="calcularVenezuela()">
-                        <p class="text-[10px] text-gray-500 italic">*Incluye alícuota de bonos y utilidades.</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium">Años de Servicio</label>
-                        <input type="number" id="años" class="w-full p-2 border rounded" value="1" oninput="calcularVenezuela()">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium">Fracción meses (si aplica)</label>
-                        <input type="number" id="meses" class="w-full p-2 border rounded" value="0" oninput="calcularVenezuela()">
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <h3 class="font-bold text-gray-700 border-b">Cálculo de Garantía (Literal A y B)</h3>
-                    
-                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded">
-                        <span class="text-sm">Garantía Trimestral (15 días x Trimestre)</span>
-                        <span id="res_garantia" class="font-bold text-blue-700">0.00 Bs.</span>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded">
-                        <span class="text-sm">Días Adicionales (2 días por año)</span>
-                        <span id="res_adicionales" class="font-bold text-blue-700">0.00 Bs.</span>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-green-50 p-3 rounded border border-green-200">
-                        <span class="text-sm font-bold">Retroactividad (Literal C - 30 días/año)</span>
-                        <span id="res_retroactividad" class="font-bold text-green-700">0.00 Bs.</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-400 mb-6">
-                <p class="text-xs text-amber-800">
-                    <strong>Nota Legal:</strong> Según el Art. 142, el trabajador recibe lo que sea más favorable entre el acumulado de garantía (trimestral + adicionales) y el cálculo retroactivo (30 días por año al último salario).
-                </p>
-            </div>
-
-            <div class="bg-blue-900 text-white p-6 rounded-xl flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg opacity-80 uppercase">Monto Total a Pagar</h2>
-                    <p class="text-xs text-blue-300">Basado en el cálculo más favorable para el trabajador</p>
-                </div>
-                <div class="text-4xl font-black text-yellow-400" id="monto_final">
-                    0.00 Bs.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function calcularVenezuela() {
-            const salario = parseFloat(document.getElementById('salario_integral').value) || 0;
-            const anos = parseFloat(document.getElementById('años').value) || 0;
-            const meses = parseFloat(document.getElementById('meses').value) || 0;
-
-            // 1. Cálculo de Garantía Trimestral (Aprox 60 días al año)
-            const diasGarantia = anos * 60 + (meses * 5);
-            const totalGarantia = diasGarantia * (salario / 30);
-
-            // 2. Días Adicionales (2 días por cada año después del primero, máx 30)
-            let diasAdicionales = 0;
-            if (anos > 1) {
-                diasAdicionales = Math.min((anos - 1) * 2, 30);
-            }
-            const totalAdicionales = diasAdicionales * (salario / 30);
-
-            // 3. Retroactividad (30 días por cada año o fracción mayor a 6 meses)
-            let anosParaRetro = anos;
-            if (meses >= 6) anosParaRetro += 1;
-            const totalRetroactividad = (anosParaRetro * 30) * (salario / 30);
-
-            // 4. Comparativo (Lo que más beneficie al trabajador)
-            const acumuladoGarantia = totalGarantia + totalAdicionales;
-            const resultadoFinal = Math.max(acumuladoGarantia, totalRetroactividad);
-
-            // Formateo
-            const bsf = new Intl.NumberFormat('es-VE', { minimumFractionDigits: 2 });
+    <div class="contenido" >
+        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
             
-            document.getElementById('res_garantia').innerText = bsf.format(totalGarantia) + " Bs.";
-            document.getElementById('res_adicionales').innerText = bsf.format(totalAdicionales) + " Bs.";
-            document.getElementById('res_retroactividad').innerText = bsf.format(totalRetroactividad) + " Bs.";
-            document.getElementById('monto_final').innerText = bsf.format(resultadoFinal) + " Bs.";
-        }
+            <div class="bg-custom-dark p-3 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="ri-scales-3-line text-xl text-yellow-400"></i>
+                    <h1 class="text-sm font-bold uppercase tracking-wide">Prestaciones Sociales (Art. 142 LOTTT)</h1>
+                </div>
+                <button onclick="window.print()" class="text-[11px] bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1 rounded transition">
+                    <i class="ri-printer-line"></i> IMPRIMIR
+                </button>
+            </div>
 
-        window.onload = calcularVenezuela;
-    </script>
+            <div class="p-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <div class="space-y-3 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <h3 class="text-xs font-bold text-custom-dark uppercase border-b pb-1">Datos de Entrada</h3>
+                        
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Salario Integral (Bs.)</label>
+                            <input type="number" id="salario_integral" class="liq-input" value="5000" oninput="calcularVenezuela()">
+                        </div>
 
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Años</label>
+                                <input type="number" id="años" class="liq-input" value="1" oninput="calcularVenezuela()">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Meses</label>
+                                <input type="number" id="meses" class="liq-input" value="0" oninput="calcularVenezuela()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 space-y-2">
+                        <h3 class="text-xs font-bold text-custom-dark uppercase border-b pb-1">Desglose de Conceptos</h3>
+                        
+                        <div class="flex justify-between items-center p-2.5 border rounded-lg hover:bg-gray-50 transition">
+                            <div>
+                                <span class="text-[11px] font-bold text-gray-600 block uppercase">Garantía Trimestral</span>
+                                <span id="res_adicionales" class="text-[9px] text-gray-400">+ 0.00 Adicionales (2d/año)</span>
+                            </div>
+                            <span id="res_garantia" class="font-bold text-gray-700">0.00 Bs.</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-2.5 border-l-4 border-l-green-600 border-y border-r rounded-r-lg bg-green-50/20">
+                            <div>
+                                <span class="text-[11px] font-bold text-green-700 block uppercase">Retroactividad (30D)</span>
+                                <span class="text-[9px] text-green-600/60 italic">Cálculo basado en último salario</span>
+                            </div>
+                            <span id="res_retroactividad" class="font-bold text-gray-700">0.00 Bs.</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 px-2 py-1 bg-blue-50/50 rounded border border-blue-100">
+                            <i class="ri-information-line text-blue-500 text-xs"></i>
+                            <p class="text-[9px] text-blue-600 leading-tight">Se aplicará automáticamente el monto más favorable para el trabajador.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 bg-custom-dark rounded-lg p-4 text-white flex justify-between items-center shadow-inner relative overflow-hidden">
+                    <div class="absolute right-0 opacity-5 -rotate-12 translate-x-4">
+                        <i class="ri-scales-3-line text-7xl"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-[10px] uppercase opacity-70 tracking-widest font-bold">Monto Total a Liquidar</h2>
+                        <p class="text-[9px] italic opacity-50">Sujeto a retenciones de ley</p>
+                    </div>
+                    
+                    <div class="relative z-10 text-right">
+                        <span class="text-xs mr-1 font-light uppercase opacity-80">Bs.</span>
+                        <span id="monto_final" class="text-4xl font-black text-yellow-400 tracking-tighter">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    function calcularVenezuela() {
+        const salario = parseFloat(document.getElementById('salario_integral').value) || 0;
+        const anos = parseFloat(document.getElementById('años').value) || 0;
+        const meses = parseFloat(document.getElementById('meses').value) || 0;
+        const salarioDiario = salario / 30;
+
+        // 1. Garantía
+        const diasGarantia = (anos * 60) + (meses * 5);
+        const totalGarantia = diasGarantia * salarioDiario;
+
+        // 2. Adicionales
+        let diasAdicionales = (anos > 1) ? Math.min((anos - 1) * 2, 30) : 0;
+        const totalAdicionales = diasAdicionales * salarioDiario;
+
+        // 3. Retroactividad
+        let anosParaRetro = (meses >= 6) ? anos + 1 : anos;
+        const totalRetroactividad = (anosParaRetro * 30) * salarioDiario;
+
+        // Comparación
+        const resultadoFinal = Math.max(totalGarantia + totalAdicionales, totalRetroactividad);
+
+        const bsf = new Intl.NumberFormat('es-VE', { minimumFractionDigits: 2 });
+        
+        document.getElementById('res_garantia').innerText = bsf.format(totalGarantia) + " Bs.";
+        document.getElementById('res_adicionales').innerText = "+ " + bsf.format(totalAdicionales) + " Adicionales (2d/año)";
+        document.getElementById('res_retroactividad').innerText = bsf.format(totalRetroactividad) + " Bs.";
+        document.getElementById('monto_final').innerText = bsf.format(resultadoFinal);
+    }
+    window.onload = calcularVenezuela;
+</script>
 
 </body>
 </html>

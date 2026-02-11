@@ -25,9 +25,9 @@ $saldos = mysqli_query($conexion, "
 ");
 
 /* ===========================
-   PROCESAR FORMULARIO
+   PROCESAR FORMULARIO (Lógica Corregida)
 =========================== */
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['empleado_id'])) {
 
     $empleado_id = intval($_POST['empleado_id']);
     $fecha_inicio = $_POST['fecha_inicio'];
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $observaciones = mysqli_real_escape_string($conexion, $_POST['observaciones']);
     $creada_por = $_SESSION['usuario'];
 
-    // Obtener saldo
+    // 1. OBTENER O CREAR SALDO AUTOMÁTICAMENTE
     $qSaldo = mysqli_query($conexion, "
         SELECT dias_pendientes 
         FROM vacaciones_saldo 
@@ -43,17 +43,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ");
 
     if (mysqli_num_rows($qSaldo) == 0) {
-        header("Location: vacaciones.php?error=saldo");
-        exit();
+        $dias_base = 15; // Días iniciales por ley
+        mysqli_query($conexion, "
+            INSERT INTO vacaciones_saldo 
+            (empleado_id, anio, dias_acumulados, dias_disfrutados, dias_pendientes, actualizado_en) 
+            VALUES ($empleado_id, $anio_actual, $dias_base, 0, $dias_base, NOW())
+        ");
+        // Volvemos a consultar para tener el dato listo
+        $qSaldo = mysqli_query($conexion, "SELECT dias_pendientes FROM vacaciones_saldo WHERE empleado_id=$empleado_id AND anio=$anio_actual");
     }
 
     $saldo = mysqli_fetch_assoc($qSaldo);
     $dias_disponibles = $saldo['dias_pendientes'];
 
-    // Calcular días
+    // 2. CALCULAR DÍAS SOLICITADOS Y FERIADOS
     $inicio = new DateTime($fecha_inicio);
     $fin = new DateTime($fecha_fin);
-    $fin->modify('+1 day');
+    $fin->modify('+1 day'); // Para incluir el último día en el conteo
 
     $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fin);
 
@@ -65,15 +71,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dias_totales++;
         $f = $fecha->format('Y-m-d');
 
-        $q = mysqli_query($conexion, "SELECT id_feriado FROM feriados WHERE fecha='$f'");
-        if (mysqli_num_rows($q) > 0) {
+        // Verificar si este día es feriado en tu tabla 'feriados'
+        $qF = mysqli_query($conexion, "SELECT id_feriado FROM feriados WHERE fecha='$f'");
+        if (mysqli_num_rows($qF) > 0) {
             $dias_feriados++;
-            $row = mysqli_fetch_assoc($q);
-            $feriados_ids[] = $row['id_feriado'];
+            $rowF = mysqli_fetch_assoc($qF);
+            $feriados_ids[] = $rowF['id_feriado'];
         }
     }
 
     $dias_habiles = $dias_totales - $dias_feriados;
+
+    // 3. VALIDACIÓN FINAL Y GUARDADO
+    if ($dias_habiles > $dias_disponibles) {
+        header("Location: vacaciones.php?error=exceso");
+        exit();
+    }
+
+    $sqlInsertVac = "INSERT INTO vacaciones (
+        empleado_id, fecha_inicio, fecha_fin,
+        dias_solicitados, dias_habiles, dias_feriados,
+        observaciones, creada_por, estado
+    ) VALUES (
+        $empleado_id, '$fecha_inicio', '$fecha_fin',
+        $dias_totales, $dias_habiles, $dias_feriados,
+        '$observaciones', '$creada_por', 'pendiente'
+    )";
+
+    if (mysqli_query($conexion, $sqlInsertVac)) {
+        $id_vacacion = mysqli_insert_id($conexion);
+        // Registrar relación con feriados encontrados
+        foreach ($feriados_ids as $id_fer) {
+            mysqli_query($conexion, "INSERT INTO vacaciones_feriados (id_vacacion, id_feriado) VALUES ($id_vacacion, $id_fer)");
+        }
+        header("Location: vacaciones.php?ok=1");
+    } else {
+        die("Error al guardar: " . mysqli_error($conexion));
+    }
+    exit();
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $empleado_id = intval($_POST['empleado_id']);
+    $fecha_inicio = $_POST['fecha_inicio'];
+    $fecha_fin = $_POST['fecha_fin'];
+    $observaciones = mysqli_real_escape_string($conexion, $_POST['observaciones']);
+    $creada_por = $_SESSION['usuario'];
+
+    // --- AQUÍ EMPIEZA EL CAMBIO ---
+    
+    // Intentar obtener saldo
+    $qSaldo = mysqli_query($conexion, "
+        SELECT dias_pendientes 
+        FROM vacaciones_saldo 
+        WHERE empleado_id=$empleado_id AND anio=$anio_actual
+    ");
+
+    // Si el registro NO existe, lo creamos automáticamente
+    if (mysqli_num_rows($qSaldo) == 0) {
+        $dias_base = 15; // Días de ley iniciales
+        
+        $sqlInsert = "INSERT INTO vacaciones_saldo 
+                      (empleado_id, anio, dias_acumulados, dias_disfrutados, dias_pendientes, actualizado_en) 
+                      VALUES ($empleado_id, $anio_actual, $dias_base, 0, $dias_base, NOW())";
+        
+        if (mysqli_query($conexion, $sqlInsert)) {
+            // Volvemos a consultar para continuar con el flujo normal
+            $qSaldo = mysqli_query($conexion, "SELECT dias_pendientes FROM vacaciones_saldo WHERE empleado_id=$empleado_id AND anio=$anio_actual");
+        } else {
+            die("Error al inicializar saldo: " . mysqli_error($conexion));
+        }
+    }
+
+    $saldo = mysqli_fetch_assoc($qSaldo);
+    $dias_disponibles = $saldo['dias_pendientes'];
+
+    // --- AQUÍ TERMINA EL CAMBIO Y SIGUE TU LÓGICA DE CALCULAR DÍAS ---
+
+    $inicio = new DateTime($fecha_inicio);
+    // ... resto de tu código igual ...
 
     // Validar saldo suficiente
     if ($dias_habiles > $dias_disponibles) {

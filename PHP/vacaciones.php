@@ -33,7 +33,7 @@ function calcularDiasVacaciones($fecha_ingreso, $dias_anuales = 15) {
 }
 
 /* =====================================
-   SALDOS DE VACACIONES (DINÁMICOS)
+   SALDOS DE VACACIONES (CON DÍAS ACUMULADOS)
 ===================================== */
 $saldos = mysqli_query($conexion, "
     SELECT 
@@ -42,10 +42,11 @@ $saldos = mysqli_query($conexion, "
         e.nombre,
         e.apellido,
         e.fecha_ingreso,
-        COALESCE(vs.dias_disfrutados,0) as dias_disfrutados
+        COALESCE(vs.dias_disfrutados, 0) as dias_disfrutados,
+        COALESCE(vs.dias_acumulados, 0) as dias_acumulados -- Agregado para evitar el Warning
     FROM empleados e
     LEFT JOIN vacaciones_saldo vs 
-        ON e.id = vs.empleado_id AND vs.anio = $anio_actual
+        ON e.id = vs.empleado_id AND vs.anio = '$anio_actual'
     WHERE e.estado='activo'
     ORDER BY e.nombre
 ");
@@ -143,39 +144,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
     }
 
-    /* ===============================
-       ACTUALIZAR O CREAR SALDO
-    =============================== */
+  /* ===============================
+    ACTUALIZAR O CREAR SALDO
+=============================== */
+$nuevo_disfrutado = $dias_disfrutados + $dias_habiles;
 
-    $nuevo_disfrutado = $dias_disfrutados + $dias_habiles;
+$sqlCheck = "SELECT id FROM vacaciones_saldo WHERE empleado_id=$empleado_id AND anio=$anio_actual";
+$checkSaldo = mysqli_query($conexion, $sqlCheck);
 
-    $checkSaldo = mysqli_query($conexion, "
-        SELECT id FROM vacaciones_saldo
+// VALIDACIÓN: Si la consulta falló, mostramos el error de SQL
+if (!$checkSaldo) {
+    die("Error en SQL: " . mysqli_error($conexion) . " | Consulta: " . $sqlCheck);
+}
+
+if (mysqli_num_rows($checkSaldo) > 0) {
+    // UPDATE
+    mysqli_query($conexion, "
+        UPDATE vacaciones_saldo
+        SET dias_disfrutados = $nuevo_disfrutado,
+            dias_pendientes = ($dias_acumulados - $nuevo_disfrutado)
         WHERE empleado_id=$empleado_id AND anio=$anio_actual
     ");
-
-    if (mysqli_num_rows($checkSaldo) > 0) {
-
-        mysqli_query($conexion, "
-            UPDATE vacaciones_saldo
-            SET dias_disfrutados = $nuevo_disfrutado
-            WHERE empleado_id=$empleado_id AND anio=$anio_actual
-        ");
-
-    } else {
-
-        mysqli_query($conexion, "
-            INSERT INTO vacaciones_saldo 
-            (empleado_id, anio, dias_acumulados, dias_disfrutados, dias_pendientes)
-            VALUES (
-                $empleado_id,
-                $anio_actual,
-                $dias_acumulados,
-                $nuevo_disfrutado,
-                ".($dias_acumulados - $nuevo_disfrutado)."
-            )
-        ");
-    }
+} else {
+    // INSERT
+    $dias_pendientes = $dias_acumulados - $nuevo_disfrutado;
+    mysqli_query($conexion, "
+        INSERT INTO vacaciones_saldo 
+        (empleado_id, anio, dias_acumulados, dias_disfrutados, dias_pendientes)
+        VALUES (
+            $empleado_id, $anio_actual, $dias_acumulados, $nuevo_disfrutado, $dias_pendientes
+        )
+    ");
+}
 
     header("Location: vacaciones.php?ok=1");
     exit();
@@ -349,13 +349,22 @@ table th{
 <th>Días Pendientes</th>
 </tr>
 
-<?php while($s = mysqli_fetch_assoc($saldos)): ?>
+<?php while($s = mysqli_fetch_assoc($saldos)): 
+    // Calculamos los días que le corresponden por ley según su fecha de ingreso
+    $acumulados_reales = calcularDiasVacaciones($s['fecha_ingreso']);
+    
+    // Los disfrutados vienen de la base de datos (ya tienen COALESCE en el SQL)
+    $disfrutados = $s['dias_disfrutados'];
+    
+    // La diferencia es lo que le queda
+    $pendientes = $acumulados_reales - $disfrutados;
+?>
 <tr>
-<td><?php echo $s['cedula']; ?></td>
-<td><?php echo $s['nombre']." ".$s['apellido']; ?></td>
-<td><?php echo $s['dias_acumulados']; ?></td>
-<td><?php echo $s['dias_disfrutados']; ?></td>
-<td><?php echo $s['dias_pendientes']; ?></td>
+    <td><?php echo $s['cedula']; ?></td>
+    <td><?php echo $s['nombre']." ".$s['apellido']; ?></td>
+    <td><?php echo $acumulados_reales; ?></td>
+    <td><?php echo $disfrutados; ?></td>
+    <td><?php echo ($pendientes < 0) ? 0 : $pendientes; ?></td>
 </tr>
 <?php endwhile; ?>
 
@@ -381,8 +390,8 @@ table th{
 <?php while($v = mysqli_fetch_assoc($vacaciones)): ?>
 <tr>
 <td><?php echo $v['nombre']." ".$v['apellido']; ?></td>
-<td><?php echo $v['fecha_inicio']; ?></td>
-<td><?php echo $v['fecha_fin']; ?></td>
+<td><?php echo date('d/m/Y', strtotime($v['fecha_inicio'])); ?></td>
+<td><?php echo date('d/m/Y', strtotime($v['fecha_fin'])); ?></td>
 <td><?php echo $v['dias_solicitados']; ?></td>
 <td><?php echo $v['dias_habiles']; ?></td>
 <td><?php echo $v['dias_feriados']; ?></td>

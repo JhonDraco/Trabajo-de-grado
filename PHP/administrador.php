@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/administrador.css">
+<link rel="stylesheet" href="../css/asignaciones.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -33,7 +33,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
-    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
     <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
     
     <a href="listar_empleados.php">
@@ -48,10 +48,9 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     </a>
              
     <a href="contactar.php">
-      <i class="ri-mail-line"></i> Agendar entrevistas 
+      <i class="ri-mail-line"></i> Email 
     </a>
     
-   
 </a>
 
    

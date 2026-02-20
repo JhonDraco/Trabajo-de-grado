@@ -74,7 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
-    <a href=""><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    
+    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
     <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
     
      <a href="listar_empleados.php"  class="active">
@@ -88,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </a>
              
     <a href="contactar.php">
-      <i class="ri-mail-line"></i> Agendar entrevistas 
+      <i class="ri-mail-line"></i> Email
     </a>
     
    

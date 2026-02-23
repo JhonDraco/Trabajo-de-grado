@@ -7,6 +7,26 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
 include("db.php");
 
+function calcularDiasVacaciones($fecha_ingreso, $dias_anuales = 15) {
+    $fechaIngreso = new DateTime($fecha_ingreso);
+    $hoy = new DateTime();
+
+    if ($fechaIngreso > $hoy) {
+        return 0;
+    }
+
+    $intervalo = $fechaIngreso->diff($hoy);
+
+    $mesesTrabajados = ($intervalo->y * 12) + $intervalo->m;
+
+    $diasPorMes = $dias_anuales / 12;
+
+    $diasAcumulados = $mesesTrabajados * $diasPorMes;
+
+    return floor($diasAcumulados);
+}
+
+
 $anio_actual = date('Y');
 
 /* =====================================
@@ -360,11 +380,18 @@ table th{
     $pendientes = $acumulados_reales - $disfrutados;
 ?>
 <tr>
+<<<<<<< Updated upstream
     <td><?php echo $s['cedula']; ?></td>
     <td><?php echo $s['nombre']." ".$s['apellido']; ?></td>
     <td><?php echo $acumulados_reales; ?></td>
     <td><?php echo $disfrutados; ?></td>
     <td><?php echo ($pendientes < 0) ? 0 : $pendientes; ?></td>
+=======
+    <td><?= $s['nombre']." ".$s['apellido'] ?></td>
+    <td><?= $s['dias_acumulados'] ?></td>
+    <td><?= $s['dias_disfrutados'] ?></td>
+    <td><strong><?= $saldo ?></strong></td>
+>>>>>>> Stashed changes
 </tr>
 <?php endwhile; ?>
 

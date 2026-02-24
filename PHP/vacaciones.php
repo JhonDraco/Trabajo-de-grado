@@ -380,18 +380,11 @@ table th{
     $pendientes = $acumulados_reales - $disfrutados;
 ?>
 <tr>
-<<<<<<< Updated upstream
     <td><?php echo $s['cedula']; ?></td>
     <td><?php echo $s['nombre']." ".$s['apellido']; ?></td>
     <td><?php echo $acumulados_reales; ?></td>
     <td><?php echo $disfrutados; ?></td>
     <td><?php echo ($pendientes < 0) ? 0 : $pendientes; ?></td>
-=======
-    <td><?= $s['nombre']." ".$s['apellido'] ?></td>
-    <td><?= $s['dias_acumulados'] ?></td>
-    <td><?= $s['dias_disfrutados'] ?></td>
-    <td><strong><?= $saldo ?></strong></td>
->>>>>>> Stashed changes
 </tr>
 <?php endwhile; ?>
 

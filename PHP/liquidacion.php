@@ -130,6 +130,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                         <i class="ri-user-settings-fill text-custom-dark text-sm"></i>
                         <h3 class="text-xs font-bold text-custom-dark uppercase tracking-tight">Información del Trabajador</h3>
                     </div>
+                <div class="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <label class="flex items-center cursor-pointer gap-2">
+                        <input type="checkbox" id="despido_injustificado" onchange="calcularVenezuela()" class="w-4 h-4 accent-custom-dark">
+                        <span class="text-[10px] font-bold text-yellow-800 uppercase">¿Despido Injustificado? (Art. 92)</span>
+                        </label>
+                </div>
                     
                     <div class="grid grid-cols-1 gap-3">
                         <div>
@@ -251,29 +257,76 @@ function calcularTiempoServicio(fechaIngreso) {
 
 // 2. Función de cálculo de dinero (Mantenla igual)
 function calcularVenezuela() {
-    const salario = parseFloat(document.getElementById('salario_integral').value) || 0;
+    // 1. OBTENER DATOS
+    const salarioBase = parseFloat(document.getElementById('salario_integral').value) || 0;
     const anos = parseFloat(document.getElementById('años').value) || 0;
     const meses = parseFloat(document.getElementById('meses').value) || 0;
-    const salarioDiario = salario / 30;
+    const esInjustificado = document.getElementById('despido_injustificado').checked;
 
+    
+
+    // 2. CONVERTIR A SALARIO INTEGRAL (Ley: Base + Alícuotas)
+    // Alícuota Utilidades (30 días/360) + Alícuota Bono Vac (15 días/360)
+    const factorIntegral = 1 + (30/360) + (15/360);
+    const salarioIntegralMensual = salarioBase * factorIntegral;
+    const salarioDiarioIntegral = salarioIntegralMensual / 30;
+    const salarioDiarioBase = salarioBase / 30;
+
+    // 3. PRESTACIONES SOCIALES (Art. 142)
     const diasGarantia = (anos * 60) + (meses * 5);
-    const totalGarantia = diasGarantia * salarioDiario;
+    const totalGarantia = diasGarantia * salarioDiarioIntegral;
 
     let diasAdicionales = (anos > 1) ? Math.min((anos - 1) * 2, 30) : 0;
-    const totalAdicionales = diasAdicionales * salarioDiario;
+    const totalAdicionales = diasAdicionales * salarioDiarioIntegral;
 
     let anosParaRetro = (meses >= 6) ? anos + 1 : anos;
-    const totalRetroactividad = (anosParaRetro * 30) * salarioDiario;
+    const totalRetroactividad = (anosParaRetro * 30) * salarioDiarioIntegral;
 
-    const resultadoFinal = Math.max(totalGarantia + totalAdicionales, totalRetroactividad);
+    // Monto mayor entre Garantía+Adicionales vs Retroactividad
+    const prestacionesSociales = Math.max(totalGarantia + totalAdicionales, totalRetroactividad);
+
+    // 4. CONCEPTOS PROPORCIONALES (Estimación legal)
+    // Utilidades proporcionales (aprox 2.5 días por mes trabajado en el año)
+    const mesesFraccion = (meses > 0) ? meses : 6; // Si no se sabe, se estiman 6 meses
+    const utilidadesProp = (mesesFraccion * 2.5) * salarioDiarioBase;
+    
+    // Bono Vacacional proporcional (aprox 1.25 días por mes desde aniversario)
+    const bonoVacProp = (mesesFraccion * 1.25) * salarioDiarioBase;
+
+    // 5. INDEMNIZACIÓN (Art. 92 - "La Doble")
+    let montoIndemnizacion = esInjustificado ? prestacionesSociales : 0;
+
+    // TOTAL FINAL
+    const resultadoFinal = prestacionesSociales + montoIndemnizacion + utilidadesProp + bonoVacProp;
+
+    // FORMATEO Y MOSTRAR EN PANTALLA
     const bsf = new Intl.NumberFormat('es-VE', { minimumFractionDigits: 2 });
     
-    document.getElementById('res_garantia').innerText = bsf.format(totalGarantia) + " Bs.";
-    document.getElementById('res_adicionales').innerText = "+ " + bsf.format(totalAdicionales) + " Adicionales (2d/año)";
-    document.getElementById('res_retroactividad').innerText = bsf.format(totalRetroactividad) + " Bs.";
-    document.getElementById('monto_final').innerText = bsf.format(resultadoFinal);
+    // ... dentro de calcularVenezuela ...
+
+// 1. Validamos si el trabajador tiene al menos un tiempo mínimo
+if (anos === 0 && meses === 0) {
+    // Si quieres que sea CERO absoluto hasta que cumpla un mes:
+    document.getElementById('monto_final').innerText = "0.00";
+    // Opcional: puedes calcular solo los DÍAS trabajados si quieres ser ultra exacto
+    return; 
 }
 
+// 2. Si quieres que calcule por DÍAS (fracción de mes)
+// Supongamos que calculamos la fracción del mes actual
+let fraccionMesUtilidades = (meses === 0 && anos === 0) ? 0.5 : meses; 
+// (Esto es solo si quieres que de algo, si quieres que de 0, deja que meses sea 0)
+    document.getElementById('res_garantia').innerText = bsf.format(totalGarantia) + " Bs.";
+    document.getElementById('res_adicionales').innerText = "+ " + bsf.format(totalAdicionales) + " Adic.";
+    document.getElementById('res_retroactividad').innerText = bsf.format(totalRetroactividad) + " Bs.";
+    
+    // Mostramos los nuevos conceptos si tienes los IDs en el HTML
+    if(document.getElementById('res_utilidades')) document.getElementById('res_utilidades').innerText = bsf.format(utilidadesProp) + " Bs.";
+    if(document.getElementById('res_bonovac')) document.getElementById('res_bonovac').innerText = bsf.format(bonoVacProp) + " Bs.";
+    if(document.getElementById('res_indemnizacion')) document.getElementById('res_indemnizacion').innerText = bsf.format(montoIndemnizacion) + " Bs.";
+
+    document.getElementById('monto_final').innerText = bsf.format(resultadoFinal);
+}
 // 3. EVENTOS: Esto es lo que debes corregir
 window.onload = function() {
     // Ejecutar cálculo inicial

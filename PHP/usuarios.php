@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <i class="ri-team-line"></i> Empleados
     </a>
     <a href="listar_usuario.php"  class="active">
-        <i class="ri-user-settings-line"></i> Usuarios
+        <i class="ri-user-settings-line"></i> Roles
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes

@@ -276,7 +276,7 @@ if (isset($_POST['generar_nomina'])) {
         <i class="ri-team-line"></i> Empleados
     </a>
     <a href="listar_usuario.php">
-        <i class="ri-user-settings-line"></i> Usuarios
+        <i class="ri-user-settings-line"></i> Roles
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes

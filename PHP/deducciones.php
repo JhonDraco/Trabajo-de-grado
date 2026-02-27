@@ -96,7 +96,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
     </a>
 
     <a href="listar_usuario.php">
-        <i class="ri-user-settings-line"></i> Usuarios
+        <i class="ri-user-settings-line"></i> Roles
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes

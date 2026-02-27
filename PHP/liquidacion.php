@@ -71,7 +71,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     </a>
 
     <a href="listar_usuario.php">
-        <i class="ri-user-settings-line"></i> Usuarios
+        <i class="ri-user-settings-line"></i> Roles
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
@@ -159,13 +159,13 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
                         <div>
                             <label class="block text-[9px] font-bold text-gray-500 mb-1 uppercase tracking-tighter">Salario Integral Mensual (Bs.)</label>
-                            <input type="number" id="salario_integral" class="liq-input font-bold text-green-700" value="5000" oninput="calcularVenezuela()">
+                            <input type="number" id="salario_integral" class="liq-input font-bold text-green-700" value="0" oninput="calcularVenezuela()">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 p-2 bg-white rounded-lg border border-gray-200">
                             <div>
                                 <label class="block text-[9px] font-bold text-gray-400 mb-1 uppercase text-center italic">Años de Serv.</label>
-                                <input type="number" id="años" class="liq-input text-center font-bold" value="1" oninput="calcularVenezuela()">
+                                <input type="number" id="años" class="liq-input text-center font-bold" value="0" oninput="calcularVenezuela()">
                             </div>
                             <div>
                                 <label class="block text-[9px] font-bold text-gray-400 mb-1 uppercase text-center italic">Meses Adic.</label>

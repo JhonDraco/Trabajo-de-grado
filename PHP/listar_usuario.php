@@ -42,7 +42,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
         <i class="ri-team-line"></i> Empleados
 
     <a href="listar_usuario.php"  class="active">
-        <i class="ri-user-settings-line"></i> Usuarios
+        <i class="ri-user-settings-line"></i> Roles
     </a>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes

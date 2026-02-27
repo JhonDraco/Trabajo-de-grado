@@ -399,13 +399,6 @@ if (isset($_POST['generar_nomina'])) {
                 <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
                 <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
 
-                <label><b>Tipo de Nómina</b></label>
-                <select name="tipo">
-                    <option value="semanal">Semanal</option>
-                    <option value="quincenal">Quincenal</option>
-                    <option value="mensual">Mensual</option>
-                </select>
-
                 <button type="submit" name="generar_nomina" class="btn-generar">
                       <i class="ri-check-double-line"></i> Generar Nómina Definitiva
                 </button>

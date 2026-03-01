@@ -1,285 +1,297 @@
 <?php
-
-
+session_start();
 include("db.php");
 
-$anio_actual = date('Y');
+if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
+    header("Location: index.php");
+    exit();
+}
 
-/* ===========================
-   SALDOS DE VACACIONES
-=========================== */
-$saldos = mysqli_query($conexion, "
-    SELECT 
-        e.id,
-        e.cedula,
-        e.nombre,
-        e.apellido,
-        vs.anio,
-        vs.dias_acumulados,
-        vs.dias_disfrutados,
-        vs.dias_pendientes
-    FROM vacaciones_saldo vs
-    INNER JOIN empleados e ON vs.empleado_id = e.id
-    WHERE vs.anio = $anio_actual
-    ORDER BY e.nombre
-");
+/* ======================================================
+   FUNCION CALCULAR SALDO
+====================================================== */
+function calcularSaldo($conexion, $empleado_id) {
 
-/* ===========================
-   PROCESAR FORMULARIO
-=========================== */
+    $q = mysqli_query($conexion, "SELECT fecha_ingreso FROM empleados WHERE id=$empleado_id");
+    $emp = mysqli_fetch_assoc($q);
+    if (!$emp) return 0;
+
+    $fecha_ingreso = new DateTime($emp['fecha_ingreso']);
+    $hoy = new DateTime();
+    $antiguedad = $fecha_ingreso->diff($hoy)->y;
+
+    if ($antiguedad < 1) return 0;
+
+    $dias_acumulados = 15 + $antiguedad;
+
+    $q2 = mysqli_query($conexion, "
+        SELECT SUM(dias_habiles) as total 
+        FROM vacaciones 
+        WHERE empleado_id=$empleado_id 
+        AND estado='aprobado'
+    ");
+
+    $usados = mysqli_fetch_assoc($q2)['total'];
+    $usados = $usados ? $usados : 0;
+
+    return $dias_acumulados - $usados;
+}
+
+/* ======================================================
+   FUNCION CALCULAR DIAS HABILES
+====================================================== */
+function calcularDiasHabiles($conexion, $inicio, $fin) {
+
+    $fin->modify('+1 day');
+    $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fin);
+
+    $dias = 0;
+
+    foreach ($periodo as $fecha) {
+
+        $diaSemana = $fecha->format('N');
+        $f = $fecha->format('Y-m-d');
+
+        // Excluir sábado (6) y domingo (7)
+        if ($diaSemana >= 6) continue;
+
+        // Excluir feriados
+        $q = mysqli_query($conexion, "SELECT id FROM feriados WHERE fecha='$f'");
+        if (mysqli_num_rows($q) > 0) continue;
+
+        $dias++;
+    }
+
+    return $dias;
+}
+
+/* ======================================================
+   VALIDAR SOLAPAMIENTO
+====================================================== */
+function haySolapamiento($conexion, $empleado_id, $inicio, $fin) {
+
+    $i = $inicio->format('Y-m-d');
+    $f = $fin->format('Y-m-d');
+
+    $q = mysqli_query($conexion, "
+        SELECT id FROM vacaciones
+        WHERE empleado_id=$empleado_id
+        AND estado IN ('pendiente','aprobado')
+        AND (
+            ('$i' BETWEEN fecha_inicio AND fecha_fin)
+            OR ('$f' BETWEEN fecha_inicio AND fecha_fin)
+            OR (fecha_inicio BETWEEN '$i' AND '$f')
+        )
+    ");
+
+    return mysqli_num_rows($q) > 0;
+}
+
+/* ======================================================
+   APROBAR / RECHAZAR
+====================================================== */
+if (isset($_GET['accion']) && isset($_GET['id'])) {
+
+    $id = intval($_GET['id']);
+
+    $q = mysqli_query($conexion, "SELECT empleado_id FROM vacaciones WHERE id=$id");
+    $v = mysqli_fetch_assoc($q);
+
+    if ($v) {
+
+        $saldo = calcularSaldo($conexion, $v['empleado_id']);
+
+        if ($_GET['accion'] == "aprobar") {
+
+            $q2 = mysqli_query($conexion, "SELECT dias_habiles FROM vacaciones WHERE id=$id");
+            $dias = mysqli_fetch_assoc($q2)['dias_habiles'];
+
+            if ($dias > $saldo) {
+                header("Location: vacaciones.php?error=saldo_insuficiente");
+                exit();
+            }
+
+            mysqli_query($conexion, "UPDATE vacaciones SET estado='aprobado' WHERE id=$id");
+        }
+
+        if ($_GET['accion'] == "rechazar") {
+            mysqli_query($conexion, "UPDATE vacaciones SET estado='rechazado' WHERE id=$id");
+        }
+    }
+
+    header("Location: vacaciones.php");
+    exit();
+}
+
+/* ======================================================
+   NUEVA SOLICITUD
+====================================================== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $empleado_id = intval($_POST['empleado_id']);
     $fecha_inicio = $_POST['fecha_inicio'];
     $fecha_fin = $_POST['fecha_fin'];
     $observaciones = mysqli_real_escape_string($conexion, $_POST['observaciones']);
-    $creada_por = $_SESSION['usuario'];
 
-    // Obtener saldo
-    $qSaldo = mysqli_query($conexion, "
-        SELECT dias_pendientes 
-        FROM vacaciones_saldo 
-        WHERE empleado_id=$empleado_id AND anio=$anio_actual
-    ");
-
-    if (mysqli_num_rows($qSaldo) == 0) {
-        header("Location: vacaciones.php?error=saldo");
+    if (!$empleado_id || !$fecha_inicio || !$fecha_fin) {
+        header("Location: vacaciones.php?error=campos");
         exit();
     }
 
-    $saldo = mysqli_fetch_assoc($qSaldo);
-    $dias_disponibles = $saldo['dias_pendientes'];
-
-    // Calcular días
     $inicio = new DateTime($fecha_inicio);
     $fin = new DateTime($fecha_fin);
-    $fin->modify('+1 day');
+    $hoy = new DateTime();
 
-    $periodo = new DatePeriod($inicio, new DateInterval('P1D'), $fin);
-
-    $dias_totales = 0;
-    $dias_feriados = 0;
-    $feriados_ids = [];
-
-    foreach ($periodo as $fecha) {
-        $dias_totales++;
-        $f = $fecha->format('Y-m-d');
-
-        $q = mysqli_query($conexion, "SELECT id_feriado FROM feriados WHERE fecha='$f'");
-        if (mysqli_num_rows($q) > 0) {
-            $dias_feriados++;
-            $row = mysqli_fetch_assoc($q);
-            $feriados_ids[] = $row['id_feriado'];
-        }
+    if ($inicio > $fin) {
+        header("Location: vacaciones.php?error=fechas");
+        exit();
     }
 
-    $dias_habiles = $dias_totales - $dias_feriados;
+    if ($inicio < $hoy) {
+        header("Location: vacaciones.php?error=pasado");
+        exit();
+    }
 
-    // Validar saldo suficiente
-    if ($dias_habiles > $dias_disponibles) {
+    if (haySolapamiento($conexion, $empleado_id, $inicio, $fin)) {
+        header("Location: vacaciones.php?error=solapamiento");
+        exit();
+    }
+
+    $dias_habiles = calcularDiasHabiles($conexion, clone $inicio, clone $fin);
+    $saldo = calcularSaldo($conexion, $empleado_id);
+
+    if ($saldo <= 0) {
+        header("Location: vacaciones.php?error=sin_derecho");
+        exit();
+    }
+
+    if ($dias_habiles > $saldo) {
         header("Location: vacaciones.php?error=exceso");
         exit();
     }
 
-    // Insertar vacaciones
     mysqli_query($conexion, "
         INSERT INTO vacaciones (
             empleado_id, fecha_inicio, fecha_fin,
-            dias_solicitados, dias_habiles, dias_feriados,
-            observaciones, creada_por
+            dias_solicitados, dias_habiles,
+            estado
         ) VALUES (
-            $empleado_id, '$fecha_inicio', '$fecha_fin',
-            $dias_totales, $dias_habiles, $dias_feriados,
-            '$observaciones', '$creada_por'
+            $empleado_id,
+            '$fecha_inicio',
+            '$fecha_fin',
+            $dias_habiles,
+            $dias_habiles,
+            'pendiente'
         )
     ");
-
-    $id_vacacion = mysqli_insert_id($conexion);
-
-    foreach ($feriados_ids as $id_feriado) {
-        mysqli_query($conexion, "
-            INSERT INTO vacaciones_feriados (id_vacacion, id_feriado)
-            VALUES ($id_vacacion, $id_feriado)
-        ");
-    }
 
     header("Location: vacaciones.php?ok=1");
     exit();
 }
 
-/* ===========================
-   DATOS PARA VISTA
-=========================== */
-$empleados = mysqli_query($conexion, "
-    SELECT id, nombre, apellido 
-    FROM empleados 
-    WHERE estado='activo'
-");
+/* ======================================================
+   AJAX SALDO
+====================================================== */
+if (isset($_GET['saldo_empleado'])) {
+    echo calcularSaldo($conexion, intval($_GET['saldo_empleado']));
+    exit();
+}
 
+/* ======================================================
+   DATOS
+====================================================== */
+$empleados = mysqli_query($conexion, "SELECT id,nombre,apellido FROM empleados WHERE estado='activo'");
 $vacaciones = mysqli_query($conexion, "
     SELECT v.*, e.nombre, e.apellido
     FROM vacaciones v
-    JOIN empleados e ON v.empleado_id = e.id
-    ORDER BY v.creada_en DESC
+    JOIN empleados e ON v.empleado_id=e.id
+    ORDER BY v.id DESC
 ");
 ?>
-
-
-<?php
-session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/vacasiones.css">
-<!-- Iconos RemixIcon -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<title>Vacaciones</title>
+<script>
+function obtenerSaldo(id) {
+    if (id == "") {
+        document.getElementById("saldo").innerHTML = "";
+        return;
+    }
 
-
+    fetch("vacaciones.php?saldo_empleado=" + id)
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("saldo").innerHTML = "Saldo disponible: " + data + " días";
+    });
+}
+</script>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-     <div class="sidebar-header">
-       
-        <h2>RRHH Admin</h2>
-         <i class="ri-building-2-fill logo-icon"></i>
-    </div>
-    <a href="administrador.php" >
-        <i class="ri-home-4-line"></i> Inicio
-    </a>
-    <a href="nomina.php">
-        <i class="ri-money-dollar-circle-line"></i> Nómina
-    </a>
+<h2>Gestión de Vacaciones</h2>
 
-    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php" class="active">  <i class="ri-sun-line"></i></i> Vacaciones</a>
-    
-    <a href="listar_empleados.php">
-        <i class="ri-team-line"></i> Empleados
-    </a>
+<form method="post">
 
-    <a href="listar_usuario.php">
-        <i class="ri-user-settings-line"></i> Roles
-    </a>
-    <a href="reportes.php">
-        <i class="ri-bar-chart-line"></i> Reportes
-    </a>
-             
-    <a href="contactar.php">
-      <i class="ri-mail-line"></i> Email 
-    </a>
-    
-   
-</a>
-
-   
-</aside>
-
-
-<div class="main">
-
-    <!-- HEADER -->
-    <header>
-        <h2>Panel de Administración - RRHH</h2>
-        <div>
-            <span>👤 <?php echo $_SESSION['usuario']; ?></span> |
-            <a href="cerrar_sesion.php">Cerrar sesión</a>
-        </div>
-    </header>
-
-    <!-- TOP MENU HORIZONTAL -->
-    <div class="top-menu">
-        <a href="solicitudes _de_vacaciones.php" class="top-button">sulicitudes de vacaciones</a>
-    </div>
-
-    <!-- CONTENIDO -->
-    <div class="contenido">
-       <h2> Gestión de Vacaciones</h2>
-
-       
-<div class="form-compacto">
-    <h3><i class="ri-calendar-check-fill"></i> Nueva Solicitud de Vacaciones</h3>
-    <form method="post">
-        
-        <div class="form-group">
-            <label><i class="ri-user-3-fill"></i> EMPLEADO</label>
-            <select name="empleado_id" required>
-                <option value="">Seleccionar...</option>
-                <?php 
-                mysqli_data_seek($empleados, 0); 
-                while ($e = mysqli_fetch_assoc($empleados)) { ?>
-                    <option value="<?= $e['id'] ?>">
-                        <?= $e['nombre']." ".$e['apellido'] ?>
-                    </option>
-                <?php } ?>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label><i class="ri-calendar-line"></i> FECHA INICIO</label>
-            <input type="date" name="fecha_inicio" required>
-        </div>
-
-        <div class="form-group">
-            <label><i class="ri-calendar-line"></i> FECHA FIN</label>
-            <input type="date" name="fecha_fin" required>
-        </div>
-
-        <div class="form-group">
-            <label><i class="ri-edit-2-line"></i> OBSERVACIONES</label>
-            <input type="text" name="observaciones" placeholder="Ej: Motivos personales...">
-        </div>
-
-        <button type="submit" class="btn-registrar">
-            <i class="ri-save-3-fill"></i> GUARDAR
-        </button>
-        
-    </form>
-<br>
-<br>
-<?php if (isset($_GET['ok'])) { ?>
-<p style="color:green;">Solicitud registrada correctamente</p>
+<label>Empleado</label>
+<select name="empleado_id" required onchange="obtenerSaldo(this.value)">
+<option value="">Seleccionar...</option>
+<?php while ($e = mysqli_fetch_assoc($empleados)) { ?>
+<option value="<?= $e['id'] ?>">
+<?= $e['nombre']." ".$e['apellido'] ?>
+</option>
 <?php } ?>
+</select>
 
-<?php if (isset($_GET['error']) && $_GET['error']=='saldo') { ?>
-<p style="color:red;">❌ El empleado no tiene saldo inicializado</p>
-<?php } ?>
+<p id="saldo" style="font-weight:bold;color:blue;"></p>
 
-<?php if (isset($_GET['error']) && $_GET['error']=='exceso') { ?>
-<p style="color:red;">❌ No tiene suficientes días disponibles</p>
-<?php } ?>
+<label>Fecha Inicio</label>
+<input type="date" name="fecha_inicio" required>
 
-<!-- SALDOS -->
-<h3> Saldo de Vacaciones <?= $anio_actual ?></h3>
-<table border="1" cellpadding="8">
-<tr>
-    <th>Empleado</th>
-    <th>Acumulados</th>
-    <th>Disfrutados</th>
-    <th>Pendientes</th>
-</tr>
+<label>Fecha Fin</label>
+<input type="date" name="fecha_fin" required>
 
-<?php while ($s = mysqli_fetch_assoc($saldos)) { ?>
-<tr>
-    <td><?= $s['nombre']." ".$s['apellido'] ?></td>
-    <td><?= $s['dias_acumulados'] ?></td>
-    <td><?= $s['dias_disfrutados'] ?></td>
-    <td><strong><?= $s['dias_pendientes'] ?></strong></td>
-</tr>
-<?php } ?>
-</table>
+<label>Observaciones</label>
+<input type="text" name="observaciones">
+
+<button type="submit">Solicitar Vacaciones</button>
+
+</form>
 
 <hr>
 
+<h3>Historial</h3>
+
+<table border="1" cellpadding="6">
+<tr>
+<th>Empleado</th>
+<th>Inicio</th>
+<th>Fin</th>
+<th>Días</th>
+<th>Estado</th>
+<th>Acción</th>
+</tr>
+
+<?php while ($v = mysqli_fetch_assoc($vacaciones)) { ?>
+<tr>
+<td><?= $v['nombre']." ".$v['apellido'] ?></td>
+<td><?= $v['fecha_inicio'] ?></td>
+<td><?= $v['fecha_fin'] ?></td>
+<td><?= $v['dias_habiles'] ?></td>
+<td><?= $v['estado'] ?></td>
+<td>
+<?php if ($v['estado'] == 'pendiente') { ?>
+<a href="vacaciones.php?accion=aprobar&id=<?= $v['id'] ?>">Aprobar</a> |
+<a href="vacaciones.php?accion=rechazar&id=<?= $v['id'] ?>">Rechazar</a>
+<?php } else { ?>
+---
+<?php } ?>
+</td>
+</tr>
+<?php } ?>
+
+</table>
+
 </body>
 </html>
-

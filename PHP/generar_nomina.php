@@ -236,6 +236,9 @@ if (isset($_POST['generar_nomina'])) {
         die("❌ Error al generar nómina: " . $e->getMessage());
     }
 }
+
+
+
 ?>
 
 

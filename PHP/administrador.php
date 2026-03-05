@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/asignaciones.css">
+<link rel="stylesheet" href="../css/administrador.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -20,21 +20,28 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 <body>
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
-     <div class="sidebar-header">
-       
-        <h2>RRHH Admin</h2>
-         <i class="ri-building-2-fill logo-icon"></i>
-    </div>
+    
+<div class="sidebar-header">
+    <img src="../img/logo.png" alt="Logo" class="logo">
+    <h3 class="system-title">KAO SHOP</h3>
+</div>
     <a href="administrador.php" class="active">
         <i class="ri-home-4-line"></i> Inicio
     </a>
+
     <a href="nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
-    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    <a href="liquidacion.php">
+        <i class="ri-ball-pen-line"></i> Liquidacion
+    </a>
+
+    <a href="vacaciones.php">
+        <i class="ri-sun-line"></i> Vacaciones
+    </a>
     
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
@@ -43,17 +50,15 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
              
     <a href="contactar.php">
-      <i class="ri-mail-line"></i> Email 
+        <i class="ri-mail-line"></i> Email
     </a>
-    
-</a>
 
-   
 </aside>
 
 

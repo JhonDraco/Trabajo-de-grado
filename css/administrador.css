@@ -2,10 +2,10 @@
     --green-dark: #1f3a34;      /* Sidebar */
     --green-mid: #2b4a42;       /* Botones */
     --green-hover: #3f6f61;     /* Hover */
-    --white: #ffffff;            /* Fondo principal */
-    --white-soft: #f7f7f7;       /* Tarjetas / secciones */
+    --white: #b9b5b5;            /* Fondo principal */
+    --white-soft: hsl(#b9,b5%,b5%);       /* Tarjetas / secciones */
     --gray-light-text: #4a4f4e;  /* Texto secundario */
-    --card-border: #e2e2e2;
+    --card-border: #000000;
     --shadow: 0 6px 18px rgba(0,0,0,0.15);
     --radius: 12px;
     --sidebar-width: 260px;
@@ -75,7 +75,7 @@ body{
     font-size:16px;
 }
 .sidebar i{
-    font-size:18px;
+    font-size:17px;
 
 }
 .sidebar a:hover{
@@ -101,11 +101,11 @@ body{
 
 .sidebar h2 {
     text-align: center;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .logo-icon {
-    font-size: 48px;
+    font-size: 40px;
     color: white;
     margin-bottom: 6px;
     display: block;

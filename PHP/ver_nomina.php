@@ -29,11 +29,12 @@ $nominas = mysqli_query($conexion, $consulta);
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-     <div class="sidebar-header">
+     
        
-        <h2>RRHH Admin</h2>
-         <i class="ri-building-2-fill logo-icon"></i>
-    </div>
+<div class="sidebar-header">
+    <img src="../img/logo.png" alt="Logo" class="logo">
+    <h3 class="system-title">KAO SHOP</h3>
+</div>
     <a href="administrador.php">
         <i class="ri-home-4-line"></i> Inicio
     </a>

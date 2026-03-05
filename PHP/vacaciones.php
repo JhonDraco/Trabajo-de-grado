@@ -264,7 +264,7 @@ $vacaciones = mysqli_query($conexion, "
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vacaciones - RRHH</title>
-<link rel="stylesheet" href="../css/vacasiones.css">
+<link rel="stylesheet" href="../css/vacaciones.css">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>

@@ -402,7 +402,7 @@ Rechazar
 
 <?php } else { echo "---"; } ?>
 <?php if($v['estado']=='aprobado'){ ?>
-<a href="pdf_constancia_vacaciones.php?id=<?= $v['id_vacacion'] ?>" 
+<a href="hola.php?id=<?= $v['id_vacacion'] ?>" 
    class="btn btn-success" target="_blank">
    📄 Constancia
 </a>

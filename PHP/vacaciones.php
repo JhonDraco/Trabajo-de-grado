@@ -126,17 +126,26 @@ if (isset($_GET['accion']) && isset($_GET['id'])) {
 
             mysqli_query($conexion, "
                 UPDATE vacaciones 
-                SET estado='aprobado' 
+                SET estado='aprobado',
+                  aprobado_por='{$_SESSION['usuario']}',
+                    fecha_aprobacion=NOW(),
+                  motivo_rechazo=NULL
                 WHERE id_vacacion=$id
             ");
         }
 
         if ($_GET['accion'] == "rechazar") {
-            mysqli_query($conexion, "
-                UPDATE vacaciones 
-                SET estado='rechazado' 
-                WHERE id_vacacion=$id
-            ");
+
+                $motivo = mysqli_real_escape_string($conexion, $_GET['motivo'] ?? '');
+
+                mysqli_query($conexion, "
+                    UPDATE vacaciones 
+                    SET estado='rechazado',
+                        motivo_rechazo='$motivo',
+                        aprobado_por='{$_SESSION['usuario']}',
+                        fecha_aprobacion=NOW()
+                    WHERE id_vacacion=$id
+                ");
         }
     }
 
@@ -231,10 +240,20 @@ $empleados = mysqli_query($conexion, "
     WHERE estado='activo'
 ");
 
+/* filtro de estado */
+$filtro_estado = $_GET['estado'] ?? '';
+
+$where = "";
+if(in_array($filtro_estado,['pendiente','aprobado','rechazado'])){
+    $where = "WHERE v.estado='$filtro_estado'";
+}
+/* filtro de estado */
+
 $vacaciones = mysqli_query($conexion, "
     SELECT v.*, e.nombre, e.apellido
     FROM vacaciones v
     JOIN empleados e ON v.empleado_id=e.id
+    $where
     ORDER BY v.id_vacacion DESC
 ");
 ?>
@@ -326,6 +345,13 @@ $vacaciones = mysqli_query($conexion, "
 
 <h3><i class="ri-history-line"></i> Historial de Vacaciones</h3>
 
+<div style="margin-bottom:15px;">
+<a href="vacaciones.php" class="top-button">Todas</a>
+<a href="vacaciones.php?estado=pendiente" class="top-button">Pendientes</a>
+<a href="vacaciones.php?estado=aprobado" class="top-button">Aprobadas</a>
+<a href="vacaciones.php?estado=rechazado" class="top-button">Rechazadas</a>
+</div>
+
 <table>
 <tr>
 <th>Empleado</th>
@@ -334,6 +360,8 @@ $vacaciones = mysqli_query($conexion, "
 <th>Días</th>
 <th>Estado</th>
 <th>Acción</th>
+<th>Aprobado/Revisado por</th>
+<th>Fecha</th>
 </tr>
 
 <?php while ($v = mysqli_fetch_assoc($vacaciones)) { 
@@ -348,7 +376,10 @@ $puede_aprobar = $v['dias_habiles'] <= $saldo_actual;
 <td><?= $v['fecha_fin'] ?></td>
 <td><?= $v['dias_habiles'] ?></td>
 <td><?= ucfirst($v['estado']) ?></td>
+<td><?= $v['aprobado_por'] ?? '-' ?></td>
+<td><?= $v['fecha_aprobacion'] ?? '-' ?></td>
 <td>
+    
 
 <?php if ($v['estado'] == 'pendiente') { ?>
 
@@ -392,15 +423,30 @@ function obtenerSaldo(id){
 }
 
 function confirmarAccion(accion,id){
-    Swal.fire({
-        title:'¿Confirmar acción?',
-        icon:'warning',
-        showCancelButton:true
-    }).then((result)=>{
-        if(result.isConfirmed){
-            window.location.href="vacaciones.php?accion="+accion+"&id="+id;
-        }
-    });
+
+    if(accion === 'rechazar'){
+        Swal.fire({
+            title:'Motivo del rechazo',
+            input:'textarea',
+            inputPlaceholder:'Escriba el motivo...',
+            showCancelButton:true,
+            confirmButtonText:'Rechazar'
+        }).then((result)=>{
+            if(result.isConfirmed && result.value){
+                window.location.href="vacaciones.php?accion="+accion+"&id="+id+"&motivo="+encodeURIComponent(result.value);
+            }
+        });
+    } else {
+        Swal.fire({
+            title:'¿Confirmar aprobación?',
+            icon:'warning',
+            showCancelButton:true
+        }).then((result)=>{
+            if(result.isConfirmed){
+                window.location.href="vacaciones.php?accion="+accion+"&id="+id;
+            }
+        });
+    }
 }
 </script>
 

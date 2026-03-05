@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-01-2026 a las 21:09:50
+-- Tiempo de generación: 05-03-2026 a las 05:33:08
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,6 +24,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `asignacion_empleado`
+--
+
+CREATE TABLE `asignacion_empleado` (
+  `id_asig_emp` int(11) NOT NULL,
+  `empleado_id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `tipo` enum('fijo','porcentaje') NOT NULL,
+  `monto` decimal(10,2) NOT NULL,
+  `activa` tinyint(1) DEFAULT 1,
+  `creada_en` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `cargo`
 --
 
@@ -39,27 +55,6 @@ CREATE TABLE `cargo` (
 INSERT INTO `cargo` (`cargo_id`, `nombre_cargo`) VALUES
 (1, 'administrador'),
 (2, 'trabajador');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `configuracion_vacaciones`
---
-
-CREATE TABLE `configuracion_vacaciones` (
-  `id_config` int(11) NOT NULL,
-  `dias_por_ano` int(11) NOT NULL DEFAULT 15,
-  `dias_adicionales_por_ano` int(11) DEFAULT 1,
-  `max_dias_acumulables` int(11) DEFAULT 30,
-  `activo` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `configuracion_vacaciones`
---
-
-INSERT INTO `configuracion_vacaciones` (`id_config`, `dias_por_ano`, `dias_adicionales_por_ano`, `max_dias_acumulables`, `activo`) VALUES
-(1, 15, 1, 30, 1);
 
 -- --------------------------------------------------------
 
@@ -194,7 +189,13 @@ INSERT INTO `detalle_asignacion` (`id_detalle_asig`, `id_detalle`, `id_asignacio
 (159, 53, 3, 0.00),
 (160, 54, 1, 0.00),
 (161, 54, 2, 250.00),
-(162, 54, 3, 0.00);
+(162, 54, 3, 0.00),
+(163, 55, 1, 0.00),
+(164, 55, 2, 2500.00),
+(165, 55, 3, 0.00),
+(166, 56, 1, 0.00),
+(167, 56, 2, 1000.00),
+(168, 56, 3, 0.00);
 
 -- --------------------------------------------------------
 
@@ -305,7 +306,13 @@ INSERT INTO `detalle_deduccion` (`id_detalle_ded`, `id_detalle`, `id_tipo`, `mon
 (161, 53, 3, 31.25),
 (162, 54, 1, 100.00),
 (163, 54, 2, 25.00),
-(164, 54, 3, 12.50);
+(164, 54, 3, 12.50),
+(165, 55, 1, 1000.00),
+(166, 55, 2, 250.00),
+(167, 55, 3, 125.00),
+(168, 56, 1, 400.00),
+(169, 56, 2, 100.00),
+(170, 56, 3, 50.00);
 
 -- --------------------------------------------------------
 
@@ -357,7 +364,9 @@ INSERT INTO `detalle_nomina` (`id_detalle`, `id_nomina`, `empleado_id`, `salario
 (42, 32, 1, 25000.00, 0.00, 1475.00, 23525.00),
 (43, 32, 2, 10000.00, 0.00, 1050.00, 8950.00),
 (53, 42, 1, 6250.00, 0.00, 343.75, 5906.25),
-(54, 42, 2, 2500.00, 0.00, 137.50, 2362.50);
+(54, 42, 2, 2500.00, 0.00, 137.50, 2362.50),
+(55, 43, 1, 25000.00, 0.00, 1375.00, 23625.00),
+(56, 43, 2, 10000.00, 0.00, 550.00, 9450.00);
 
 -- --------------------------------------------------------
 
@@ -384,7 +393,9 @@ CREATE TABLE `empleados` (
 
 INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `telefono`, `email`, `fecha_ingreso`, `salario_base`, `estado`) VALUES
 (1, '12345678', 'Jhon', 'Administrador', 'Caracas', '04141234567', 'jhon@example.com', '2024-01-01', 25000.00, 'activo'),
-(2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 10000.00, 'activo');
+(2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 10000.00, 'activo'),
+(4, '32657336', 'Jhon pequeño', 'Castillo correa', 'tucaca', '04123456781', 'casticj671119@gmail.com', '2025-11-13', 1000.00, 'activo'),
+(5, '33657336', 'Emilio', 'Emiliano', 'La dolorita', '04142347728', 'emiliobatanero@gmail.com', '2025-01-29', 1400.00, 'activo');
 
 -- --------------------------------------------------------
 
@@ -449,28 +460,8 @@ INSERT INTO `nomina` (`id_nomina`, `fecha_inicio`, `fecha_fin`, `tipo`, `estado`
 (18, '2026-01-19', '2026-01-25', 'semanal', 'pagada', 'jhon', '2026-01-24 15:09:27'),
 (19, '2026-01-19', '2026-01-25', 'semanal', 'pagada', 'jhon', '2026-01-24 15:42:00'),
 (32, '2026-01-26', '2026-02-01', 'semanal', 'abierta', 'jhon', '2026-01-27 02:58:02'),
-(42, '2026-01-12', '2026-01-18', 'semanal', 'abierta', 'jhon', '2026-01-30 19:39:53');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `nomina_vacaciones`
---
-
-CREATE TABLE `nomina_vacaciones` (
-  `id` int(11) NOT NULL,
-  `id_nomina` int(11) NOT NULL,
-  `id_vacacion` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `dias_pagados` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `nomina_vacaciones`
---
-
-INSERT INTO `nomina_vacaciones` (`id`, `id_nomina`, `id_vacacion`, `empleado_id`, `dias_pagados`) VALUES
-(1, 42, 1, 1, 14);
+(42, '2026-01-12', '2026-01-18', 'semanal', 'abierta', 'jhon', '2026-01-30 19:39:53'),
+(43, '2026-01-01', '2026-01-29', 'semanal', 'abierta', 'jhon', '2026-01-30 20:24:13');
 
 -- --------------------------------------------------------
 
@@ -496,20 +487,6 @@ INSERT INTO `pagos` (`id_pago`, `id_nomina`, `fecha_pago`, `total_pagado`, `meto
 (2, 13, '2006-11-11', 27065.50, 'transferencia', ''),
 (3, 19, '2026-01-25', 36075.00, 'transferencia', ''),
 (4, 18, '2026-01-25', 36575.00, 'transferencia', '');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `saldo_vacaciones`
---
-
-CREATE TABLE `saldo_vacaciones` (
-  `id_saldo` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `dias_disponibles` int(11) NOT NULL DEFAULT 0,
-  `dias_disfrutados` int(11) NOT NULL DEFAULT 0,
-  `ultima_actualizacion` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -598,72 +575,47 @@ CREATE TABLE `vacaciones` (
   `fecha_fin` date NOT NULL,
   `dias_solicitados` int(11) NOT NULL,
   `dias_habiles` int(11) NOT NULL,
-  `dias_feriados` int(11) DEFAULT 0,
-  `estado` enum('pendiente','aprobada','rechazada','disfrutada') DEFAULT 'pendiente',
   `observaciones` text DEFAULT NULL,
   `creada_por` varchar(100) DEFAULT NULL,
-  `creada_en` timestamp NOT NULL DEFAULT current_timestamp()
+  `creada_en` timestamp NOT NULL DEFAULT current_timestamp(),
+  `estado` enum('pendiente','aprobado','rechazado') DEFAULT 'pendiente',
+  `aprobado_por` varchar(100) DEFAULT NULL,
+  `fecha_aprobacion` datetime DEFAULT NULL,
+  `motivo_rechazo` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `vacaciones`
 --
 
-INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_fin`, `dias_solicitados`, `dias_habiles`, `dias_feriados`, `estado`, `observaciones`, `creada_por`, `creada_en`) VALUES
-(1, 1, '2026-01-05', '2026-01-18', 14, 14, 0, 'aprobada', '', 'jhon', '2026-01-15 15:08:23'),
-(2, 2, '2026-01-05', '2026-01-11', 7, 7, 0, 'aprobada', 'se le daran sus vacaciones att: jhon administrador', 'jhon', '2026-01-16 14:22:34');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `vacaciones_feriados`
---
-
-CREATE TABLE `vacaciones_feriados` (
-  `id` int(11) NOT NULL,
-  `id_vacacion` int(11) NOT NULL,
-  `id_feriado` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `vacaciones_saldo`
---
-
-CREATE TABLE `vacaciones_saldo` (
-  `id_saldo` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `anio` int(11) NOT NULL,
-  `dias_acumulados` int(11) NOT NULL,
-  `dias_disfrutados` int(11) DEFAULT 0,
-  `dias_pendientes` int(11) NOT NULL,
-  `actualizado_en` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `vacaciones_saldo`
---
-
-INSERT INTO `vacaciones_saldo` (`id_saldo`, `empleado_id`, `anio`, `dias_acumulados`, `dias_disfrutados`, `dias_pendientes`, `actualizado_en`) VALUES
-(1, 1, 2026, 15, 14, 1, '2026-01-15 18:25:50'),
-(2, 2, 2026, 15, 7, 8, '2026-01-16 14:22:58');
+INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_fin`, `dias_solicitados`, `dias_habiles`, `observaciones`, `creada_por`, `creada_en`, `estado`, `aprobado_por`, `fecha_aprobacion`, `motivo_rechazo`) VALUES
+(7, 1, '2026-03-03', '2026-03-05', 3, 3, '', 'jhon', '2026-03-02 15:47:34', 'rechazado', NULL, NULL, NULL),
+(8, 1, '2026-03-10', '2026-03-28', 14, 14, '', 'jhon', '2026-03-02 19:34:55', 'aprobado', NULL, NULL, NULL),
+(9, 1, '2026-04-07', '2026-04-11', 4, 4, '', 'jhon', '2026-03-02 19:35:49', 'pendiente', NULL, NULL, NULL),
+(10, 1, '2026-03-05', '2026-03-05', 1, 1, '', 'jhon', '2026-03-05 03:48:37', 'aprobado', 'jhon', '2026-03-04 23:48:40', NULL),
+(11, 2, '2026-03-05', '2026-03-07', 2, 2, '', 'jhon', '2026-03-05 03:49:11', 'aprobado', 'jhon', '2026-03-04 23:49:19', NULL),
+(12, 5, '2026-03-05', '2026-03-07', 2, 2, '', 'jhon', '2026-03-05 03:55:31', 'aprobado', 'jhon', '2026-03-04 23:55:34', NULL),
+(13, 5, '2026-03-17', '2026-03-18', 2, 2, '', 'jhon', '2026-03-05 04:13:06', 'rechazado', NULL, NULL, NULL),
+(14, 5, '2026-03-17', '2026-03-18', 2, 2, '', 'jhon', '2026-03-05 04:14:02', 'aprobado', 'jhon', '2026-03-05 00:14:06', NULL),
+(15, 5, '2026-03-24', '2026-03-25', 2, 2, '', 'jhon', '2026-03-05 04:14:57', 'rechazado', 'jhon', '2026-03-05 00:15:01', 'asdas'),
+(16, 5, '2026-04-07', '2026-04-08', 2, 2, '', 'jhon', '2026-03-05 04:16:15', 'aprobado', 'jhon', '2026-03-05 00:16:18', NULL);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
+-- Indices de la tabla `asignacion_empleado`
+--
+ALTER TABLE `asignacion_empleado`
+  ADD PRIMARY KEY (`id_asig_emp`),
+  ADD KEY `empleado_id` (`empleado_id`);
+
+--
 -- Indices de la tabla `cargo`
 --
 ALTER TABLE `cargo`
   ADD PRIMARY KEY (`cargo_id`);
-
---
--- Indices de la tabla `configuracion_vacaciones`
---
-ALTER TABLE `configuracion_vacaciones`
-  ADD PRIMARY KEY (`id_config`);
 
 --
 -- Indices de la tabla `deduccion_empleado`
@@ -716,27 +668,11 @@ ALTER TABLE `nomina`
   ADD PRIMARY KEY (`id_nomina`);
 
 --
--- Indices de la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_nomina` (`id_nomina`),
-  ADD KEY `id_vacacion` (`id_vacacion`),
-  ADD KEY `empleado_id` (`empleado_id`);
-
---
 -- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id_pago`),
   ADD KEY `id_nomina` (`id_nomina`);
-
---
--- Indices de la tabla `saldo_vacaciones`
---
-ALTER TABLE `saldo_vacaciones`
-  ADD PRIMARY KEY (`id_saldo`),
-  ADD KEY `empleado_id` (`empleado_id`);
 
 --
 -- Indices de la tabla `tipo_asignacion`
@@ -765,35 +701,20 @@ ALTER TABLE `vacaciones`
   ADD KEY `empleado_id` (`empleado_id`);
 
 --
--- Indices de la tabla `vacaciones_feriados`
---
-ALTER TABLE `vacaciones_feriados`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_vacacion` (`id_vacacion`),
-  ADD KEY `id_feriado` (`id_feriado`);
-
---
--- Indices de la tabla `vacaciones_saldo`
---
-ALTER TABLE `vacaciones_saldo`
-  ADD PRIMARY KEY (`id_saldo`),
-  ADD UNIQUE KEY `empleado_id` (`empleado_id`,`anio`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `asignacion_empleado`
+--
+ALTER TABLE `asignacion_empleado`
+  MODIFY `id_asig_emp` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `cargo`
 --
 ALTER TABLE `cargo`
   MODIFY `cargo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `configuracion_vacaciones`
---
-ALTER TABLE `configuracion_vacaciones`
-  MODIFY `id_config` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `deduccion_empleado`
@@ -805,25 +726,25 @@ ALTER TABLE `deduccion_empleado`
 -- AUTO_INCREMENT de la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
-  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_deduccion`
 --
 ALTER TABLE `detalle_deduccion`
-  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_nomina`
 --
 ALTER TABLE `detalle_nomina`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `feriados`
@@ -835,25 +756,13 @@ ALTER TABLE `feriados`
 -- AUTO_INCREMENT de la tabla `nomina`
 --
 ALTER TABLE `nomina`
-  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
-
---
--- AUTO_INCREMENT de la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
   MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `saldo_vacaciones`
---
-ALTER TABLE `saldo_vacaciones`
-  MODIFY `id_saldo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_asignacion`
@@ -877,23 +786,17 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `vacaciones`
 --
 ALTER TABLE `vacaciones`
-  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `vacaciones_feriados`
---
-ALTER TABLE `vacaciones_feriados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `vacaciones_saldo`
---
-ALTER TABLE `vacaciones_saldo`
-  MODIFY `id_saldo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `asignacion_empleado`
+--
+ALTER TABLE `asignacion_empleado`
+  ADD CONSTRAINT `asignacion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`);
 
 --
 -- Filtros para la tabla `deduccion_empleado`
@@ -923,24 +826,10 @@ ALTER TABLE `detalle_nomina`
   ADD CONSTRAINT `detalle_nomina_ibfk_2` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `nomina_vacaciones`
---
-ALTER TABLE `nomina_vacaciones`
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_1` FOREIGN KEY (`id_nomina`) REFERENCES `nomina` (`id_nomina`) ON DELETE CASCADE,
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_2` FOREIGN KEY (`id_vacacion`) REFERENCES `vacaciones` (`id_vacacion`) ON DELETE CASCADE,
-  ADD CONSTRAINT `nomina_vacaciones_ibfk_3` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
-
---
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
   ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`id_nomina`) REFERENCES `nomina` (`id_nomina`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `saldo_vacaciones`
---
-ALTER TABLE `saldo_vacaciones`
-  ADD CONSTRAINT `saldo_vacaciones_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `usuarios`
@@ -952,20 +841,7 @@ ALTER TABLE `usuarios`
 -- Filtros para la tabla `vacaciones`
 --
 ALTER TABLE `vacaciones`
-  ADD CONSTRAINT `vacaciones_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `vacaciones_feriados`
---
-ALTER TABLE `vacaciones_feriados`
-  ADD CONSTRAINT `vacaciones_feriados_ibfk_1` FOREIGN KEY (`id_vacacion`) REFERENCES `vacaciones` (`id_vacacion`) ON DELETE CASCADE,
-  ADD CONSTRAINT `vacaciones_feriados_ibfk_2` FOREIGN KEY (`id_feriado`) REFERENCES `feriados` (`id_feriado`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `vacaciones_saldo`
---
-ALTER TABLE `vacaciones_saldo`
-  ADD CONSTRAINT `vacaciones_saldo_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `vacaciones_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -350,6 +350,7 @@ $vacaciones = mysqli_query($conexion, "
 <a href="vacaciones.php?estado=pendiente" class="top-button">Pendientes</a>
 <a href="vacaciones.php?estado=aprobado" class="top-button">Aprobadas</a>
 <a href="vacaciones.php?estado=rechazado" class="top-button">Rechazadas</a>
+
 </div>
 
 <table>
@@ -362,6 +363,7 @@ $vacaciones = mysqli_query($conexion, "
 <th>Acción</th>
 <th>Aprobado/Revisado por</th>
 <th>Fecha</th>
+
 </tr>
 
 <?php while ($v = mysqli_fetch_assoc($vacaciones)) { 
@@ -397,7 +399,14 @@ Sin saldo
 Rechazar
 </button>
 
+
 <?php } else { echo "---"; } ?>
+<?php if($v['estado']=='aprobado'){ ?>
+<a href="pdf_constancia_vacaciones.php?id=<?= $v['id_vacacion'] ?>" 
+   class="btn btn-success" target="_blank">
+   📄 Constancia
+</a>
+<?php } ?>
 
 </td>
 </tr>

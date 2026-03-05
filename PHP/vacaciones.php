@@ -401,10 +401,13 @@ Rechazar
 
 
 <?php } else { echo "---"; } ?>
+
+
+
 <?php if($v['estado']=='aprobado'){ ?>
-<a href="hola.php?id=<?= $v['id_vacacion'] ?>" 
-   class="btn btn-success" target="_blank">
-   📄 Constancia
+<a href="constancia_vacaciones.php?id=<?= $v['id_vacacion'] ?>" 
+   class="btn-guardar-compact" style="text-decoration:none; background:#28a745;" target="_blank">
+   <i class="ri-file-pdf-line"></i> Constancia
 </a>
 <?php } ?>
 

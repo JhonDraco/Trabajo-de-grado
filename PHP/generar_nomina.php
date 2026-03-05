@@ -377,7 +377,11 @@ if (isset($_POST['generar_nomina'])) {
                 <tbody>
                 <?php foreach ($lista_empleados as $emp) { ?>
                     <tr>
-                        <td><?= $emp['nombre'] ?></td>
+                        <td>
+                                <a href="#" onclick="verDetalle(<?= $emp['id'] ?>); return false;">
+                                    <?= $emp['nombre'] ?>
+                                </a>
+                        </td>
                         <td><?= number_format($emp['salario'],2) ?> Bs</td>
                         <td><?= number_format($emp['asig'],2) ?> Bs</td>
                         <td><?= number_format($emp['ded'],2) ?> Bs</td>
@@ -386,6 +390,15 @@ if (isset($_POST['generar_nomina'])) {
                 <?php } ?>
                 </tbody>
             </table>
+        </div>
+
+        <div id="panelDetalle" class="panel-detalle">
+            <div class="panel-contenido">
+                <button onclick="cerrarPanel()" class="cerrar-btn">✖</button>
+                <div id="contenidoDetalle">
+                    <!-- Aquí se cargará el detalle -->
+                </div>
+            </div>
         </div>
 
         <!-- TOTALES -->
@@ -410,6 +423,27 @@ if (isset($_POST['generar_nomina'])) {
 
     </div>
 </div>
+
+
+<script>
+function verDetalle(id){
+
+    const inicio = "<?= $fecha_inicio ?>";
+    const fin = "<?= $fecha_fin ?>";
+    const tipo = "<?= $tipo_nomina ?>";
+
+    fetch("detalle_prenomina.php?id="+id+"&inicio="+inicio+"&fin="+fin+"&tipo="+tipo)
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("contenidoDetalle").innerHTML = data;
+        document.getElementById("panelDetalle").classList.add("activo");
+    });
+}
+
+function cerrarPanel(){
+    document.getElementById("panelDetalle").classList.remove("activo");
+}
+</script>
 
 
 </body>

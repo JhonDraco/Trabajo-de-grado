@@ -380,23 +380,50 @@ table tbody tr:nth-child(even) {
 
 /* detalle prenomina */
 
+.panel-detalle {
+    position: fixed;
+    right: -500px;
+    top: 0;
+    width: 500px;
+    height: 100%;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    z-index: 999;
+}
+
+.panel-detalle.activo {
+    right: 0;
+}
+
+.panel-contenido {
+    padding: 25px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.cerrar-btn {
+    float: right;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
 .tabla-detalle {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
 }
 
-.tabla-detalle th {
-    background: #2c3e50;
-    color: white;
-    padding: 8px;
-}
-
+.tabla-detalle th,
 .tabla-detalle td {
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
     padding: 8px;
 }
 
-.tabla-detalle tr:nth-child(even) {
-    background: #f2f2f2;
+.total {
+    font-weight: bold;
+    background: #f4f4f4;
 }

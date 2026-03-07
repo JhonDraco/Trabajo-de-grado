@@ -10,7 +10,7 @@ include("db.php");
 /* --------------------------------------------------------
    CONFIGURACIÓN GENERAL
 ---------------------------------------------------------*/
-$TOPE_DEDUCCION = 0.40; // 40% del salario del período (CONFIGURABLE)
+$TOPE_DEDUCCION = 0.40; // 40% del salario del período
 
 /* --------------------------------------------------------
    1. FECHA AUTOMÁTICA (SEMANA ACTUAL)
@@ -31,126 +31,131 @@ $siguiente_nomina = ($data_nom['maximo'] ?? 0) + 1;
 /* --------------------------------------------------------
    3. CARGAR TABLAS
 ---------------------------------------------------------*/
-$empleados    = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
-$asignaciones = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
-$deducciones  = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
+$empleados = mysqli_query($conexion, "SELECT * FROM empleados WHERE estado='activo'");
 
-$arr_asig = [];
-while ($a = mysqli_fetch_assoc($asignaciones)) $arr_asig[] = $a;
-
-$arr_ded = [];
-while ($d = mysqli_fetch_assoc($deducciones)) $arr_ded[] = $d;
-
-/* --------------------------------------------------------
-   4. TIPO DE NÓMINA
----------------------------------------------------------*/
+/* Tipo de nómina */
 $tipo_nomina = $_GET['tipo'] ?? 'mensual';
-
 switch ($tipo_nomina) {
-    case 'semanal':   $factor = 1 / 4; break;
-    case 'quincenal': $factor = 1 / 2; break;
-    default:          $factor = 1;
+    case 'semanal': $factor = 1/4; break;
+    case 'quincenal': $factor = 1/2; break;
+    default: $factor = 1;
 }
 
 /* --------------------------------------------------------
-   5. PRE-NÓMINA
+   4. PRE-NÓMINA
 ---------------------------------------------------------*/
 $lista_empleados = [];
 $total_general_asig = 0;
 $total_general_ded = 0;
 $total_general_pagar = 0;
 
-mysqli_data_seek($empleados, 0);
-while ($emp = mysqli_fetch_assoc($empleados)) {
+while($emp = mysqli_fetch_assoc($empleados)) {
 
-    $salario = round(floatval($emp['salario_base']) * $factor, 2);
+    $salario = round($emp['salario_base'] * $factor, 2);
     $total_asig = 0;
     $total_ded = 0;
 
-    // 🔒 TOPE DE DEDUCCIONES
+    $id_emp = $emp['id'];
     $max_deducciones = round($salario * $TOPE_DEDUCCION, 2);
 
-    /* ===== DEDUCCIONES GENERALES ===== */
-    foreach ($arr_ded as $ded) {
+    /* ===== ASIGNACIONES: tipo_asignacion + asignacion_empleado ===== */
+    $asig_list = [];
 
-        $monto = round($salario * ($ded['porcentaje'] / 100), 2);
-
-        if (($total_ded + $monto) > $max_deducciones) {
-            $monto = $max_deducciones - $total_ded;
-        }
-
-        if ($monto <= 0) break;
-        $total_ded += $monto;
-    }
-
-    /* ===== DEDUCCIONES POR EMPLEADO (CUOTAS) ===== */
-    $qDedEmp = mysqli_query($conexion, "
-        SELECT * FROM deduccion_empleado
-        WHERE empleado_id = {$emp['id']}
-          AND activa = 1
-          AND cuota_actual < cuotas
+    $qAsig = mysqli_query($conexion, "
+        SELECT ta.id_asignacion, ta.nombre, ta.tipo, ta.porcentaje, ae.monto AS monto_emp
+        FROM tipo_asignacion ta
+        LEFT JOIN asignacion_empleado ae
+        ON ae.id_asignacion = ta.id_asignacion AND ae.empleado_id = $id_emp AND ae.activa=1
     ");
 
-    while ($de = mysqli_fetch_assoc($qDedEmp)) {
-
-        $cuota = round(($de['monto'] / $de['cuotas']) * $factor, 2);
-
-        if (($total_ded + $cuota) > $max_deducciones) {
-            $cuota = $max_deducciones - $total_ded;
+    while($a = mysqli_fetch_assoc($qAsig)) {
+        // Calcular monto: fijo = monto emp si existe, sino ta.porcentaje, porcentaje = porcentaje sobre salario
+        if($a['tipo'] == 'fijo') {
+            $monto = $a['monto_emp'] !== null ? $a['monto_emp'] : $a['porcentaje'];
+        } else {
+            $monto = round($salario * ($a['porcentaje']/100), 2);
         }
-
-        if ($cuota <= 0) break;
-        $total_ded += $cuota;
+        $total_asig += $monto;
+        $asig_list[] = ['nombre'=>$a['nombre'],'monto'=>$monto];
     }
 
-    /* ===== VACACIONES (INFORMATIVO) ===== */
+    /* ===== DEDUCCIONES: tipo_deduccion + deduccion_empleado ===== */
+    $ded_list = [];
+    $total_ded_aplicada = 0;
+
+    // Deducciones generales
+    $qDed = mysqli_query($conexion, "
+        SELECT td.id_tipo, td.nombre, td.tipo, td.porcentaje, de.monto AS monto_emp, de.cuotas, de.cuota_actual
+        FROM tipo_deduccion td
+        LEFT JOIN deduccion_empleado de
+        ON de.id_tipo = td.id_tipo AND de.empleado_id = $id_emp AND de.activa=1
+    ");
+
+    while($d = mysqli_fetch_assoc($qDed)) {
+        if($d['tipo'] == 'fijo') {
+            $monto = $d['monto_emp'] !== null ? $d['monto_emp'] : $d['porcentaje'];
+        } else {
+            $monto = round($salario * ($d['porcentaje']/100), 2);
+        }
+
+        // aplicar tope
+        if(($total_ded_aplicada + $monto) > $max_deducciones){
+            $monto = $max_deducciones - $total_ded_aplicada;
+        }
+        if($monto <= 0) break;
+
+        $total_ded_aplicada += $monto;
+        $ded_list[] = ['nombre'=>$d['nombre'],'monto'=>$monto];
+    }
+
+    /* ===== VACACIONES (informativo) ===== */
     $vacaciones = mysqli_query($conexion, "
         SELECT dias_habiles FROM vacaciones
-        WHERE empleado_id = {$emp['id']}
-          AND estado = 'aprobada'
-          AND fecha_inicio <= '$fecha_fin'
-          AND fecha_fin >= '$fecha_inicio'
+        WHERE empleado_id = $id_emp
+        AND estado = 'aprobado'
+        AND fecha_inicio <= '$fecha_fin'
+        AND fecha_fin >= '$fecha_inicio'
     ");
-
-    $dias_vacaciones = 0;
-    while ($v = mysqli_fetch_assoc($vacaciones)) {
-        $dias_vacaciones += intval($v['dias_habiles']);
+    $dias_vac = 0;
+    while($v = mysqli_fetch_assoc($vacaciones)){
+        $dias_vac += intval($v['dias_habiles']);
     }
 
-    $total_pago = max(0, ($salario + $total_asig) - $total_ded);
+    $total_pago = max(0, ($salario + $total_asig) - $total_ded_aplicada);
 
     $lista_empleados[] = [
-        "id"     => $emp['id'],
-        "nombre" => $emp['nombre']." ".$emp['apellido'],
-        "salario"=> $salario,
-        "asig"   => $total_asig,
-        "ded"    => $total_ded,
-        "pagar"  => $total_pago,
-        "vac"    => $dias_vacaciones
+        'id'=>$id_emp,
+        'nombre'=>$emp['nombre']." ".$emp['apellido'],
+        'salario'=>$salario,
+        'asig'=>$total_asig,
+        'asig_detalle'=>$asig_list,
+        'ded'=>$total_ded_aplicada,
+        'ded_detalle'=>$ded_list,
+        'pagar'=>$total_pago,
+        'vac'=>$dias_vac
     ];
 
-    $total_general_ded += $total_ded;
+    $total_general_asig += $total_asig;
+    $total_general_ded += $total_ded_aplicada;
     $total_general_pagar += $total_pago;
 }
 
 /* --------------------------------------------------------
-   6. GENERAR NÓMINA DEFINITIVA
+   5. GENERAR NÓMINA DEFINITIVA
 ---------------------------------------------------------*/
-if (isset($_POST['generar_nomina'])) {
-
+if(isset($_POST['generar_nomina'])){
     mysqli_begin_transaction($conexion);
 
     try {
-
         mysqli_query($conexion, "
             INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
-            VALUES ('$fecha_inicio', '$fecha_fin', '$tipo_nomina', '{$_SESSION['usuario']}')
+            VALUES ('$fecha_inicio','$fecha_fin','$tipo_nomina','{$_SESSION['usuario']}')
         ");
-
         $id_nomina = mysqli_insert_id($conexion);
 
-        foreach ($lista_empleados as $emp) {
+        foreach($lista_empleados as $emp){
 
+            // insertar detalle_nomina
             mysqli_query($conexion, "
                 INSERT INTO detalle_nomina
                 (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
@@ -163,81 +168,35 @@ if (isset($_POST['generar_nomina'])) {
                     {$emp['pagar']}
                 )
             ");
-
             $id_detalle = mysqli_insert_id($conexion);
-            $total_ded_aplicada = 0;
-            $max_deducciones = round($emp['salario'] * $TOPE_DEDUCCION, 2);
 
-            /* ===== DEDUCCIONES GENERALES ===== */
-            foreach ($arr_ded as $ded) {
-
-                $monto = round($emp['salario'] * ($ded['porcentaje'] / 100), 2);
-
-                if (($total_ded_aplicada + $monto) > $max_deducciones) {
-                    $monto = $max_deducciones - $total_ded_aplicada;
-                }
-
-                if ($monto <= 0) break;
-
+            // detalle_asignacion
+            foreach($emp['asig_detalle'] as $a){
                 mysqli_query($conexion, "
-                    INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
-                    VALUES ($id_detalle, {$ded['id_tipo']}, $monto)
+                    INSERT INTO detalle_asignacion
+                    (id_detalle, id_asignacion, monto)
+                    VALUES ($id_detalle, (SELECT id_asignacion FROM tipo_asignacion WHERE nombre='".mysqli_real_escape_string($conexion,$a['nombre'])."'), {$a['monto']})
                 ");
-
-                $total_ded_aplicada += $monto;
             }
 
-            /* ===== DEDUCCIONES POR EMPLEADO ===== */
-            $qDedEmp = mysqli_query($conexion, "
-                SELECT * FROM deduccion_empleado
-                WHERE empleado_id = {$emp['id']}
-                  AND activa = 1
-                  AND cuota_actual < cuotas
-            ");
-
-            while ($de = mysqli_fetch_assoc($qDedEmp)) {
-
-                $cuota = round(($de['monto'] / $de['cuotas']) * $factor, 2);
-
-                if (($total_ded_aplicada + $cuota) > $max_deducciones) {
-                    $cuota = $max_deducciones - $total_ded_aplicada;
-                }
-
-                if ($cuota <= 0) break;
-
+            // detalle_deduccion
+            foreach($emp['ded_detalle'] as $d){
                 mysqli_query($conexion, "
-                    INSERT INTO detalle_deduccion (id_detalle, id_tipo, monto)
-                    VALUES ($id_detalle, NULL, $cuota)
+                    INSERT INTO detalle_deduccion
+                    (id_detalle, id_tipo, monto)
+                    VALUES ($id_detalle, (SELECT id_tipo FROM tipo_deduccion WHERE nombre='".mysqli_real_escape_string($conexion,$d['nombre'])."'), {$d['monto']})
                 ");
-
-                mysqli_query($conexion, "
-                    UPDATE deduccion_empleado
-                    SET cuota_actual = cuota_actual + 1
-                    WHERE id_deduccion_emp = {$de['id_deduccion_emp']}
-                ");
-
-                mysqli_query($conexion, "
-                    UPDATE deduccion_empleado
-                    SET activa = 0
-                    WHERE id_deduccion_emp = {$de['id_deduccion_emp']}
-                      AND cuota_actual >= cuotas
-                ");
-
-                $total_ded_aplicada += $cuota;
             }
         }
 
         mysqli_commit($conexion);
         header("Location: ver_nomina.php?id=$id_nomina");
         exit();
-
-    } catch (Exception $e) {
+    } catch(Exception $e){
         mysqli_rollback($conexion);
-        die("❌ Error al generar nómina: " . $e->getMessage());
+        die("Error al generar nómina: ".$e->getMessage());
     }
 }
-
-
 
 ?>
 

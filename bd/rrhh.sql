@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-03-2026 a las 05:33:08
+-- Tiempo de generación: 07-03-2026 a las 01:23:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -30,8 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `asignacion_empleado` (
   `id_asig_emp` int(11) NOT NULL,
   `empleado_id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `tipo` enum('fijo','porcentaje') NOT NULL,
+  `id_asignacion` int(11) DEFAULT NULL,
   `monto` decimal(10,2) NOT NULL,
   `activa` tinyint(1) DEFAULT 1,
   `creada_en` timestamp NOT NULL DEFAULT current_timestamp()
@@ -65,8 +64,7 @@ INSERT INTO `cargo` (`cargo_id`, `nombre_cargo`) VALUES
 CREATE TABLE `deduccion_empleado` (
   `id_deduccion_emp` int(11) NOT NULL,
   `empleado_id` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `tipo` enum('fijo','porcentaje') DEFAULT 'fijo',
+  `id_tipo` int(11) DEFAULT NULL,
   `monto` decimal(12,2) NOT NULL,
   `cuotas` int(11) DEFAULT 1,
   `cuota_actual` int(11) DEFAULT 0,
@@ -78,9 +76,9 @@ CREATE TABLE `deduccion_empleado` (
 -- Volcado de datos para la tabla `deduccion_empleado`
 --
 
-INSERT INTO `deduccion_empleado` (`id_deduccion_emp`, `empleado_id`, `nombre`, `tipo`, `monto`, `cuotas`, `cuota_actual`, `activa`, `creada_en`) VALUES
-(1, 2, 'Prestamo Telefono', 'fijo', 500.00, 1, 1, 0, '2026-01-24 14:01:16'),
-(2, 1, 'prestamo carro', 'fijo', 100.00, 1, 1, 0, '2026-01-24 17:18:27');
+INSERT INTO `deduccion_empleado` (`id_deduccion_emp`, `empleado_id`, `id_tipo`, `monto`, `cuotas`, `cuota_actual`, `activa`, `creada_en`) VALUES
+(1, 2, NULL, 500.00, 1, 1, 0, '2026-01-24 14:01:16'),
+(2, 1, NULL, 100.00, 1, 1, 0, '2026-01-24 17:18:27');
 
 -- --------------------------------------------------------
 
@@ -195,7 +193,19 @@ INSERT INTO `detalle_asignacion` (`id_detalle_asig`, `id_detalle`, `id_asignacio
 (165, 55, 3, 0.00),
 (166, 56, 1, 0.00),
 (167, 56, 2, 1000.00),
-(168, 56, 3, 0.00);
+(168, 56, 3, 0.00),
+(169, 57, 1, 0.00),
+(170, 57, 2, 2500.00),
+(171, 57, 3, 0.00),
+(172, 58, 1, 0.00),
+(173, 58, 2, 1000.00),
+(174, 58, 3, 0.00),
+(175, 59, 1, 0.00),
+(176, 59, 2, 100.00),
+(177, 59, 3, 0.00),
+(178, 60, 1, 0.00),
+(179, 60, 2, 140.00),
+(180, 60, 3, 0.00);
 
 -- --------------------------------------------------------
 
@@ -312,7 +322,19 @@ INSERT INTO `detalle_deduccion` (`id_detalle_ded`, `id_detalle`, `id_tipo`, `mon
 (167, 55, 3, 125.00),
 (168, 56, 1, 400.00),
 (169, 56, 2, 100.00),
-(170, 56, 3, 50.00);
+(170, 56, 3, 50.00),
+(171, 57, 1, 1000.00),
+(172, 57, 2, 250.00),
+(173, 57, 3, 125.00),
+(174, 58, 1, 400.00),
+(175, 58, 2, 100.00),
+(176, 58, 3, 50.00),
+(177, 59, 1, 40.00),
+(178, 59, 2, 10.00),
+(179, 59, 3, 5.00),
+(180, 60, 1, 56.00),
+(181, 60, 2, 14.00),
+(182, 60, 3, 7.00);
 
 -- --------------------------------------------------------
 
@@ -366,7 +388,11 @@ INSERT INTO `detalle_nomina` (`id_detalle`, `id_nomina`, `empleado_id`, `salario
 (53, 42, 1, 6250.00, 0.00, 343.75, 5906.25),
 (54, 42, 2, 2500.00, 0.00, 137.50, 2362.50),
 (55, 43, 1, 25000.00, 0.00, 1375.00, 23625.00),
-(56, 43, 2, 10000.00, 0.00, 550.00, 9450.00);
+(56, 43, 2, 10000.00, 0.00, 550.00, 9450.00),
+(57, 44, 1, 25000.00, 2500.00, 1375.00, 26125.00),
+(58, 44, 2, 10000.00, 1000.00, 550.00, 10450.00),
+(59, 44, 4, 1000.00, 100.00, 55.00, 1045.00),
+(60, 44, 5, 1400.00, 140.00, 77.00, 1463.00);
 
 -- --------------------------------------------------------
 
@@ -461,7 +487,8 @@ INSERT INTO `nomina` (`id_nomina`, `fecha_inicio`, `fecha_fin`, `tipo`, `estado`
 (19, '2026-01-19', '2026-01-25', 'semanal', 'pagada', 'jhon', '2026-01-24 15:42:00'),
 (32, '2026-01-26', '2026-02-01', 'semanal', 'abierta', 'jhon', '2026-01-27 02:58:02'),
 (42, '2026-01-12', '2026-01-18', 'semanal', 'abierta', 'jhon', '2026-01-30 19:39:53'),
-(43, '2026-01-01', '2026-01-29', 'semanal', 'abierta', 'jhon', '2026-01-30 20:24:13');
+(43, '2026-01-01', '2026-01-29', 'semanal', 'abierta', 'jhon', '2026-01-30 20:24:13'),
+(44, '2026-03-02', '2026-03-08', 'mensual', 'abierta', 'jhon', '2026-03-06 18:51:20');
 
 -- --------------------------------------------------------
 
@@ -498,7 +525,7 @@ CREATE TABLE `tipo_asignacion` (
   `id_asignacion` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `tipo` enum('fijo','porcentaje') NOT NULL DEFAULT 'fijo',
-  `valor` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `porcentaje` decimal(10,2) NOT NULL DEFAULT 0.00,
   `descripcion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -506,7 +533,7 @@ CREATE TABLE `tipo_asignacion` (
 -- Volcado de datos para la tabla `tipo_asignacion`
 --
 
-INSERT INTO `tipo_asignacion` (`id_asignacion`, `nombre`, `tipo`, `valor`, `descripcion`) VALUES
+INSERT INTO `tipo_asignacion` (`id_asignacion`, `nombre`, `tipo`, `porcentaje`, `descripcion`) VALUES
 (1, 'Bono Alimentación', 'fijo', 0.00, 'Bono en monto fijo por política'),
 (2, 'Bono por Responsabilidad', 'porcentaje', 10.00, '10% sobre salario base'),
 (3, 'Horas extras (ejemplo)', 'fijo', 0.00, 'Asignación por horas extras - monto calculado manualmente');
@@ -609,7 +636,8 @@ INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_f
 --
 ALTER TABLE `asignacion_empleado`
   ADD PRIMARY KEY (`id_asig_emp`),
-  ADD KEY `empleado_id` (`empleado_id`);
+  ADD KEY `empleado_id` (`empleado_id`),
+  ADD KEY `fk_asig_tipo` (`id_asignacion`);
 
 --
 -- Indices de la tabla `cargo`
@@ -622,7 +650,8 @@ ALTER TABLE `cargo`
 --
 ALTER TABLE `deduccion_empleado`
   ADD PRIMARY KEY (`id_deduccion_emp`),
-  ADD KEY `empleado_id` (`empleado_id`);
+  ADD KEY `empleado_id` (`empleado_id`),
+  ADD KEY `fk_ded_tipo` (`id_tipo`);
 
 --
 -- Indices de la tabla `detalle_asignacion`
@@ -726,19 +755,19 @@ ALTER TABLE `deduccion_empleado`
 -- AUTO_INCREMENT de la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
-  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
+  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=181;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_deduccion`
 --
 ALTER TABLE `detalle_deduccion`
-  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
+  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_nomina`
 --
 ALTER TABLE `detalle_nomina`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -756,7 +785,7 @@ ALTER TABLE `feriados`
 -- AUTO_INCREMENT de la tabla `nomina`
 --
 ALTER TABLE `nomina`
-  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
@@ -796,13 +825,15 @@ ALTER TABLE `vacaciones`
 -- Filtros para la tabla `asignacion_empleado`
 --
 ALTER TABLE `asignacion_empleado`
-  ADD CONSTRAINT `asignacion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`);
+  ADD CONSTRAINT `asignacion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`),
+  ADD CONSTRAINT `fk_asig_tipo` FOREIGN KEY (`id_asignacion`) REFERENCES `tipo_asignacion` (`id_asignacion`);
 
 --
 -- Filtros para la tabla `deduccion_empleado`
 --
 ALTER TABLE `deduccion_empleado`
-  ADD CONSTRAINT `deduccion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `deduccion_empleado_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ded_tipo` FOREIGN KEY (`id_tipo`) REFERENCES `tipo_deduccion` (`id_tipo`);
 
 --
 -- Filtros para la tabla `detalle_asignacion`

@@ -144,6 +144,7 @@ while($emp = mysqli_fetch_assoc($empleados)) {
    5. GENERAR NÓMINA DEFINITIVA
 ---------------------------------------------------------*/
 if(isset($_POST['generar_nomina'])){
+    $empleados_seleccionados = $_POST['empleados'] ?? [];
     mysqli_begin_transaction($conexion);
 
     try {
@@ -154,6 +155,11 @@ if(isset($_POST['generar_nomina'])){
         $id_nomina = mysqli_insert_id($conexion);
 
         foreach($lista_empleados as $emp){
+
+                  // si el empleado no está seleccionado, lo saltamos
+                if(!in_array($emp['id'], $empleados_seleccionados)){
+                 continue;
+                }
 
             // insertar detalle_nomina
             mysqli_query($conexion, "
@@ -197,6 +203,8 @@ if(isset($_POST['generar_nomina'])){
         die("Error al generar nómina: ".$e->getMessage());
     }
 }
+
+
 
 ?>
 
@@ -321,11 +329,34 @@ if(isset($_POST['generar_nomina'])){
             </form>
         </div>
 
+
+        <form method="POST">
+        <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
+        <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
+
+            <!-- selecionar todos o no --> 
+            <div class="controles-nomina">
+                            <button type="button" onclick="seleccionarTodos()" class="btn-control">
+                            ☑ Seleccionar todos
+                            </button>
+
+                            <button type="button" onclick="quitarTodos()" class="btn-control">
+                            ☐ Quitar todos
+                            </button>
+
+                            <div class="contador-empleados">
+                            Incluidos: <strong id="emp_incluidos">0</strong> |
+                            Excluidos: <strong id="emp_excluidos">0</strong>
+                            </div>
+            </div>
+
+
         <!-- TABLA -->
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Empleado</th>
                         <th>Salario Base</th>
                         <th>Asignaciones</th>
@@ -334,19 +365,43 @@ if(isset($_POST['generar_nomina'])){
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($lista_empleados as $emp) { ?>
-                    <tr>
+                    <?php foreach ($lista_empleados as $emp) { ?>
+                        <tr>
+
+                        
+
                         <td>
+
+                                <input type="checkbox"
+                                class="check-empleado"
+                                data-asig="<?= $emp['asig'] ?>"
+                                data-ded="<?= $emp['ded'] ?>"
+                                data-total="<?= $emp['pagar'] ?>"
+                                name="empleados[]"
+                                value="<?= $emp['id'] ?>"
+                                checked>
+
                                 <a href="#" onclick="verDetalle(<?= $emp['id'] ?>); return false;">
-                                    <?= $emp['nombre'] ?>
+                                <?= $emp['nombre'] ?>
                                 </a>
-                        </td>
+
+                                <?php
+                                if($emp['vac'] > 0){
+                                    echo '<span class="estado vac">Vacaciones</span>';
+                                }else{
+                                    echo '<span class="estado activo">Activo</span>';
+                                }
+                                ?>
+
+                                </td>
+
                         <td><?= number_format($emp['salario'],2) ?> Bs</td>
                         <td><?= number_format($emp['asig'],2) ?> Bs</td>
                         <td><?= number_format($emp['ded'],2) ?> Bs</td>
                         <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
-                    </tr>
-                <?php } ?>
+
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -362,9 +417,22 @@ if(isset($_POST['generar_nomina'])){
 
         <!-- TOTALES -->
         <div class="card totales-box">
-            <p>🟢 Total Asignaciones: <strong><?= number_format($total_general_asig,2) ?> Bs</strong></p>
-            <p>🔴 Total Deducciones: <strong><?= number_format($total_general_ded,2) ?> Bs</strong></p>
-            <p>💰 Total Neto a Pagar: <strong><?= number_format($total_general_pagar,2) ?> Bs</strong></p>
+
+                <p>
+                🟢 Total Asignaciones:
+                <strong id="total_asig"><?= number_format($total_general_asig,2) ?></strong> Bs
+                </p>
+
+                <p>
+                🔴 Total Deducciones:
+                <strong id="total_ded"><?= number_format($total_general_ded,2) ?></strong> Bs
+                </p>
+
+                <p>
+                💰 Total Neto a Pagar:
+                <strong id="total_pagar"><?= number_format($total_general_pagar,2) ?></strong> Bs
+                </p>
+
         </div>
 
         <!-- GENERAR -->
@@ -376,6 +444,8 @@ if(isset($_POST['generar_nomina'])){
                 <button type="submit" name="generar_nomina" class="btn-generar">
                       <i class="ri-check-double-line"></i> Generar Nómina Definitiva
                 </button>
+
+                </form>
 
             </form>
         </div>
@@ -404,6 +474,113 @@ function cerrarPanel(){
 }
 </script>
 
+
+<script>
+
+function actualizarTotales(){
+
+        let totalAsig = 0;
+        let totalDed = 0;
+        let totalPagar = 0;
+
+        document.querySelectorAll(".check-empleado").forEach(check => {
+
+        if(check.checked){
+
+        totalAsig += parseFloat(check.dataset.asig);
+        totalDed += parseFloat(check.dataset.ded);
+        totalPagar += parseFloat(check.dataset.total);
+
+        }
+
+        });
+
+        document.getElementById("total_asig").innerText = totalAsig.toFixed(2);
+        document.getElementById("total_ded").innerText = totalDed.toFixed(2);
+        document.getElementById("total_pagar").innerText = totalPagar.toFixed(2);
+
+        }
+
+        document.querySelectorAll(".check-empleado").forEach(check => {
+
+        check.addEventListener("change", actualizarTotales);
+
+        });
+
+</script>
+
+<script>
+
+function actualizarTotales(){
+
+let totalAsig = 0;
+let totalDed = 0;
+let totalPagar = 0;
+
+let incluidos = 0;
+let excluidos = 0;
+
+document.querySelectorAll(".check-empleado").forEach(check => {
+
+if(check.checked){
+
+totalAsig += parseFloat(check.dataset.asig);
+totalDed += parseFloat(check.dataset.ded);
+totalPagar += parseFloat(check.dataset.total);
+
+incluidos++;
+
+}else{
+
+excluidos++;
+
+}
+
+});
+
+document.getElementById("total_asig").innerText = totalAsig.toFixed(2);
+document.getElementById("total_ded").innerText = totalDed.toFixed(2);
+document.getElementById("total_pagar").innerText = totalPagar.toFixed(2);
+
+document.getElementById("emp_incluidos").innerText = incluidos;
+document.getElementById("emp_excluidos").innerText = excluidos;
+
+}
+
+
+function seleccionarTodos(){
+
+document.querySelectorAll(".check-empleado").forEach(check => {
+
+check.checked = true;
+
+});
+
+actualizarTotales();
+
+}
+
+function quitarTodos(){
+
+document.querySelectorAll(".check-empleado").forEach(check => {
+
+check.checked = false;
+
+});
+
+actualizarTotales();
+
+}
+
+document.querySelectorAll(".check-empleado").forEach(check => {
+
+check.addEventListener("change", actualizarTotales);
+
+});
+
+window.onload = actualizarTotales;
+
+</script>
 
 </body>
 </html>

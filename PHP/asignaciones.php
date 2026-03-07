@@ -125,6 +125,19 @@ $asignaciones_emp = mysqli_query($conexion, "
 <div class="contenido">
     <h3><i class="ri-add-box-line"></i> Nueva Asignación</h3>
 
+    <div class="form-group-compact">
+<label>Aplicar a</label>
+
+<select name="aplica_a">
+
+<option value="todos">Todos los empleados</option>
+
+<option value="manual">Seleccionar empleados</option>
+
+</select>
+
+</div>
+
     <div class="form-container-compact">
         <form method="post" class="form-grid">
             <div class="form-group-compact">
@@ -197,6 +210,8 @@ $asignaciones_emp = mysqli_query($conexion, "
 
     </div>
 
+    
+
 
     <div class="form-group-compact">
     <label>Asignación</label>
@@ -238,6 +253,8 @@ $asignaciones_emp = mysqli_query($conexion, "
 </div>
 
     <h3><i class="ri-team-line"></i> Asignaciones a Empleados</h3>
+
+    
 
             <table border="1" cellpadding="5">
 

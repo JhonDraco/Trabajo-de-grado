@@ -6,6 +6,7 @@ $inicio = $_GET['inicio'];
 $fin = $_GET['fin'];
 $tipo = $_GET['tipo'];
 
+/* ===== FACTOR SEGÚN TIPO DE NÓMINA ===== */
 switch ($tipo) {
     case 'semanal': $factor = 1/4; break;
     case 'quincenal': $factor = 1/2; break;
@@ -19,7 +20,11 @@ SELECT * FROM empleados WHERE id = $id
 
 $salario = round($emp['salario_base'] * $factor,2);
 
-/* ===== ASIGNACIONES ===== */
+/* ======================================================
+   ASIGNACIONES
+======================================================*/
+$total_asig = 0;
+
 $asig = mysqli_query($conexion,"
 SELECT ta.nombre,
 CASE
@@ -33,27 +38,29 @@ AND ae.empleado_id = $id
 AND ae.activa = 1
 ");
 
-$total_asig = 0;
+/* ======================================================
+   DEDUCCIONES LEGALES
+======================================================*/
+$ded_legales = mysqli_query($conexion,"
+SELECT nombre, porcentaje
+FROM tipo_deduccion
+WHERE activo = 1
+");
 
-/* ===== DEDUCCIONES ===== */
-$ded = mysqli_query($conexion,"
-SELECT td.nombre,
-CASE
-    WHEN td.tipo='porcentaje' THEN ($salario * td.porcentaje / 100)
-    ELSE IFNULL(de.monto, td.porcentaje)
-END monto
-FROM tipo_deduccion td
-LEFT JOIN deduccion_empleado de
-ON de.id_tipo = td.id_tipo
-AND de.empleado_id = $id
-AND de.activa = 1
+/* ======================================================
+   DEDUCCIONES INDIVIDUALES
+======================================================*/
+$ded_personales = mysqli_query($conexion,"
+SELECT nombre, monto, cuotas, cuota_actual
+FROM deduccion_empleado
+WHERE empleado_id = $id
+AND activa = 1
 ");
 
 $total_ded = 0;
 ?>
 
 <h3><?= $emp['nombre']." ".$emp['apellido'] ?></h3>
-
 
 <p><strong>Salario Base:</strong> <?= number_format($salario,2) ?> Bs</p>
 
@@ -62,13 +69,15 @@ $total_ded = 0;
 <h4>🟢 Asignaciones</h4>
 
 <table class="tabla-detalle">
+
 <tr>
 <th>Concepto</th>
 <th>Monto</th>
 </tr>
 
 <?php while($a=mysqli_fetch_assoc($asig)){ 
-    $total_asig += $a['monto'];
+
+$total_asig += $a['monto'];
 ?>
 
 <tr>
@@ -79,8 +88,8 @@ $total_ded = 0;
 <?php } ?>
 
 <tr class="total">
-<td>Total Asignaciones</td>
-<td><?= number_format($total_asig,2) ?> Bs</td>
+<td><strong>Total Asignaciones</strong></td>
+<td><strong><?= number_format($total_asig,2) ?> Bs</strong></td>
 </tr>
 
 </table>
@@ -96,20 +105,48 @@ $total_ded = 0;
 <th>Monto</th>
 </tr>
 
-<?php while($d=mysqli_fetch_assoc($ded)){ 
-    $total_ded += $d['monto'];
+<?php
+/* ===== DEDUCCIONES LEGALES ===== */
+while($d = mysqli_fetch_assoc($ded_legales)){
+
+    $monto = round($salario * ($d['porcentaje']/100),2);
+
+    $total_ded += $monto;
 ?>
 
 <tr>
 <td><?= $d['nombre'] ?></td>
-<td><?= number_format($d['monto'],2) ?> Bs</td>
+<td><?= number_format($monto,2) ?> Bs</td>
+</tr>
+
+<?php } ?>
+
+
+<?php
+/* ===== DEDUCCIONES PERSONALES ===== */
+while($d = mysqli_fetch_assoc($ded_personales)){
+
+    $cuota = $d['monto'] / $d['cuotas'];
+    $cuota = round($cuota,2);
+
+    $total_ded += $cuota;
+?>
+
+<tr>
+<td>
+<?= $d['nombre'] ?>
+<br>
+<small>Cuota <?= $d['cuota_actual']+1 ?> de <?= $d['cuotas'] ?></small>
+</td>
+
+<td><?= number_format($cuota,2) ?> Bs</td>
 </tr>
 
 <?php } ?>
 
 <tr class="total">
-<td>Total Deducciones</td>
-<td><?= number_format($total_ded,2) ?> Bs</td>
+<td><strong>Total Deducciones</strong></td>
+<td><strong><?= number_format($total_ded,2) ?> Bs</strong></td>
 </tr>
 
 </table>

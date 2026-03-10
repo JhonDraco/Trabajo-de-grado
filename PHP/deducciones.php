@@ -40,7 +40,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
         INSERT INTO deduccion_empleado (
             empleado_id,
             nombre,
-            tipo,
+            id_tipo,
             monto,
             cuotas,
             cuota_actual,
@@ -48,7 +48,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
         ) VALUES (
             $empleado_id,
             '$nombre',
-            '$tipo',
+            NULL,
             $monto,
             $cuotas,
             0,

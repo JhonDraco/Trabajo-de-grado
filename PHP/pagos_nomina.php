@@ -26,6 +26,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_nomina'])) {
     // Actualizar estado de nomina
     mysqli_query($conexion, "UPDATE nomina SET estado='pagada' WHERE id_nomina=$id_nomina");
 
+        /* ======================================================
+   DESCONTAR CUOTAS DE PRÉSTAMOS / DEDUCCIONES
+======================================================*/
+
+// obtener empleados incluidos en la nómina
+$empleados_nomina = mysqli_query($conexion,"
+SELECT empleado_id
+FROM detalle_nomina
+WHERE id_nomina = $id_nomina
+");
+
+while($emp = mysqli_fetch_assoc($empleados_nomina)){
+
+    $id_emp = $emp['empleado_id'];
+
+    // deducciones activas del empleado
+    $deducciones = mysqli_query($conexion,"
+    SELECT id_deduccion_emp, cuota_actual, cuotas
+    FROM deduccion_empleado
+    WHERE empleado_id = $id_emp
+    AND activa = 1
+    ");
+
+    while($d = mysqli_fetch_assoc($deducciones)){
+
+        $nueva_cuota = $d['cuota_actual'] + 1;
+
+        if($nueva_cuota >= $d['cuotas']){
+            
+            // préstamo terminado
+            mysqli_query($conexion,"
+            UPDATE deduccion_empleado
+            SET cuota_actual = $nueva_cuota,
+                activa = 0
+            WHERE id_deduccion_emp = {$d['id_deduccion_emp']}
+            ");
+
+        }else{
+
+            // seguir descontando
+            mysqli_query($conexion,"
+            UPDATE deduccion_empleado
+            SET cuota_actual = $nueva_cuota
+            WHERE id_deduccion_emp = {$d['id_deduccion_emp']}
+            ");
+
+        }
+
+    }
+
+}
     header("Location: pagar_nomina.php?ok=1");
     exit();
 }

@@ -245,246 +245,379 @@ if(isset($_POST['generar_nomina'])){
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Pre-Nómina</title>
 
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="../css/generar_nomina.css">
+
 </head>
 
 <body>
 
 <!-- ===== SIDEBAR ===== -->
+
 <aside class="sidebar">
+
 <div class="sidebar-header">
-    <img src="../img/logo.png" alt="Logo" class="logo">
-    <h3 class="system-title">KAO SHOP</h3>
+<img src="../img/logo.png" alt="Logo" class="logo">
+<h3 class="system-title">KAO SHOP</h3>
 </div>
-    <a href="administrador.php">
-        <i class="ri-home-4-line"></i> Inicio
-    </a>
-    <a href="nomina.php" class="active">
-        <i class="ri-money-dollar-circle-line"></i> Nómina
-    </a>
 
-    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
-    
+<a href="administrador.php">
+<i class="ri-home-4-line"></i> Inicio
+</a>
 
-    </a>
-     <a href="listar_empleados.php">
-        <i class="ri-team-line"></i> Empleados
-    </a>
-    <a href="listar_usuario.php">
-        <i class="ri-user-settings-line"></i> Roles
-    </a>
-    <a href="reportes.php">
-        <i class="ri-bar-chart-line"></i> Reportes
-    </a>
-             
-    <a href="contactar.php">
-      <i class="ri-mail-line"></i> Email 
-    </a>
-    
-   
+<a href="nomina.php" class="active">
+<i class="ri-money-dollar-circle-line"></i> Nómina
+</a>
+
+<a href="liquidacion.php">
+<i class="ri-ball-pen-line"></i> Liquidación
+</a>
+
+<a href="vacaciones.php">
+<i class="ri-sun-line"></i> Vacaciones
+</a>
+
+<a href="listar_empleados.php">
+<i class="ri-team-line"></i> Empleados
+</a>
+
+<a href="listar_usuario.php">
+<i class="ri-user-settings-line"></i> Roles
+</a>
+
+<a href="reportes.php">
+<i class="ri-bar-chart-line"></i> Reportes
+</a>
+
+<a href="contactar.php">
+<i class="ri-mail-line"></i> Email
+</a>
+
 </aside>
 
 <!-- ===== MAIN ===== -->
+
 <div class="main">
 
-    <!-- HEADER -->
-    <header>
-        <h2>Panel de Administración - RRHH</h2>
-        <div>
-            <span>👤 <?= $_SESSION['usuario'] ?></span> |
-            <a href="cerrar_sesion.php">Cerrar sesión</a>
-        </div>
-    </header>
+<!-- ===== HEADER ===== -->
 
-    <!-- TOP MENU -->
-   <div class="top-menu">
-        <a href="asignaciones.php" class="top-button">
-            <i class="ri-add-circle-line"></i> Asignaciones
-        </a>
+<header>
 
-        <a href="deducciones.php" class="top-button">
-            <i class="ri-subtract-line"></i> Deducciones
-        </a>
+<h2>Panel de Administración - RRHH</h2>
 
-        <a href="generar_nomina.php" class="top-button">
-            <i class="ri-calculator-line"></i> Generar Nómina
-        </a>
-
-        <a href="ver_nomina.php" class="top-button">
-            <i class="ri-file-list-line"></i> Ver Nóminas
-        </a>
-       <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
-        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
-        
-   
-    </div>
-
-    <!-- ===== CONTENIDO ===== -->
-<!-- ===== CONTENIDO ===== -->
-<div class="contenido">
-    <div class="card-container">
-
-        <h2>🧾 Pre-Nómina — Vista Previa</h2>
-
-        <!-- INFO GENERAL -->
-        <div class="card info-box">
-            <p><strong>Nómina #:</strong> <?= $siguiente_nomina ?></p>
-            <p><strong>Período:</strong> <?= $fecha_inicio ?> → <?= $fecha_fin ?></p>
-            <p><strong>Generada por:</strong> <?= $_SESSION['usuario'] ?></p>
-        </div>
-
-        <!-- FORM PERÍODO -->
-        <div class="card">
-            <form method="GET" class="periodo-form">
-
-            <select name="tipo">
-    <option value="semanal" <?= $tipo_nomina=='semanal'?'selected':'' ?>>Semanal</option>
-    <option value="quincenal" <?= $tipo_nomina=='quincenal'?'selected':'' ?>>Quincenal</option>
-    <option value="mensual" <?= $tipo_nomina=='mensual'?'selected':'' ?>>Mensual</option>
-</select>
-
-                <label>Fecha Inicio</label>
-                <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
-
-                <label>Fecha Fin</label>
-                <input type="date" name="fin" value="<?= $fecha_fin ?>">
-
-                <button type="submit">
-                    <i class="ri-refresh-line"></i> Actualizar Período
-                </button>
-            </form>
-        </div>
-
-
-        <form method="POST">
-        <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
-        <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
-
-            <!-- selecionar todos o no --> 
-            <div class="controles-nomina">
-                            <button type="button" onclick="seleccionarTodos()" class="btn-control">
-                            ☑ Seleccionar todos
-                            </button>
-
-                            <button type="button" onclick="quitarTodos()" class="btn-control">
-                            ☐ Quitar todos
-                            </button>
-
-                            <div class="contador-empleados">
-                            Incluidos: <strong id="emp_incluidos">0</strong> |
-                            Excluidos: <strong id="emp_excluidos">0</strong>
-                            </div>
-            </div>
-
-
-        <!-- TABLA -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Empleado</th>
-                        <th>Salario Base</th>
-                        <th>Asignaciones</th>
-                        <th>Deducciones</th>
-                        <th>Total a Pagar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($lista_empleados as $emp) { ?>
-                        <tr>
-
-                        
-
-                        <td>
-
-                                <input type="checkbox"
-                                class="check-empleado"
-                                data-asig="<?= $emp['asig'] ?>"
-                                data-ded="<?= $emp['ded'] ?>"
-                                data-total="<?= $emp['pagar'] ?>"
-                                name="empleados[]"
-                                value="<?= $emp['id'] ?>"
-                                checked>
-
-                                <a href="#" onclick="verDetalle(<?= $emp['id'] ?>); return false;">
-                                <?= $emp['nombre'] ?>
-                                </a>
-
-                                <?php
-                                if($emp['vac'] > 0){
-                                    echo '<span class="estado vac">Vacaciones</span>';
-                                }else{
-                                    echo '<span class="estado activo">Activo</span>';
-                                }
-                                ?>
-
-                                </td>
-
-                        <td><?= number_format($emp['salario'],2) ?> Bs</td>
-                        <td><?= number_format($emp['asig'],2) ?> Bs</td>
-                        <td><?= number_format($emp['ded'],2) ?> Bs</td>
-                        <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
-
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="panelDetalle" class="panel-detalle">
-            <div class="panel-contenido">
-                <button onclick="cerrarPanel()" class="cerrar-btn">✖</button>
-                <div id="contenidoDetalle">
-                    <!-- Aquí se cargará el detalle -->
-                </div>
-            </div>
-        </div>
-
-        <!-- TOTALES -->
-        <div class="card totales-box">
-
-                <p>
-                🟢 Total Asignaciones:
-                <strong id="total_asig"><?= number_format($total_general_asig,2) ?></strong> Bs
-                </p>
-
-                <p>
-                🔴 Total Deducciones:
-                <strong id="total_ded"><?= number_format($total_general_ded,2) ?></strong> Bs
-                </p>
-
-                <p>
-                💰 Total Neto a Pagar:
-                <strong id="total_pagar"><?= number_format($total_general_pagar,2) ?></strong> Bs
-                </p>
-
-        </div>
-
-        <!-- GENERAR -->
-        <div class="card">
-            <form method="POST">
-                <input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
-                <input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
-
-                <button type="submit" name="generar_nomina" class="btn-generar">
-                      <i class="ri-check-double-line"></i> Generar Nómina Definitiva
-                </button>
-
-                </form>
-
-            </form>
-        </div>
-
-    </div>
+<div>
+<span>👤 <?= $_SESSION['usuario'] ?></span> |
+<a href="cerrar_sesion.php">Cerrar sesión</a>
 </div>
 
+</header>
+
+
+<!-- ===== TOP MENU ===== -->
+
+<div class="top-menu">
+
+<a href="asignaciones.php" class="top-button">
+<i class="ri-add-circle-line"></i> Asignaciones
+</a>
+
+<a href="deducciones.php" class="top-button">
+<i class="ri-subtract-line"></i> Deducciones
+</a>
+
+<a href="generar_nomina.php" class="top-button">
+<i class="ri-calculator-line"></i> Generar Nómina
+</a>
+
+<a href="ver_nomina.php" class="top-button">
+<i class="ri-file-list-line"></i> Ver Nóminas
+</a>
+
+<a href="pagar_nomina.php" class="top-button">
+<i class="ri-eye-line"></i> Pagar Nóminas
+</a>
+
+<a href="historial_pagos.php" class="top-button">
+<i class="ri-file-text-line"></i> Historial de Pagos
+</a>
+
+</div>
+
+
+<!-- ===== CONTENIDO ===== -->
+
+<div class="contenido">
+
+<div class="card-container">
+
+<h2>🧾 Pre-Nómina — Vista Previa</h2>
+
+
+<!-- ===== INFO GENERAL ===== -->
+
+<div class="card info-box">
+
+<div class="info-item">
+<span class="info-label">Nómina</span>
+<span class="info-value">#<?= $siguiente_nomina ?></span>
+</div>
+
+<div class="info-item">
+<span class="info-label">Período</span>
+<span class="info-value"><?= $fecha_inicio ?> → <?= $fecha_fin ?></span>
+</div>
+
+<div class="info-item">
+<span class="info-label">Generado por</span>
+<span class="info-value"><?= $_SESSION['usuario'] ?></span>
+</div>
+
+</div>
+
+
+<!-- ===== FORM PERIODO ===== -->
+
+<div class="card">
+
+<form method="GET" class="periodo-form">
+
+<div class="form-group">
+<label>Tipo de Nómina</label>
+
+<select name="tipo">
+
+<option value="semanal" <?= $tipo_nomina=='semanal'?'selected':'' ?>>Semanal</option>
+<option value="quincenal" <?= $tipo_nomina=='quincenal'?'selected':'' ?>>Quincenal</option>
+<option value="mensual" <?= $tipo_nomina=='mensual'?'selected':'' ?>>Mensual</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Fecha Inicio</label>
+<input type="date" name="inicio" value="<?= $fecha_inicio ?>">
+</div>
+
+<div class="form-group">
+<label>Fecha Fin</label>
+<input type="date" name="fin" value="<?= $fecha_fin ?>">
+</div>
+
+<div class="form-group">
+<button type="submit">
+<i class="ri-refresh-line"></i> Actualizar
+</button>
+</div>
+
+</form>
+
+</div>
+
+
+
+<form method="POST">
+
+<input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
+<input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
+
+
+<!-- ===== CONTROLES ===== -->
+
+<div class="controles-nomina">
+
+<button type="button" onclick="seleccionarTodos()" class="btn-control">
+☑ Seleccionar todos
+</button>
+
+<button type="button" onclick="quitarTodos()" class="btn-control">
+☐ Quitar todos
+</button>
+
+<div class="contador-empleados">
+
+Incluidos:
+<strong id="emp_incluidos">0</strong>
+
+|
+
+Excluidos:
+<strong id="emp_excluidos">0</strong>
+
+</div>
+
+</div>
+
+
+
+<!-- ===== TABLA ===== -->
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th></th>
+<th>Empleado</th>
+<th>Salario Base</th>
+<th>Asignaciones</th>
+<th>Deducciones</th>
+<th>Total a Pagar</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+<?php foreach ($lista_empleados as $emp) { ?>
+
+<tr>
+
+<td>
+
+<tr>
+
+<td>
+
+<input type="checkbox"
+class="check-empleado"
+data-asig="<?= $emp['asig'] ?>"
+data-ded="<?= $emp['ded'] ?>"
+data-total="<?= $emp['pagar'] ?>"
+name="empleados[]"
+value="<?= $emp['id'] ?>"
+checked>
+
+</td>
+
+<td>
+
+<a href="#" onclick="verDetalle(<?= $emp['id'] ?>); return false;">
+<i class="ri-user-3-line"></i>
+<?= $emp['nombre'] ?>
+</a>
+
+<?php
+if($emp['vac'] > 0){
+echo '<span class="estado vac">Vacaciones</span>';
+}else{
+echo '<span class="estado activo">Activo</span>';
+}
+?>
+
+</td>
+
+<td><?= number_format($emp['salario'],2) ?> Bs</td>
+
+<td><?= number_format($emp['asig'],2) ?> Bs</td>
+
+<td><?= number_format($emp['ded'],2) ?> Bs</td>
+
+<td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
+
+</tr>
+<?php } ?>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- ===== PANEL DETALLE ===== -->
+
+<div id="panelDetalle" class="panel-detalle">
+
+<div class="panel-contenido">
+
+<button onclick="cerrarPanel()" class="cerrar-btn">
+✖
+</button>
+
+<div id="contenidoDetalle"></div>
+
+</div>
+
+</div>
+
+
+
+<!-- ===== TOTALES ===== -->
+
+<div class="totales-box">
+
+<div class="total-card asig">
+
+🟢 Total Asignaciones
+
+<strong id="total_asig">
+<?= number_format($total_general_asig,2) ?>
+</strong> Bs
+
+</div>
+
+
+<div class="total-card ded">
+
+🔴 Total Deducciones
+
+<strong id="total_ded">
+<?= number_format($total_general_ded,2) ?>
+</strong> Bs
+
+</div>
+
+
+<div class="total-card pagar">
+
+💰 Total Neto a Pagar
+
+<strong id="total_pagar">
+<?= number_format($total_general_pagar,2) ?>
+</strong> Bs
+
+</div>
+
+</div>
+
+
+<!-- ===== BOTON GENERAR ===== -->
+
+<div class="card generar-card">
+
+<button type="submit" name="generar_nomina" class="btn-generar">
+
+<i class="ri-check-double-line"></i>
+
+Generar Nómina Definitiva
+
+</button>
+
+</div>
+
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
 
 <script>
 function verDetalle(id){

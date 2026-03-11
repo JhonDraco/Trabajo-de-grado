@@ -79,34 +79,66 @@ while($emp = mysqli_fetch_assoc($empleados)) {
         $asig_list[] = ['nombre'=>$a['nombre'],'monto'=>$monto];
     }
 
-    /* ===== DEDUCCIONES: tipo_deduccion + deduccion_empleado ===== */
-    $ded_list = [];
-    $total_ded_aplicada = 0;
+    /* ===== DEDUCCIONES ===== */
+$ded_list = [];
+$total_ded_aplicada = 0;
 
-    // Deducciones generales
-    $qDed = mysqli_query($conexion, "
-        SELECT td.id_tipo, td.nombre, td.tipo, td.porcentaje, de.monto AS monto_emp, de.cuotas, de.cuota_actual
-        FROM tipo_deduccion td
-        LEFT JOIN deduccion_empleado de
-        ON de.id_tipo = td.id_tipo AND de.empleado_id = $id_emp AND de.activa=1
-    ");
+/* ===== DEDUCCIONES GENERALES (LEY) ===== */
+$qDed = mysqli_query($conexion, "
+SELECT *
+FROM tipo_deduccion
+WHERE activo = 1
+");
 
-    while($d = mysqli_fetch_assoc($qDed)) {
-        if($d['tipo'] == 'fijo') {
-            $monto = $d['monto_emp'] !== null ? $d['monto_emp'] : $d['porcentaje'];
-        } else {
-            $monto = round($salario * ($d['porcentaje']/100), 2);
-        }
+while($d = mysqli_fetch_assoc($qDed)){
 
-        // aplicar tope
-        if(($total_ded_aplicada + $monto) > $max_deducciones){
-            $monto = $max_deducciones - $total_ded_aplicada;
-        }
-        if($monto <= 0) break;
+    $monto = round($salario * ($d['porcentaje']/100),2);
 
-        $total_ded_aplicada += $monto;
-        $ded_list[] = ['nombre'=>$d['nombre'],'monto'=>$monto];
+    // aplicar tope
+    if(($total_ded_aplicada + $monto) > $max_deducciones){
+        $monto = $max_deducciones - $total_ded_aplicada;
     }
+
+    if($monto <= 0) break;
+
+    $total_ded_aplicada += $monto;
+
+    $ded_list[] = [
+        'nombre'=>$d['nombre'],
+        'monto'=>$monto
+    ];
+}
+
+
+            /* ===== DEDUCCIONES INDIVIDUALES (PRÉSTAMOS, ADELANTOS) ===== */
+            $qDedEmp = mysqli_query($conexion, "
+            SELECT *
+            FROM deduccion_empleado
+            WHERE empleado_id = $id_emp
+            AND activa = 1
+            ");
+
+            while($d = mysqli_fetch_assoc($qDedEmp)){
+
+                // calcular cuota
+                $cuota = $d['monto'] / $d['cuotas'];
+
+                $cuota = round($cuota,2);
+
+                // aplicar tope 40%
+                if(($total_ded_aplicada + $cuota) > $max_deducciones){
+                    $cuota = $max_deducciones - $total_ded_aplicada;
+                }
+
+                if($cuota <= 0) break;
+
+                $total_ded_aplicada += $cuota;
+
+                $ded_list[] = [
+                    'nombre'=>$d['nombre'],
+                    'monto'=>$cuota
+                ];
+            }
 
     /* ===== VACACIONES (informativo) ===== */
     $vacaciones = mysqli_query($conexion, "

@@ -99,7 +99,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-        <a href="" class="top-button">Despido injustificado</a>
+    
 
     </div>
 
@@ -226,11 +226,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
                                     <span class="text-xs font-bold opacity-60">Bs.</span>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <button onclick="window.print()" class="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition border border-white/20">
-                                    <i class="ri-printer-line text-lg"></i>
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>

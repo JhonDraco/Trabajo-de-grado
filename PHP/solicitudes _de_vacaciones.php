@@ -93,6 +93,7 @@ $vacaciones = mysqli_query($conexion, "
     <img src="../img/logo.png" alt="Logo" class="logo">
     <h3 class="system-title">KAO SHOP</h3>
 </div>
+
     <a href="administrador.php">
         <i class="ri-home-4-line"></i> Inicio
     </a>

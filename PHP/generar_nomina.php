@@ -356,89 +356,91 @@ if(isset($_POST['generar_nomina'])){
 
 <div class="card-container">
 
-<h2>🧾 Pre-Nómina — Vista Previa</h2>
+<h2> Pre-Nómina </h2>
 
+<div class="panel-nomina">
 
-<!-- ===== INFO GENERAL ===== -->
+<!-- INFORMACION NOMINA -->
 
-<div class="card info-box">
+<div class="info-nomina">
 
-<div class="info-item">
-<span class="info-label">Nómina</span>
-<span class="info-value">#<?= $siguiente_nomina ?></span>
+<div class="info-card">
+<span class="info-titulo">Nómina</span>
+<span class="info-valor">#<?= $siguiente_nomina ?></span>
 </div>
 
-<div class="info-item">
-<span class="info-label">Período</span>
-<span class="info-value"><?= $fecha_inicio ?> → <?= $fecha_fin ?></span>
+<div class="info-card">
+<span class="info-titulo">Período</span>
+<span class="info-valor"><?= $fecha_inicio ?> → <?= $fecha_fin ?></span>
 </div>
 
-<div class="info-item">
-<span class="info-label">Generado por</span>
-<span class="info-value"><?= $_SESSION['usuario'] ?></span>
+<div class="info-card">
+<span class="info-titulo">Generado por</span>
+<span class="info-valor"><?= $_SESSION['usuario'] ?></span>
 </div>
 
 </div>
 
+<!-- FILTROS NOMINA -->
 
-<!-- ===== FORM PERIODO ===== -->
+<div class="filtros-nomina">
 
-<div class="card">
+<form method="GET" class="form-nomina">
 
-<form method="GET" class="periodo-form">
+<div class="grupo-form">
 
-<div class="form-group">
 <label>Tipo de Nómina</label>
 
 <select name="tipo">
-
 <option value="semanal" <?= $tipo_nomina=='semanal'?'selected':'' ?>>Semanal</option>
 <option value="quincenal" <?= $tipo_nomina=='quincenal'?'selected':'' ?>>Quincenal</option>
 <option value="mensual" <?= $tipo_nomina=='mensual'?'selected':'' ?>>Mensual</option>
-
 </select>
 
 </div>
 
-<div class="form-group">
+<div class="grupo-form">
+
 <label>Fecha Inicio</label>
 <input type="date" name="inicio" value="<?= $fecha_inicio ?>">
+
 </div>
 
-<div class="form-group">
+<div class="grupo-form">
+
 <label>Fecha Fin</label>
 <input type="date" name="fin" value="<?= $fecha_fin ?>">
+
 </div>
 
-<div class="form-group">
+<div class="grupo-form boton">
+
 <button type="submit">
-<i class="ri-refresh-line"></i> Actualizar
+<i class="ri-refresh-line"></i>
+Actualizar
 </button>
+
 </div>
 
 </form>
 
 </div>
 
-
-
-<form method="POST">
-
-<input type="hidden" name="fecha_inicio" value="<?= $fecha_inicio ?>">
-<input type="hidden" name="fecha_fin" value="<?= $fecha_fin ?>">
-
-
-<!-- ===== CONTROLES ===== -->
+<!-- CONTROLES -->
 
 <div class="controles-nomina">
 
+<div class="controles-izq">
+
 <button type="button" onclick="seleccionarTodos()" class="btn-control">
-☑ Seleccionar todos
+Seleccionar todos
 </button>
 
-<button type="button" onclick="quitarTodos()" class="btn-control">
-☐ Quitar todos
+<button type="button" onclick="quitarTodos()" class="btn-control rojo">
+Quitar todos
 </button>
+
+</div>
 
 <div class="contador-empleados">
 
@@ -454,9 +456,26 @@ Excluidos:
 
 </div>
 
+</div>
 
+<!-- FORM PRINCIPAL -->
 
-<!-- ===== TABLA ===== -->
+<form method="POST">
+
+<!-- BUSCADOR -->
+
+<div class="buscador-empleados">
+
+<i class="ri-search-line"></i>
+
+<input
+type="text"
+id="buscarEmpleado"
+placeholder="Buscar empleado...">
+
+</div>
+
+<!-- TABLA -->
 
 <div class="table-container">
 
@@ -465,26 +484,20 @@ Excluidos:
 <thead>
 
 <tr>
-
 <th></th>
 <th>Empleado</th>
+<th>Estado</th>
 <th>Salario Base</th>
 <th>Asignaciones</th>
 <th>Deducciones</th>
 <th>Total a Pagar</th>
-
 </tr>
 
 </thead>
 
-
 <tbody>
 
 <?php foreach ($lista_empleados as $emp) { ?>
-
-<tr>
-
-<td>
 
 <tr>
 
@@ -500,13 +513,16 @@ value="<?= $emp['id'] ?>"
 checked>
 
 </td>
-
 <td>
 
 <a href="#" onclick="verDetalle(<?= $emp['id'] ?>); return false;">
 <i class="ri-user-3-line"></i>
 <?= $emp['nombre'] ?>
 </a>
+
+</td>
+
+<td>
 
 <?php
 if($emp['vac'] > 0){
@@ -519,14 +535,12 @@ echo '<span class="estado activo">Activo</span>';
 </td>
 
 <td><?= number_format($emp['salario'],2) ?> Bs</td>
-
 <td><?= number_format($emp['asig'],2) ?> Bs</td>
-
 <td><?= number_format($emp['ded'],2) ?> Bs</td>
-
 <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
 
 </tr>
+
 <?php } ?>
 
 </tbody>
@@ -535,16 +549,13 @@ echo '<span class="estado activo">Activo</span>';
 
 </div>
 
-
-<!-- ===== PANEL DETALLE ===== -->
+<!-- PANEL DETALLE -->
 
 <div id="panelDetalle" class="panel-detalle">
 
 <div class="panel-contenido">
 
-<button onclick="cerrarPanel()" class="cerrar-btn">
-✖
-</button>
+<button onclick="cerrarPanel()" class="cerrar-btn">✖</button>
 
 <div id="contenidoDetalle"></div>
 
@@ -552,48 +563,34 @@ echo '<span class="estado activo">Activo</span>';
 
 </div>
 
-
-
-<!-- ===== TOTALES ===== -->
+<!-- TOTALES -->
 
 <div class="totales-box">
 
 <div class="total-card asig">
-
 🟢 Total Asignaciones
-
 <strong id="total_asig">
 <?= number_format($total_general_asig,2) ?>
 </strong> Bs
-
 </div>
 
-
 <div class="total-card ded">
-
 🔴 Total Deducciones
-
 <strong id="total_ded">
 <?= number_format($total_general_ded,2) ?>
 </strong> Bs
-
 </div>
 
-
 <div class="total-card pagar">
-
 💰 Total Neto a Pagar
-
 <strong id="total_pagar">
 <?= number_format($total_general_pagar,2) ?>
 </strong> Bs
-
 </div>
 
 </div>
 
-
-<!-- ===== BOTON GENERAR ===== -->
+<!-- BOTON GENERAR -->
 
 <div class="card generar-card">
 
@@ -607,15 +604,11 @@ Generar Nómina Definitiva
 
 </div>
 
-
 </form>
 
 </div>
 
 </div>
-
-</div>
-
 </body>
 </html>
 
@@ -744,6 +737,31 @@ check.addEventListener("change", actualizarTotales);
 });
 
 window.onload = actualizarTotales;
+
+const buscador = document.getElementById("buscarEmpleado");
+
+buscador.addEventListener("keyup", function(){
+
+let filtro = buscador.value.toLowerCase();
+let filas = document.querySelectorAll("table tbody tr");
+
+filas.forEach(fila => {
+
+let texto = fila.innerText.toLowerCase();
+
+if(texto.includes(filtro)){
+
+fila.style.display = "";
+
+}else{
+
+fila.style.display = "none";
+
+}
+
+});
+
+});
 
 </script>
 

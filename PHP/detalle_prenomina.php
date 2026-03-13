@@ -59,101 +59,137 @@ AND activa = 1
 
 $total_ded = 0;
 ?>
+<div class="detalle-dashboard">
 
+<div class="detalle-top">
+
+<div class="empleado-info">
+<i class="ri-user-3-line"></i>
+<div>
 <h3><?= $emp['nombre']." ".$emp['apellido'] ?></h3>
+<span>Salario período</span>
+</div>
+</div>
 
-<p><strong>Salario Base:</strong> <?= number_format($salario,2) ?> Bs</p>
+<div class="salario-big">
+<?= number_format($salario,2) ?> Bs
+</div>
 
-<hr>
+</div>
+
+
+<div class="detalle-grid">
+
+<!-- ASIGNACIONES -->
+
+<div class="detalle-box asignaciones">
 
 <h4>🟢 Asignaciones</h4>
 
-<table class="tabla-detalle">
-
-<tr>
-<th>Concepto</th>
-<th>Monto</th>
-</tr>
+<div class="detalle-list">
 
 <?php while($a=mysqli_fetch_assoc($asig)){ 
-
 $total_asig += $a['monto'];
 ?>
 
-<tr>
-<td><?= $a['nombre'] ?></td>
-<td><?= number_format($a['monto'],2) ?> Bs</td>
-</tr>
+<div class="fila">
+
+<span><?= $a['nombre'] ?></span>
+
+<strong class="positivo">
+<?= number_format($a['monto'],2) ?> Bs
+</strong>
+
+</div>
 
 <?php } ?>
 
-<tr class="total">
-<td><strong>Total Asignaciones</strong></td>
-<td><strong><?= number_format($total_asig,2) ?> Bs</strong></td>
-</tr>
+</div>
 
-</table>
+<div class="box-total positivo">
 
-<hr>
+Total
+<?= number_format($total_asig,2) ?> Bs
+
+</div>
+
+</div>
+
+
+<!-- DEDUCCIONES -->
+
+<div class="detalle-box deducciones">
 
 <h4>🔴 Deducciones</h4>
 
-<table class="tabla-detalle">
-
-<tr>
-<th>Concepto</th>
-<th>Monto</th>
-</tr>
+<div class="detalle-list">
 
 <?php
-/* ===== DEDUCCIONES LEGALES ===== */
 while($d = mysqli_fetch_assoc($ded_legales)){
 
-    $monto = round($salario * ($d['porcentaje']/100),2);
-
-    $total_ded += $monto;
+$monto = round($salario * ($d['porcentaje']/100),2);
+$total_ded += $monto;
 ?>
 
-<tr>
-<td><?= $d['nombre'] ?></td>
-<td><?= number_format($monto,2) ?> Bs</td>
-</tr>
+<div class="fila">
+
+<span><?= $d['nombre'] ?></span>
+
+<strong class="negativo">
+<?= number_format($monto,2) ?> Bs
+</strong>
+
+</div>
 
 <?php } ?>
 
 
 <?php
-/* ===== DEDUCCIONES PERSONALES ===== */
 while($d = mysqli_fetch_assoc($ded_personales)){
 
-    $cuota = $d['monto'] / $d['cuotas'];
-    $cuota = round($cuota,2);
-
-    $total_ded += $cuota;
+$cuota = round($d['monto'] / $d['cuotas'],2);
+$total_ded += $cuota;
 ?>
 
-<tr>
-<td>
-<?= $d['nombre'] ?>
-<br>
-<small>Cuota <?= $d['cuota_actual']+1 ?> de <?= $d['cuotas'] ?></small>
-</td>
+<div class="fila">
 
-<td><?= number_format($cuota,2) ?> Bs</td>
-</tr>
+<span>
+<?= $d['nombre'] ?>
+<small>(<?= $d['cuota_actual']+1 ?>/<?= $d['cuotas'] ?>)</small>
+</span>
+
+<strong class="negativo">
+<?= number_format($cuota,2) ?> Bs
+</strong>
+
+</div>
 
 <?php } ?>
 
-<tr class="total">
-<td><strong>Total Deducciones</strong></td>
-<td><strong><?= number_format($total_ded,2) ?> Bs</strong></td>
-</tr>
+</div>
 
-</table>
+<div class="box-total negativo">
 
-<hr>
+Total
+<?= number_format($total_ded,2) ?> Bs
 
-<h3>
-💰 Neto a pagar:
+</div>
+
+</div>
+
+</div>
+
+
+<div class="neto-final">
+
+<span>Neto a pagar</span>
+
+<strong>
+
 <?= number_format(($salario+$total_asig)-$total_ded,2) ?> Bs
-</h3>
+
+</strong>
+
+</div>
+
+</div>

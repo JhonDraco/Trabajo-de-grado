@@ -178,14 +178,14 @@ header a{
 }
 
 /* ===== TABLA ===== */
-.table-container {
-    width: 94%;
-    margin: 25px auto;
-    background: var(--white);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow-x: auto;
+table{
+    width:94%;
+    border-collapse:collapse;
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    margin-top:20px;
 }
 
 table {
@@ -193,10 +193,10 @@ table {
     border-collapse: collapse;
     font-size: 15px;
 }
-
-table thead {
-    background: var(--green-mid);
-    color: white;
+table th{
+    background:var(--green-mid);
+    color:white;
+    font-weight:600;
 }
 
 table th, table td {
@@ -218,6 +218,7 @@ table a {
 table a:hover {
     text-decoration: underline;
 }
+
 
 /* ===== RESPONSIVE ===== */
 @media (max-width:880px){

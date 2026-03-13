@@ -257,7 +257,7 @@ if(isset($_POST['generar_nomina'])){
 </head>
 
 <body>
-
+<div id="overlay" class="overlay"></div>
 <!-- ===== SIDEBAR ===== -->
 
 <aside class="sidebar">
@@ -615,21 +615,30 @@ Generar Nómina Definitiva
 <script>
 function verDetalle(id){
 
-    const inicio = "<?= $fecha_inicio ?>";
-    const fin = "<?= $fecha_fin ?>";
-    const tipo = "<?= $tipo_nomina ?>";
+const inicio = "<?= $fecha_inicio ?>";
+const fin = "<?= $fecha_fin ?>";
+const tipo = "<?= $tipo_nomina ?>";
 
-    fetch("detalle_prenomina.php?id="+id+"&inicio="+inicio+"&fin="+fin+"&tipo="+tipo)
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById("contenidoDetalle").innerHTML = data;
-        document.getElementById("panelDetalle").classList.add("activo");
-    });
+fetch("detalle_prenomina.php?id="+id+"&inicio="+inicio+"&fin="+fin+"&tipo="+tipo)
+.then(res => res.text())
+.then(data => {
+
+document.getElementById("contenidoDetalle").innerHTML = data;
+
+document.getElementById("panelDetalle").classList.add("activo");
+document.getElementById("overlay").classList.add("activo");
+
+});
+
 }
 
 function cerrarPanel(){
-    document.getElementById("panelDetalle").classList.remove("activo");
+
+document.getElementById("panelDetalle").classList.remove("activo");
+document.getElementById("overlay").classList.remove("activo");
+
 }
+document.getElementById("overlay").onclick = cerrarPanel;
 </script>
 
 

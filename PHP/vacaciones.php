@@ -296,63 +296,65 @@ $vacaciones = mysqli_query($conexion, "
         <a href="cerrar_sesion.php">Cerrar sesión</a>
     </div>
 </header>
+    <div class="top-menu">
+        <a href="vacaciones.php" class="top-button">Todas</a>
+        <a href="vacaciones.php?estado=pendiente" class="top-button">Pendientes</a>
+        <a href="vacaciones.php?estado=aprobado" class="top-button">Aprobadas</a>
+        <a href="vacaciones.php?estado=rechazado" class="top-button">Rechazadas</a>
+        
+
+    </div>
 
 <div class="contenido">
 
+<br>
 <h3><i class="ri-sun-line"></i> Nueva Solicitud de Vacaciones</h3>
 
-<div class="form-container-compact">
-<form method="post" class="form-grid">
+    <div class="form-compacto">
 
-<div class="form-group-compact">
+<form method="post">
+
+<div class="form-group">
 <label>Empleado</label>
 <select name="empleado_id" required onchange="obtenerSaldo(this.value)">
 <option value="">Seleccionar...</option>
+
 <?php while ($e = mysqli_fetch_assoc($empleados)) { ?>
 <option value="<?= $e['id'] ?>">
 <?= $e['nombre']." ".$e['apellido'] ?>
 </option>
 <?php } ?>
+
 </select>
 </div>
 
-<div class="form-group-compact">
+<div class="form-group">
 <label>Fecha Inicio</label>
 <input type="date" name="fecha_inicio" required>
 </div>
 
-<div class="form-group-compact">
+<div class="form-group">
 <label>Fecha Fin</label>
 <input type="date" name="fecha_fin" required>
 </div>
 
-<div class="form-group-compact">
+<div class="form-group">
 <label>Observaciones</label>
 <input type="text" name="observaciones" placeholder="Opcional...">
 </div>
 
-<button type="submit" class="btn-guardar-compact">
+<button type="submit" class="btn-registrar">
 <i class="ri-save-3-line"></i> Solicitar
 </button>
 
 </form>
 
+
+
 <p style="margin-top:10px;font-weight:600;color:#1f3a34;">
 <strong id="saldo">Saldo disponible: 0 días</strong>
+
 </p>
-
-</div>
-
-<h3><i class="ri-history-line"></i> Historial de Vacaciones</h3>
-
-<div style="margin-bottom:15px;">
-<a href="vacaciones.php" class="top-button">Todas</a>
-<a href="vacaciones.php?estado=pendiente" class="top-button">Pendientes</a>
-<a href="vacaciones.php?estado=aprobado" class="top-button">Aprobadas</a>
-<a href="vacaciones.php?estado=rechazado" class="top-button">Rechazadas</a>
-
-</div>
-
 <table>
 <tr>
 <th>Empleado</th>

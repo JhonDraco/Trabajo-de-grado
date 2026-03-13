@@ -256,6 +256,56 @@ table tr:nth-child(even){
 table tr:hover{
     background:#d9e6e0;
 }
+.table-container{
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+.table-container{
+
+max-height:420px;
+overflow-y:auto;
+
+}
+table thead{
+    background:var(--green-mid);
+    color:white;
+}
+
+table th,
+table td{
+    padding:11px 12px;
+    border-bottom:1px solid #e8e8e8;
+}
+
+table tbody tr:hover{
+    background:#f2f7f6;
+}
+
+table tbody tr:nth-child(even){
+    background:#fbfbfb;
+}
+table tbody tr:hover {
+    background: #eaf3f1;
+    transition: 0.2s;
+}
+table td:nth-child(3),
+table td:nth-child(4),
+table td:nth-child(5),
+table td:nth-child(6) {
+    text-align: right;
+    font-weight: 500;
+}
+table td:last-child {
+    font-weight: 700;
+    color: #1f3a34;
+}
 
 
 

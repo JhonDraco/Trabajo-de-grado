@@ -1,14 +1,12 @@
 
 <?php
-session_start();
+
 include("db.php");
 
+include("seguridad.php");
 
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
-
+verificarSesion();
+bloquearSiNo(puedeVacaciones());
 
 
 /* ======================================================

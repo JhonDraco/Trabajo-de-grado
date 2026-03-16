@@ -1,6 +1,11 @@
 <?php
 include("db.php"); // incluye la conexión
 
+include("seguridad.php");
+
+verificarSesion();
+bloquearSiNo(puedeListarEmpleados());
+
 // Consulta SQL
 $buscar = "";
 
@@ -27,11 +32,7 @@ if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
 }
 
-session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

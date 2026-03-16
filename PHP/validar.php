@@ -14,14 +14,20 @@ $filas = mysqli_fetch_array($resultado);
 if ($filas) {
     // Guardamos datos en la sesión
     $_SESSION['usuario'] = $usuario;
-    $_SESSION['cargo'] = $filas['cargo_id']; // 1 = admin, 2 = trabajador
+    $_SESSION['cargo_id'] = $filas['cargo_id']; // 1 = admin, 2 = trabajador
     $_SESSION['empleado_id'] = $filas['empleado_id']; //  ESTO ES NUEVO
 
     // Redirección según el cargo
     if ($filas['cargo_id'] == 1) {
         header("Location: administrador.php");
     } elseif ($filas['cargo_id'] == 2) {
-        header("Location: trabajador.php");
+        header("Location: empleado.php");
+    } elseif ($filas['cargo_id'] == 3) {
+        header("Location: administrador.php");
+    } elseif ($filas['cargo_id'] == 4) {
+        header("Location: administrador.php");
+    } elseif ($filas['cargo_id'] == 5) {
+        header("Location: administrador.php");
     }
 } else {
     // Si el usuario o contraseña son incorrectos

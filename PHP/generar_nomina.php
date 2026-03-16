@@ -1,9 +1,8 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: index.php");
-    exit();
-}
+include("seguridad.php");
+
+verificarSesion();
+bloquearSiNo(puedeGenerarNomina());
 
 include("db.php");
 

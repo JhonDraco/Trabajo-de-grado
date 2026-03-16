@@ -1,9 +1,8 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
+include("seguridad.php");
+
+verificarSesion();
+bloquearSiNo(puedeAdministrador());
 ?>
 <!DOCTYPE html>
 <html lang="es">

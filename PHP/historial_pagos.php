@@ -74,7 +74,7 @@ $res = mysqli_query($conexion, $sql);
 <header>
     <h2>Panel de Administración - RRHH</h2>
     <div>
-        <span>👤 <?= $_SESSION['usuario'] ?></span> |
+        <span>👤 <?= $_SESSION['usuario'] ?></span> 
         <a href="cerrar_sesion.php">Cerrar sesión</a>
     </div>
 </header>
@@ -92,10 +92,10 @@ $res = mysqli_query($conexion, $sql);
 <div class="contenido">
     <div class="card-container">
 
-        <h2>📜 Historial de Pagos</h2>
+        <h2> Historial de Pagos</h2>
 
         <!-- BUSCADOR -->
-        <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar por ID, método, fecha, notas...">
+        <input type="text" id="buscador" class="buscador" placeholder=" Buscar por ID, método, fecha, notas...">
 
         <div class="table-container">
             <table id="tablaPagos">

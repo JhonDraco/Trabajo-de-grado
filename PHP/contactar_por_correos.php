@@ -18,6 +18,15 @@ if (!$correo || empty($destinatario) || empty($emisor)) {
 
 $mail = new PHPMailer(true);
 
+// Adjuntar archivo si existe
+if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
+
+    $ruta_tmp = $_FILES['archivo']['tmp_name'];
+    $nombre_archivo = $_FILES['archivo']['name'];
+
+    $mail->addAttachment($ruta_tmp, $nombre_archivo);
+}
+
 try {
     // Configuración SMTP
     $mail->isSMTP();
@@ -36,35 +45,21 @@ try {
     $mail->isHTML(true);
     $mail->Subject = "Invitación a entrevista - $emisor";
 
-    $mail->Body = "
-        <p>Estimado/a <strong>{$destinatario}</strong>,</p>
+ $mail->Subject = "Documento enviado por $emisor";
 
-        <p>
-            Nos gustaría invitarte a una entrevista para conocerte mejor y conversar sobre
-            tu experiencia, así como los detalles de la oportunidad.
-        </p>
+$mail->Body = "
+<p>Estimado/a <strong>{$destinatario}</strong>,</p>
 
-        <p>
-            La entrevista puede realizarse de manera <strong>presencial o virtual</strong>,
-            en la fecha y hora que te resulte más conveniente dentro de esta semana.
-        </p>
+<p>
+Se le envía el documento adjunto para su revisión.
+</p>
 
-        <p>
-            Por favor, indícanos tu disponibilidad para coordinar el encuentro.
-        </p>
+<p>
+Si tiene alguna duda puede responder a este correo.
+</p>
 
-        <p>
-            Quedamos atentos a tu respuesta y agradecemos tu interés en formar parte de
-            nuestro equipo.
-        </p>
-
-        <p>Atentamente,<br><strong>{$emisor}</strong></p>
-    ";
-
-    $mail->AltBody = "Estimado/a $destinatario,
-Nos gustaría invitarte a una entrevista.
-Indícanos tu disponibilidad.
-Atentamente, $emisor";
+<p>Atentamente,<br><strong>{$emisor}</strong></p>
+";
 
     $mail->send();
 

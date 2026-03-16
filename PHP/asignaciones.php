@@ -51,7 +51,7 @@ $asignaciones_emp = mysqli_query($conexion, "
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/asignaciones.csss">
+<link rel="stylesheet" href="../css/asignaciones.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -120,21 +120,20 @@ $asignaciones_emp = mysqli_query($conexion, "
     </div>
 
     <!-- CONTENIDO -->
-<div class="contenido">
+ <div class="contenido">
     <h3><i class="ri-add-box-line"></i> Nueva Asignación</h3>
 
     <div class="form-group-compact">
-<label>Aplicar a</label>
+    <label>Aplicar a</label>
 
-<select name="aplica_a">
+    <select name="aplica_a">
 
-<option value="todos">Todos los empleados</option>
+      <option value="todos">Todos los empleados</option>
 
-<option value="manual">Seleccionar empleados</option>
+      <option value="manual">Seleccionar empleados</option>
+    </select>
 
-</select>
 
-</div>
 
     <div class="form-container-compact">
         <form method="post" class="form-grid">
@@ -292,7 +291,7 @@ $asignaciones_emp = mysqli_query($conexion, "
             <?php } ?>
 
             </table>
-
+</div>
             <script>
 
 const selectAsignacion = document.getElementById("asignacion_select");

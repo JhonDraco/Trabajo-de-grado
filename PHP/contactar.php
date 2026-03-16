@@ -82,7 +82,7 @@ verificarSesion();
             </div>
         <?php } ?>
 
-        <form action="contactar_por_correos.php" method="post" class="form-contacto">
+        <form action="contactar_por_correos.php" method="post" class="form-contacto" enctype="multipart/form-data">
 
             <label>
                 <i class="ri-user-line"></i> Nombre del destinatario
@@ -98,9 +98,14 @@ verificarSesion();
                 <i class="ri-mail-line"></i> Correo electrónico
             </label>
             <input type="email" name="email" required placeholder="ejemplo@gmail.com">
+            <label>
+            
+            <i class="ri-file-upload-line"></i> Adjuntar archivo (PDF, DOC, etc.)
+            </label>
+            <input type="file" name="archivo" accept=".pdf,.doc,.docx">
 
             <button type="submit">
-                <i class="ri-send-plane-2-line"></i> Enviar invitación
+            <i class="ri-send-plane-2-line"></i> Enviar documento
             </button>
 
         </form>

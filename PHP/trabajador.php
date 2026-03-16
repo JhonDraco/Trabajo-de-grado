@@ -25,6 +25,8 @@ if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 2) {
     <img src="../img/logo.png" alt="Logo" class="logo">
     <h3 class="system-title">KAO SHOP</h3>
 </div>
+
+
     <a href="administrador.php" class="active">
         <i class="ri-home-4-line"></i> Inicio
     </a>

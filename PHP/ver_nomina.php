@@ -85,7 +85,7 @@ $nominas = mysqli_query($conexion, $consulta);
     </div>
 
     <!-- TABLA -->
-    <h2>📄 Nóminas Generadas</h2>
+    <h2> Nóminas Generadas</h2>
 
     <div class="table-container">
         <table>

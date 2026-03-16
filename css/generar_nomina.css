@@ -260,7 +260,12 @@ table{
     border-collapse:collapse;
     font-size:13px;
 }
+.table-container{
 
+max-height:420px;
+overflow-y:auto;
+
+}
 table thead{
     background:var(--green-mid);
     color:white;
@@ -279,7 +284,42 @@ table tbody tr:hover{
 table tbody tr:nth-child(even){
     background:#fbfbfb;
 }
+table tbody tr:hover {
+    background: #eaf3f1;
+    transition: 0.2s;
+}
+table td:nth-child(3),
+table td:nth-child(4),
+table td:nth-child(5),
+table td:nth-child(6) {
+    text-align: right;
+    font-weight: 500;
+}
+table td:last-child {
+    font-weight: 700;
+    color: #1f3a34;
+}
 
+/* fila seleccionada */
+
+table tbody tr:has(.check-empleado:checked){
+background:#f0faf6;
+transition:0.2s;
+}
+table tbody tr:hover{
+background:#f6f8fa;
+transition:0.2s;
+cursor:pointer;
+}
+table td strong{
+color:#0a7f5a;
+font-size:16px;
+}
+
+table td{
+padding:12px;
+font-size:14px;
+}
 /* ===== ESTADOS ===== */
 
 .estado{
@@ -422,4 +462,482 @@ table tbody tr:nth-child(even){
     justify-content:center;
 }
 
+}/* PANEL NOMINA */
+
+.panel-nomina{
+display:flex;
+flex-direction:column;
+gap:18px;
+margin-bottom:15px;
+}
+
+
+/* INFO NOMINA */
+
+.info-nomina{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.info-card{
+background:white;
+padding:12px 18px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+display:flex;
+flex-direction:column;
+min-width:160px;
+}
+
+.info-titulo{
+font-size:12px;
+color:#777;
+}
+
+.info-valor{
+font-size:16px;
+font-weight:700;
+color:#1f3a34;
+}
+
+
+/* FILTROS */
+
+.filtros-nomina{
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.form-nomina{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+align-items:flex-end;
+}
+
+.grupo-form{
+display:flex;
+flex-direction:column;
+font-size:13px;
+}
+
+.grupo-form input,
+.grupo-form select{
+padding:8px 10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.grupo-form button{
+background:#2b4a42;
+color:white;
+border:none;
+padding:9px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.grupo-form button:hover{
+background:#3f6f61;
+}
+
+
+/* CONTROLES */
+
+.controles-nomina{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.controles-izq{
+display:flex;
+gap:10px;
+}
+
+.btn-control{
+background:#2b4a42;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+cursor:pointer;
+font-size:13px;
+}
+
+.btn-control.rojo{
+background:#c0392b;
+}
+
+.btn-control:hover{
+opacity:0.9;
+}
+
+.contador-empleados{
+font-size:13px;
+color:#555;
+}
+.buscador-empleados{
+
+position:relative;
+margin-bottom:12px;
+
+}
+
+.buscador-empleados input{
+
+width:100%;
+padding:10px 14px 10px 40px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:14px;
+
+}
+
+.buscador-empleados i{
+
+position:absolute;
+left:12px;
+top:50%;
+transform:translateY(-50%);
+color:#777;
+
+}
+.panel-detalle{
+
+position:fixed;
+top:0;
+right:0;
+width:480px;
+height:100%;
+background:white;
+
+box-shadow:-6px 0 25px rgba(0,0,0,0.2);
+
+transform:translateX(100%);
+transition:transform 0.35s ease;
+
+z-index:9999;
+
+}
+
+.panel-detalle.activo{
+
+transform:translateX(0);
+
+}
+.panel-contenido{
+
+padding:25px;
+opacity:0;
+transform:translateY(20px);
+transition:0.3s;
+
+}
+
+.panel-detalle.activo .panel-contenido{
+
+opacity:1;
+transform:translateY(0);
+
+}
+table tbody tr{
+
+transition:0.2s;
+
+}
+
+table tbody tr:hover{
+
+background:#eaf3f1;
+transform:scale(1.01);
+
+}.layout-nomina{
+
+display:grid;
+grid-template-columns:320px 1fr;
+gap:20px;
+align-items:start;
+
+}
+
+.panel-control{
+
+display:flex;
+flex-direction:column;
+gap:15px;
+
+}
+
+.panel-tabla{
+
+background:white;
+border-radius:12px;
+box-shadow:var(--shadow);
+padding:15px;
+
+}
+
+/* enlaces de empleados */
+
+table td a{
+text-decoration: none;
+color: #2c3e50;
+font-weight: 500;
+display: inline-flex;
+align-items: center;
+gap:6px;
+}
+
+table td a:hover{
+color: #0a7f5a;
+}
+/* checkbox moderno */
+
+.check-empleado{
+width:18px;
+height:18px;
+cursor:pointer;
+accent-color:#024731;
+}
+
+table td:first-child{
+text-align:center;
+}
+.check-empleado:checked{
+transform:scale(1.1);
+}
+/* nombre de empleados */
+
+table td a{
+text-decoration: none;
+color: #2c3e50;
+font-weight: 600;
+font-size: 16px;   /* tamaño del nombre */
+display: inline-flex;
+align-items: center;
+gap:6px;
+}
+
+table td a:hover{
+color:#0a7f5a;
+}
+/* PANEL DETALLE */
+
+.panel-detalle{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+
+z-index:999;
+}
+
+.panel-detalle.activo{
+opacity:1;
+pointer-events:auto;
+.panel-contenido{
+
+background:white;
+width:720px;
+max-width:90%;
+padding:25px;
+
+border-radius:12px;
+
+box-shadow:0 10px 35px rgba(0,0,0,0.3);
+
+animation:modalEntrada .35s ease;
+}
+
+@keyframes modalEntrada{
+
+from{
+transform:scale(.85);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
+.cerrar-btn{
+
+position:absolute;
+top:15px;
+right:20px;
+
+background:#e74c3c;
+color:white;
+
+border:none;
+border-radius:6px;
+
+width:32px;
+height:32px;
+
+cursor:pointer;
+font-size:16px;
+}
+
+
+}.detalle-dashboard{
+padding:20px;
+font-family:Arial;
+height:100%;
+display:flex;
+flex-direction:column;
+}
+
+/* header */
+
+.detalle-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.empleado-info{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.empleado-info i{
+font-size:22px;
+color:#0a7f5a;
+}
+
+.salario-big{
+font-size:22px;
+font-weight:bold;
+color:#0a7f5a;
+}
+
+/* grid */
+
+.detalle-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+flex:1;
+}
+
+/* cajas */
+
+.detalle-box{
+background:#f8fafc;
+border-radius:10px;
+padding:12px;
+display:flex;
+flex-direction:column;
+}
+
+/* lista */
+
+.detalle-list{
+flex:1;
+overflow:hidden;
+}
+
+.fila{
+display:flex;
+justify-content:space-between;
+padding:6px 0;
+font-size:14px;
+border-bottom:1px solid #eee;
+}
+
+.fila:last-child{
+border:none;
+}
+
+/* montos */
+
+.positivo{
+color:#0a7f5a;
+font-weight:600;
+}
+
+.negativo{
+color:#d93025;
+font-weight:600;
+}
+
+/* total */
+
+.box-total{
+margin-top:10px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+}
+
+/* neto final */
+
+.neto-final{
+margin-top:15px;
+background:#0a7f5a;
+color:white;
+padding:12px;
+border-radius:8px;
+text-align:center;
+}
+
+.neto-final strong{
+font-size:22px;
+display:block;
+margin-top:4px;
+}
+
+/* cuando se abre */
+
+.panel-detalle.activo{
+transform:translateX(0);
+}
+.panel-contenido{
+opacity:0;
+transform:translateY(20px);
+transition:all .3s ease;
+}
+
+.panel-detalle.activo .panel-contenido{
+opacity:1;
+transform:translateY(0);
+}
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.35);
+opacity:0;
+pointer-events:none;
+transition:.3s;
+z-index:998;
+}
+
+.overlay.activo{
+opacity:1;
+pointer-events:auto;
 }

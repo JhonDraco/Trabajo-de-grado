@@ -1,77 +1,95 @@
 <?php
-
 require('../librerias/fpdf.php');
 
-// Zona horaria de Venezuela
 date_default_timezone_set('America/Caracas');
-setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
+setlocale(LC_TIME, 'es_ES.UTF-8', 'spanish');
 
-$pdf = new FPDF();
+class PDF extends FPDF
+{
+    function Header()
+    {
+        // LOGO
+        $this->Image('../img/logo.png', 30, 15, 30);
+
+        // Empresa
+        $this->SetFont('Arial','B',14);
+        $this->SetTextColor(31,58,52);
+        $this->Cell(0,10,'KAO SHOP',0,1,'R');
+
+
+
+        $this->Ln(15);
+    }
+}
+
+$pdf = new PDF();
 $pdf->AddPage();
 
 // Márgenes
 $pdf->SetLeftMargin(25);
 $pdf->SetRightMargin(25);
 
-// Variables POST
-$nombre   = isset($_POST['name']) ? $_POST['name'] : '';
-$apellido = isset($_POST['apellido']) ? $_POST['apellido'] : '';
-$cedula   = isset($_POST['cedula']) ? $_POST['cedula'] : '';
+// Datos
+$nombre   = $_POST['name'] ?? '';
+$apellido = $_POST['apellido'] ?? '';
+$cedula   = $_POST['cedula'] ?? '';
 
-// Fecha y hora
+// Fecha
 $fecha = strftime('%d de %B de %Y');
 $hora  = date('H:i');
 
-// ===== EMPRESA =====
-$pdf->SetFont('Arial','B',12);
-$pdf->SetTextColor(0,102,204);
-$pdf->Cell(0,10,'EMPRESA XX S.A.',0,1,'L');
-
-// Espacio
-$pdf->Ln(15);
-
-// ===== FECHA Y HORA =====
+// Fecha alineada derecha
 $pdf->SetFont('Arial','',11);
 $pdf->SetTextColor(0,0,0);
-$pdf->Cell(0,8,utf8_decode("Caracas, $fecha - $hora"),0,1,'L');
+$pdf->Cell(0,8,utf8_decode("Caracas, $fecha - $hora"),0,1,'R');
 
-// Espacio
 $pdf->Ln(10);
 
-// ===== DESTINATARIO =====
-$pdf->Cell(0,8,'Para RR.HH',0,1,'L');
+// Título
+$pdf->SetFont('Arial','B',13);
+$pdf->Cell(0,10,'CONSTANCIA DE TRABAJO',0,1,'C');
 
-// Espacio
 $pdf->Ln(10);
 
-// ===== CUERPO =====
+// Destinatario
+$pdf->SetFont('Arial','',11);
+$pdf->Cell(0,8,'Para RR.HH.',0,1,'L');
+
+$pdf->Ln(10);
+
+// Texto
+$pdf->SetFont('Arial','',11);
+
 $texto1 = utf8_decode(
-    "Mediante la siguiente carta laboral, se hace constancia de que el trabajador "
-    ."$nombre $apellido, de cédula $cedula, trabajó a tiempo parcial en nuestra empresa "
-    ."en el periodo comprendido entre enero del año 2004 y enero del año 2008, con un "
-    ."contrato laboral de 18 horas mensuales con el cargo de Ayudante de Banca y gestión "
-    ."de tesorería."
-);
+"   Mediante la presente se hace constar que el ciudadano $nombre $apellido, 
+titular de la cédula de identidad N° $cedula, 
+laboró en nuestra empresa desempeñándose como Ayudante de Banca y gestión de tesorería,
+bajo modalidad de tiempo parcial (18 horas mensuales), 
+durante el periodo comprendido entre enero de 2004 y enero de 2008.");
 
 $pdf->MultiCell(0,7,$texto1,0,'J');
 
-// Espacio
 $pdf->Ln(5);
 
 $texto2 = utf8_decode(
-    "Durante todo el periodo laboral demostró ser un trabajador con grandes cualidades, "
-    ."buen trato personal y capacidad de liderazgo, eficiente y responsable."
+"Durante su permanencia en la empresa, demostró responsabilidad, compromiso, excelente trato interpersonal y habilidades de liderazgo."
 );
 
 $pdf->MultiCell(0,7,$texto2,0,'J');
 
-// Espacio para firma
-$pdf->Ln(20);
+$pdf->Ln(25);
 
-// ===== FIRMA =====
+// Línea firma
+$pdf->Line(120, 220, 180, 220);
 
-$pdf->SetFont('Arial','',11);
-$pdf->Cell(0,6,'Director de Recursos Humanos.',0,1,'L');
-$pdf->Cell(0,6,'Venezuela',0,1,'L');
+$pdf->Ln(5);
+
+// Firma alineada derecha
+$pdf->SetX(120);
+$pdf->Cell(60,6,'Director de Recursos Humanos',0,1,'C');
+
+$pdf->SetX(120);
+$pdf->Cell(60,6,'Venezuela',0,1,'C');
 
 $pdf->Output();
+?>

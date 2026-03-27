@@ -9,7 +9,6 @@ if(!isset($_GET['id'])){
 
 $id = intval($_GET['id']);
 
-// ELIMINADO: e.cargo de la consulta SQL
 $query = mysqli_query($conexion,"
     SELECT v.*, e.nombre, e.apellido, e.cedula
     FROM vacaciones v
@@ -24,50 +23,74 @@ if(!$datos || $datos['estado'] != 'aprobado'){
 }
 
 /* =========================
-   ESTRUCTURA PDF
+   PDF
 =========================*/
 class PDF extends FPDF {
     function Header() {
+        // LOGO
+        $this->Image('../img/logo.png', 30, 15, 30);
+
+        // EMPRESA
         $this->SetFont('Arial','B',14);
-        $this->Cell(0,10,'BAZAR ANORIKEV C.A',0,1,'L');
-        $this->SetFont('Arial','I',10);
-        $this->Cell(0,5,'RIF: J-31321135-0',0,1,'L');
+        $this->SetTextColor(31,58,52);
+        $this->Cell(0,10,'KAO SHOP',0,1,'R');
+
         $this->Ln(10);
+
+        // TÍTULO
+        $this->SetFont('Arial','B',13);
+        $this->Cell(0,10,utf8_decode('CONSTANCIA DE VACACIONES'),0,1,'C');
+
+        $this->Ln(5);
     }
 }
 
 $pdf = new PDF();
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',16);
 
-$pdf->Cell(0,10,utf8_decode('CONSTANCIA DE VACACIONES'),0,1,'C');
+// Márgenes
+$pdf->SetLeftMargin(25);
+$pdf->SetRightMargin(25);
+
+// ===== FECHA ACTUAL =====
+$pdf->SetFont('Arial','',11);
+$pdf->SetTextColor(0,0,0);
+$pdf->Cell(0,8,utf8_decode("Caracas, ".strftime('%d de %B de %Y')),0,1,'R');
+
 $pdf->Ln(10);
 
-$pdf->SetFont('Arial','',12);
+// ===== CUERPO =====
+$pdf->SetFont('Arial','',11);
 
-// ELIMINADO: La frase que mencionaba el cargo
 $texto = "La empresa certifica que el trabajador "
         .$datos['nombre']." ".$datos['apellido']
-        .", titular de la cedula ".$datos['cedula']
-        .", disfrutara de un periodo vacacional desde el "
+        .", titular de la cédula ".$datos['cedula']
+        .", disfrutará de un período vacacional desde el "
         .date('d/m/Y', strtotime($datos['fecha_inicio']))
         ." hasta el "
         .date('d/m/Y', strtotime($datos['fecha_fin']))
         .", por un total de "
-        .$datos['dias_habiles']." dias habiles.";
+        .$datos['dias_habiles']." días hábiles.";
 
-$pdf->MultiCell(0,8,utf8_decode($texto));
+$pdf->MultiCell(0,7,utf8_decode($texto),0,'J');
 
-$pdf->Ln(15);
+$pdf->Ln(10);
 
-$pdf->SetFont('Arial','B',11);
-$pdf->Cell(0,8,utf8_decode("Aprobado por: ".$datos['aprobado_por']),0,1);
-$pdf->Cell(0,8,utf8_decode("Fecha de aprobación: ".date('d/m/Y H:i', strtotime($datos['fecha_aprobacion']))),0,1);
+// ===== DATOS DE APROBACIÓN =====
+$pdf->SetFont('Arial','',11);
 
-$pdf->Ln(30);
+$pdf->Cell(0,7,utf8_decode("Aprobado por: ".$datos['aprobado_por']),0,1);
+$pdf->Cell(0,7,utf8_decode("Fecha de aprobación: ".date('d/m/Y H:i', strtotime($datos['fecha_aprobacion']))),0,1);
 
-$pdf->Cell(0,8,"______________________________",0,1,'C');
-$pdf->Cell(0,8,"Firma y Sello de la Empresa",0,1,'C');
+$pdf->Ln(25);
+
+// ===== FIRMA =====
+$pdf->Line(120, 220, 180, 220);
+
+$pdf->Ln(5);
+
+$pdf->SetX(120);
+$pdf->Cell(60,6,'Firma y Sello de la Empresa',0,1,'C');
 
 ob_end_clean();
 $pdf->Output("I","Constancia_Vacaciones_$id.pdf");

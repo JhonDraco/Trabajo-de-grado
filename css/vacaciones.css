@@ -306,6 +306,16 @@ table td:last-child {
     font-weight: 700;
     color: #1f3a34;
 }
+table a {
+    color: var(--green-mid);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+table a:hover {
+    text-decoration: underline;
+}
+
 
 
 
@@ -438,4 +448,17 @@ table td:last-child {
     display: flex;
     gap: 8px;
     white-space: nowrap;
+}
+/* Botón Constancia (PDF) */
+.btn-constancia {
+    background: #e6f4ea;
+    color: #1f7a4c;
+    border: 1px solid #b7e4c7;
+}
+
+.btn-constancia:hover {
+    background: #1f7a4c;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(31, 122, 76, 0.25);
 }

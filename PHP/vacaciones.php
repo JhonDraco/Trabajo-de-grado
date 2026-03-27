@@ -355,15 +355,14 @@ $vacaciones = mysqli_query($conexion, "
 </p>
 <table>
 <tr>
-<th>Empleado</th>
-<th>Inicio</th>
-<th>Fin</th>
-<th>Días</th>
-<th>Estado</th>
-<th>Acción</th>
-<th>Aprobado/Revisado por</th>
-<th>Fecha</th>
-
+    <th>Empleado</th>
+    <th>Inicio</th>
+    <th>Fin</th>
+    <th>Días</th>
+    <th>Estado </th>
+    <th>Acción</th>
+    <th>Revisado por:</th>
+    <th>Fecha</th>
 </tr>
 
 <?php while ($v = mysqli_fetch_assoc($vacaciones)) { 
@@ -373,51 +372,50 @@ $puede_aprobar = $v['dias_habiles'] <= $saldo_actual;
 ?>
 
 <tr>
-<td><?= $v['nombre']." ".$v['apellido'] ?></td>
-<td><?= $v['fecha_inicio'] ?></td>
-<td><?= $v['fecha_fin'] ?></td>
-<td><?= $v['dias_habiles'] ?></td>
-<td><?= ucfirst($v['estado']) ?></td>
-<td><?= $v['aprobado_por'] ?? '-' ?></td>
-<td><?= $v['fecha_aprobacion'] ?? '-' ?></td>
-<td>
-    
+    <td><?= $v['nombre']." ".$v['apellido'] ?></td>
+    <td><?= $v['fecha_inicio'] ?></td>
+    <td><?= $v['fecha_fin'] ?></td>
+    <td><?= $v['dias_habiles'] ?></td>
+    <td><?= ucfirst($v['estado']) ?></td>
 
-<?php if ($v['estado'] == 'pendiente') { ?>
+    <!-- ACCIONES -->
+    <td>
+        <?php if ($v['estado'] == 'pendiente') { ?>
 
-<?php if ($puede_aprobar) { ?>
-<button class="top-button" onclick="confirmarAccion('aprobar', <?= $v['id_vacacion'] ?>)">
-Aprobar
-</button>
-<?php } else { ?>
-<button class="top-button" style="background:red;" disabled>
-Sin saldo
-</button>
-<?php } ?>
+            <?php if ($puede_aprobar) { ?>
+                <button class="top-button" onclick="confirmarAccion('aprobar', <?= $v['id_vacacion'] ?>)">
+                    Aprobar
+                </button>
+            <?php } else { ?>
+                <button class="top-button" style="background:red;" disabled>
+                    Sin saldo
+                </button>
+            <?php } ?>
 
-<button class="top-button" onclick="confirmarAccion('rechazar', <?= $v['id_vacacion'] ?>)">
-Rechazar
-</button>
+            <button class="top-button" onclick="confirmarAccion('rechazar', <?= $v['id_vacacion'] ?>)">
+                Rechazar
+            </button>
 
+        <?php } else { echo "---"; } ?>
 
-<?php } else { echo "---"; } ?>
-
-
-
-<?php if($v['estado']=='aprobado'){ ?>
-<a href="constancia_vacaciones.php?id=<?= $v['id_vacacion'] ?>" 
-   class="btn-guardar-compact" style="text-decoration:none; background:#28a745;" target="_blank">
-   <i class="ri-file-pdf-line"></i> Constancia
+        <?php if($v['estado']=='aprobado'){ ?>
+            <a href="constancia_vacaciones.php?id=<?= $v['id_vacacion'] ?>" 
+            class="btn-accion btn-constancia"
+            target="_blank">
+            <i class="ri-file-pdf-line"></i> Constancia
 </a>
-<?php } ?>
+        <?php } ?>
+    </td>
 
-</td>
+    <!-- APROBADO POR -->
+    <td><?= $v['aprobado_por'] ?? '-' ?></td>
+
+    <!-- FECHA -->
+    <td><?= $v['fecha_aprobacion'] ?? '-' ?></td>
 </tr>
 
 <?php } ?>
-
 </table>
-
 </div>
 </div>
 

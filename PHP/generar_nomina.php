@@ -330,9 +330,6 @@ if(isset($_POST['generar_nomina'])){
 <i class="ri-subtract-line"></i> Deducciones
 </a>
 
-<a href="generar_nomina.php" class="top-button">
-<i class="ri-calculator-line"></i> Generar Nómina
-</a>
 
 <a href="ver_nomina.php" class="top-button">
 <i class="ri-file-list-line"></i> Ver Nóminas

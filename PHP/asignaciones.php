@@ -110,7 +110,7 @@ $asignaciones_emp = mysqli_query($conexion, "
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-       <a href="asignaciones.php" class="top-button"><i class="ri-add-circle-line"></i> Asignaciones</a>
+      
        <a href="deducciones.php" class="top-button"><i class="ri-subtract-line"></i> Deducciónes</a>
        <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>

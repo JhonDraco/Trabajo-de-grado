@@ -64,7 +64,6 @@ include("seguridad.php");
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
         <a href="Reportes.php" class="top-button"><i class="ri-file-text-line"></i> Cartas de trabajo</a>
-        <a href="referencias_lavoral.php" class="top-button"><i class="ri-file-paper-2-line"></i> Referencia laboral</a>
     </div>
     
     <!-- FORMULARIO -->

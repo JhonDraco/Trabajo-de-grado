@@ -1,10 +1,14 @@
 <?php
-session_start();
+include("seguridad.php");
 
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
+verificarSesion();
+
+include("db.php");
+
+if (!isset($_GET['id'])) {
+    die("ID de vacación no especificado");
 }
+
 
 include("db.php");
 

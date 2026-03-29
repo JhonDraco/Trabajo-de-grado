@@ -98,7 +98,7 @@ if (!$resultado) {
 
     <!-- TOP MENU -->
     <div class="top-menu">
-        <a href="listar_empleados.php" class="top-button">Lista de Empleados</a>
+       
         <a href="formulario_para_registrar_empleado.php" class="top-button">Registrar Empleado</a>
     </div>
 

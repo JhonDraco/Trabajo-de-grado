@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="top-menu">
         <a href="listar_empleados.php" class="top-button"><i class="ri-file-list-2-line"></i> Lista de empleados</a>
-        <a href="formulario_para_registrar_empleado.php" class="top-button"><i class="ri-user-add-line"></i> Registrar empleado</a>
+        
     </div>
 
     <div class="form-card">

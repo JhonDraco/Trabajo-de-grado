@@ -21,6 +21,10 @@ function esAdmin(){
     return $_SESSION['cargo_id'] == 1;
 }
 
+function esEmpleado(){
+    return $_SESSION['cargo_id'] == 2;
+}
+
 function esAnalista(){
     return $_SESSION['cargo_id'] == 3;
 }
@@ -83,6 +87,9 @@ function puedeReportes(){
    BLOQUEAR ACCESO
 ============================ */
 
+function puedeEmpleado(){
+    return $_SESSION['cargo_id'] == 2;
+}
 function bloquearSiNo($permiso){
 
     if(!$permiso){

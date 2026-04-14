@@ -21,7 +21,7 @@ if ($filas) {
     if ($filas['cargo_id'] == 1) {
         header("Location: administrador.php");
     } elseif ($filas['cargo_id'] == 2) {
-        header("Location: empleado.php");
+        header("Location: trabajador.php");
     } elseif ($filas['cargo_id'] == 3) {
         header("Location: administrador.php");
     } elseif ($filas['cargo_id'] == 4) {

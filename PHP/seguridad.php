@@ -79,6 +79,9 @@ function puedeDeducciones(){
     return in_array($_SESSION['cargo_id'], [1,4]);
 }
 
+function puedeSalariosArchivos(){
+    return in_array($_SESSION['cargo_id'], [1, 3, 4]);
+}
 
 function puedeReportes(){
     return in_array($_SESSION['cargo_id'], [1,3,4,5]);

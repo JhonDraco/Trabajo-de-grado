@@ -98,8 +98,13 @@ if (!$resultado) {
 
     <!-- TOP MENU -->
     <div class="top-menu">
+        <a href="formulario_para_registrar_empleado.php" class="top-button">
+            <i class="ri-user-add-line"></i> Registrar Empleado
+        </a>
+        <a href="registrar_empleado_usuario.php" class="top-button">
+            <i class="ri-user-follow-line"></i> Registrar con Usuario
+        </a>
        
-        <a href="formulario_para_registrar_empleado.php" class="top-button">Registrar Empleado</a>
     </div>
 
     <!-- CONTENIDO -->
@@ -140,10 +145,12 @@ if (!$resultado) {
                     <td><?php echo $fila['telefono']; ?></td>
                     <td><?php echo $fila['estado']; ?></td>
                     <td class="acciones">
-                        <a class="btn editar" href="editar_empleado.php?id=<?php echo $fila['id']; ?>">
-                            <i class="ri-edit-2-line"></i> Editar
+                        <a class="btn" href="salarios_archivos.php?id=<?php echo $fila['id']; ?>"
+                        style="background:#1f3a34; color:white;">
+                            <i class="ri-folder-user-line"></i> Datos
                         </a>
-                        <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>" onclick="return confirm('¿Eliminar empleado?');">
+                        <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>"
+                        onclick="return confirm('¿Eliminar empleado?');">
                             <i class="ri-delete-bin-6-line"></i> Eliminar
                         </a>
                     </td>

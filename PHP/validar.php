@@ -1,42 +1,52 @@
-<?php 
+<?php
 session_start();
 include('db.php');
 
-$usuario = $_POST['user'];
-$contraseña = $_POST['contraseña']; // evita usar "ñ" en la BD y nombres de columnas si puedes
+$usuario   = $_POST['user'];
+$contrasena = $_POST['contraseña'];
 
-// Consulta a la base de datos
-$consulta = "SELECT * FROM usuarios WHERE usuario='$usuario' AND clave='$contraseña'";
-$resultado = mysqli_query($conexion, $consulta) or die("Error en la consulta: " . mysqli_error($conexion));
-
-$filas = mysqli_fetch_array($resultado);
+// Busca solo por usuario, sin comparar clave en SQL
+$stmt = $conexion->prepare("SELECT * FROM usuarios WHERE usuario = ?");
+$stmt->bind_param("s", $usuario);
+$stmt->execute();
+$filas = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if ($filas) {
-    // Guardamos datos en la sesión
-    $_SESSION['usuario'] = $usuario;
-    $_SESSION['cargo_id'] = $filas['cargo_id']; // 1 = admin, 2 = trabajador
-    $_SESSION['empleado_id'] = $filas['empleado_id']; //  ESTO ES NUEVO
 
-    // Redirección según el cargo
-    if ($filas['cargo_id'] == 1) {
-        header("Location: administrador.php");
-    } elseif ($filas['cargo_id'] == 2) {
-        header("Location: trabajador.php");
-    } elseif ($filas['cargo_id'] == 3) {
-        header("Location: administrador.php");
-    } elseif ($filas['cargo_id'] == 4) {
-        header("Location: administrador.php");
-    } elseif ($filas['cargo_id'] == 5) {
-        header("Location: administrador.php");
+    $clave_bd   = $filas['clave'];
+    $es_bcrypt  = password_verify($contrasena, $clave_bd);
+    $es_plano   = ($clave_bd === $contrasena);
+    $autenticado = $es_bcrypt || $es_plano;
+
+    if ($autenticado) {
+
+        // Si la clave era texto plano, migrarla a hash ahora mismo
+        if ($es_plano && !$es_bcrypt) {
+            $nuevo_hash = password_hash($contrasena, PASSWORD_BCRYPT);
+            $upd = $conexion->prepare("UPDATE usuarios SET clave = ? WHERE usuario = ?");
+            $upd->bind_param("ss", $nuevo_hash, $usuario);
+            $upd->execute();
+            $upd->close();
+        }
+
+        $_SESSION['usuario']     = $usuario;
+        $_SESSION['cargo_id']    = $filas['cargo_id'];
+        $_SESSION['empleado_id'] = $filas['empleado_id'];
+
+        if ($filas['cargo_id'] == 1)      header("Location: administrador.php");
+        elseif ($filas['cargo_id'] == 2)  header("Location: trabajador.php");
+        elseif ($filas['cargo_id'] == 3)  header("Location: administrador.php");
+        elseif ($filas['cargo_id'] == 4)  header("Location: administrador.php");
+        elseif ($filas['cargo_id'] == 5)  header("Location: administrador.php");
+        exit();
     }
-} else {
-    // Si el usuario o contraseña son incorrectos
-    echo "<script>
-            alert('Usuario o contraseña incorrectos');
-            window.location = 'index.php';
-          </script>";
 }
 
-mysqli_free_result($resultado);
+echo "<script>
+        alert('Usuario o contraseña incorrectos');
+        window.location = 'index.php';
+      </script>";
+
 mysqli_close($conexion);
 ?>

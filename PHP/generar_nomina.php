@@ -352,7 +352,7 @@ if(isset($_POST['generar_nomina'])){
 
 <div class="card-container">
 
-<h2> Cálculo Preliminar  </h2>
+<h2> Pre-Nómina </h2>
 
 <div class="panel-nomina">
 

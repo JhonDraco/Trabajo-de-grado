@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
     exit();
 }
 
-$res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion");
+/* res para ordenar por activas primero*/
+$res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion ORDER BY activo DESC, nombre ASC");
+$res2 = mysqli_query($conexion, "SELECT * FROM tipo_asignacion WHERE activo = 1");
 
 $empleados = mysqli_query($conexion, "SELECT id, nombre FROM empleados ORDER BY nombre");
 
@@ -168,12 +170,26 @@ $asignaciones_emp = mysqli_query($conexion, "
     <h3>Lista de Asignaciones</h3>
     <table border="1" cellpadding="5">
 <tr><th>Nombre</th><th>Tipo</th><th>porcentaje</th><th>Acción</th></tr>
-<?php while($d = mysqli_fetch_assoc($res)) { ?>
+
+<?php while($d = mysqli_fetch_assoc($res)) {
+    $activo  = $d['activo'];
+    $btn_txt = $activo ? 'Activa' : 'Inactiva';
+    $btn_col = $activo ? '#28a745' : '#dc3545';
+    $btn_acc = $activo ? '¿Desactivar esta asignación?' : '¿Reactivar esta asignación?';
+?>
 <tr>
-  <td><?=htmlspecialchars($d['nombre'])?></td>
+  <td><?= htmlspecialchars($d['nombre']) ?></td>
   <td><?= $d['tipo'] ?></td>
   <td><?= number_format($d['porcentaje'],2) ?><?= $d['tipo']=='porcentaje' ? '%' : '' ?></td>
-  <td><a href="eliminar_asignacion.php?id=<?=$d['id_asignacion']?>" onclick="return confirm('Eliminar?')">Eliminar</a></td>
+  <td>
+    <a href="toggle_asignacion.php?id=<?= $d['id_asignacion'] ?>"
+       onclick="return confirm('<?= $btn_acc ?>')"
+       style="background:<?= $btn_col ?>; color:white; padding:4px 12px;
+              border-radius:20px; font-size:12px; font-weight:600;
+              text-decoration:none;">
+       <?= $btn_txt ?>
+    </a>
+  </td>
 </tr>
 <?php } ?>
 </table>
@@ -277,11 +293,13 @@ $asignaciones_emp = mysqli_query($conexion, "
 
             <td>
 
+        
             <a href="eliminar_asignacion_empleado.php?id=<?= $a['id_asig_emp'] ?>"
-            onclick="return confirm('Eliminar asignación?')">
-
+            onclick="return confirm('¿Desactivar esta asignación al empleado?')"
+            style="background:#dc3545; color:white; padding:4px 12px;
+                    border-radius:20px; font-size:12px; font-weight:600;
+                    text-decoration:none;">
             Eliminar
-
             </a>
 
             </td>

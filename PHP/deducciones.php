@@ -167,18 +167,34 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                     <th>Porcentaje</th>
                     <th>Obligatoria</th>
                     <th>Descripción</th>
+                    <th>Acción</th>
+
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $generales = mysqli_query($conexion, "SELECT * FROM tipo_deduccion");
                 while ($d = mysqli_fetch_assoc($generales)) {
-                    echo "<tr>
-                            <td>{$d['nombre']}</td>
-                            <td>{$d['porcentaje']}%</td>
-                            <td>" . ($d['obligatorio'] ? 'Sí' : 'No') . "</td>
-                            <td>{$d['descripcion']}</td>
-                          </tr>";
+                $activo  = $d['activo'];
+                $btn_txt = $activo ? 'Activa' : 'Inactiva';
+                $btn_col = $activo ? '#28a745' : '#dc3545';
+                $btn_acc = $activo ? '¿Desactivar esta deducción?' : '¿Reactivar esta deducción?';
+
+                echo "<tr>
+                    <td>{$d['nombre']}</td>
+                    <td>{$d['porcentaje']}%</td>
+                    <td>" . ($d['obligatorio'] ? 'Sí' : 'No') . "</td>
+                    <td>{$d['descripcion']}</td>
+                    <td>
+                        <a href='toggle_deduccion.php?id={$d['id_tipo']}'
+                        onclick=\"return confirm('$btn_acc')\"
+                        style='background:$btn_col; color:white; padding:4px 12px;
+                                border-radius:20px; font-size:12px; font-weight:600;
+                                text-decoration:none;'>
+                        $btn_txt
+                        </a>
+                    </td>
+                </tr>";
                 }
                 ?>
             </tbody>
@@ -234,6 +250,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                     <th>Monto</th>
                     <th>Progreso Cuotas</th>
                     <th>Estado</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -248,12 +265,19 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                     $clase = $d['activa'] ? 'status-active' : 'status-off';
                     $texto = $d['activa'] ? 'Activa' : 'Finalizada';
                     echo "<tr>
-                            <td><strong>{$d['emp_nombre']} {$d['apellido']}</strong></td>
-                            <td>{$d['nombre']}</td>
-                            <td>" . number_format($d['monto'], 2) . "</td>
-                            <td>{$d['cuota_actual']} / {$d['cuotas']}</td>
-                            <td><span class='status-badge $clase'>$texto</span></td>
-                          </tr>";
+                    <td><strong>{$d['emp_nombre']} {$d['apellido']}</strong></td>
+                    <td>{$d['nombre']}</td>
+                    <td>" . number_format($d['monto'], 2) . "</td>
+                    <td>{$d['cuota_actual']} / {$d['cuotas']}</td>
+                    <td><span class='status-badge $clase'>$texto</span></td>
+                    <td>
+                        " . ($d['activa'] ? "
+                        <a href='eliminar_deduccion_empleado.php?id={$d['id_deduccion_emp']}'
+                        onclick=\"return confirm('¿Desactivar esta deducción?')\">
+                        Desactivar
+                        </a>" : "—") . "
+                    </td>
+                </tr>";
                 }
                 ?>
             </tbody>

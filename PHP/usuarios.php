@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $nombre = trim($_POST['name']);
     $usuario = trim($_POST['user']);
-    $contraseña = $_POST['contraseña'];
+    $contraseña = password_hash($_POST['contraseña'], PASSWORD_BCRYPT);
     $cargo = (int)$_POST['cargo'];
 
     $sql = "INSERT INTO usuarios (nombre_apellido, usuario, clave, cargo_id) VALUES (?, ?, ?, ?)";

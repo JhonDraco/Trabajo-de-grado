@@ -352,7 +352,7 @@ if(isset($_POST['generar_nomina'])){
 
 <div class="card-container">
 
-<h2> Calculo De Pre-Nómina Salarial</h2>
+<h2> Pre-Nómina </h2>
 
 <div class="panel-nomina">
 

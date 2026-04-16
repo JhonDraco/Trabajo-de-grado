@@ -18,23 +18,29 @@ body {
   justify-content:center;
   align-items:center;
   min-height:100vh;
-  background: linear-gradient(135deg, var(--green-dark), var(--green-mid), var(--white));
-  background-attachment: fixed;
+
+  background: 
+    linear-gradient(135deg, rgba(31,58,52,0.85), rgba(43,74,66,0.85)),
+    url('../img/Logo.png') no-repeat center/cover;
+
   color: var(--gray-light-text);
 }
-
-/* Caja de login */
 .login-container {
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.15); /* transparente */
+  backdrop-filter: blur(12px); /* efecto glass 🔥 */
+  -webkit-backdrop-filter: blur(12px);
+
   padding: 35px 40px;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+
   width: 400px;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .login-form h1 {
   text-align:center;
-  color: var(--green-dark);
+  color: white;
   margin-bottom:20px;
   font-size:24px;
 }
@@ -56,8 +62,9 @@ body {
   width:100%;
   padding:10px;
   margin-bottom:15px;
-  border:1px solid #ccc;
   border-radius:8px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.9);
 }
 
 .buttons {
@@ -108,4 +115,32 @@ footer {
 
 .login-form .icon {
   color: var(--green-mid);
+}
+.login-form label {
+  color: #eaeaea;
+}
+
+.login-form input {
+  background: rgba(255,255,255,0.9);
+  border: none;
+}
+.buttons button[type="submit"] {
+  background: linear-gradient(135deg, #2b4a42, #3f6f61);
+}
+
+.buttons button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.buttons button[type="reset"] {
+  background: rgba(255,255,255,0.3);
+  color: white;
+}
+
+.buttons button[type="reset"]:hover {
+  background: rgba(255,255,255,0.5);
+}
+.login-container {
+  transition: all 0.3s ease;
 }

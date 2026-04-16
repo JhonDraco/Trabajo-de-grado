@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-03-2026 a las 15:16:33
+-- Tiempo de generación: 16-04-2026 a las 15:25:24
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -545,7 +545,43 @@ INSERT INTO `detalle_asignacion` (`id_detalle_asig`, `id_detalle`, `id_asignacio
 (497, 116, 4, 140.00),
 (498, 116, 5, 10000.00),
 (499, 116, 6, 700.00),
-(500, 116, 7, 10.00);
+(500, 116, 7, 10.00),
+(501, 117, 1, 0.00),
+(502, 117, 2, 2500.00),
+(503, 117, 3, 0.00),
+(504, 117, 4, 2500.00),
+(505, 117, 5, 0.00),
+(506, 117, 6, 12500.00),
+(507, 117, 7, 1.00),
+(508, 118, 1, 1000.00),
+(509, 118, 1, 10000.00),
+(510, 118, 2, 1000.00),
+(511, 118, 3, 0.00),
+(512, 118, 4, 1000.00),
+(513, 118, 5, 10000.00),
+(514, 118, 6, 5000.00),
+(515, 118, 7, 1.00),
+(516, 119, 1, 0.00),
+(517, 119, 2, 100.00),
+(518, 119, 3, 0.00),
+(519, 119, 4, 100.00),
+(520, 119, 5, 0.00),
+(521, 119, 6, 500.00),
+(522, 119, 7, 1.00),
+(523, 120, 1, 1000.00),
+(524, 120, 2, 140.00),
+(525, 120, 3, 0.00),
+(526, 120, 4, 140.00),
+(527, 120, 5, 10000.00),
+(528, 120, 6, 700.00),
+(529, 120, 7, 10.00),
+(530, 121, 1, 0.00),
+(531, 121, 2, 150.00),
+(532, 121, 3, 0.00),
+(533, 121, 4, 150.00),
+(534, 121, 5, 0.00),
+(535, 121, 6, 750.00),
+(536, 121, 7, 1.00);
 
 -- --------------------------------------------------------
 
@@ -886,7 +922,27 @@ INSERT INTO `detalle_deduccion` (`id_detalle_ded`, `id_detalle`, `id_tipo`, `mon
 (391, 116, 1, 56.00),
 (392, 116, 2, 14.00),
 (393, 116, 3, 7.00),
-(394, 116, 4, 140.00);
+(394, 116, 4, 140.00),
+(395, 117, 1, 1000.00),
+(396, 117, 2, 250.00),
+(397, 117, 3, 125.00),
+(398, 117, 4, 2500.00),
+(399, 118, 1, 400.00),
+(400, 118, 2, 100.00),
+(401, 118, 3, 50.00),
+(402, 118, 4, 1000.00),
+(403, 119, 1, 40.00),
+(404, 119, 2, 10.00),
+(405, 119, 3, 5.00),
+(406, 119, 4, 100.00),
+(407, 120, 1, 56.00),
+(408, 120, 2, 14.00),
+(409, 120, 3, 7.00),
+(410, 120, 4, 140.00),
+(411, 121, 1, 60.00),
+(412, 121, 2, 15.00),
+(413, 121, 3, 7.50),
+(414, 121, 4, 150.00);
 
 -- --------------------------------------------------------
 
@@ -1000,7 +1056,12 @@ INSERT INTO `detalle_nomina` (`id_detalle`, `id_nomina`, `empleado_id`, `salario
 (113, 59, 1, 25000.00, 17501.00, 3875.00, 38626.00),
 (114, 59, 2, 10000.00, 28001.00, 1550.00, 36451.00),
 (115, 59, 4, 1000.00, 701.00, 155.00, 1546.00),
-(116, 59, 5, 1400.00, 11990.00, 217.00, 13173.00);
+(116, 59, 5, 1400.00, 11990.00, 217.00, 13173.00),
+(117, 60, 1, 25000.00, 17501.00, 3875.00, 38626.00),
+(118, 60, 2, 10000.00, 28001.00, 1550.00, 36451.00),
+(119, 60, 4, 1000.00, 701.00, 155.00, 1546.00),
+(120, 60, 5, 1400.00, 11990.00, 217.00, 13173.00),
+(121, 60, 7, 1500.00, 1051.00, 232.50, 2318.50);
 
 -- --------------------------------------------------------
 
@@ -1029,7 +1090,8 @@ INSERT INTO `empleados` (`id`, `cedula`, `nombre`, `apellido`, `direccion`, `tel
 (1, '12345678', 'Jhon', 'Administrador', 'Caracas', '04141234567', 'jhon@example.com', '2024-01-01', 25000.00, 'activo'),
 (2, '99887766', 'Carlos', 'Pérez', 'La Guaira', '04145556677', 'carlos@example.com', '2024-01-15', 10000.00, 'activo'),
 (4, '32657336', 'Jhon pequeño', 'Castillo correa', 'tucaca', '04123456781', 'casticj671119@gmail.com', '2025-11-13', 1000.00, 'activo'),
-(5, '33657336', 'Emilio', 'Emiliano', 'La dolorita', '04142347728', 'emiliobatanero@gmail.com', '2025-01-29', 1400.00, 'activo');
+(5, '33657336', 'Emilio', 'Emiliano', 'La dolorita', '04142347728', 'emiliobatanero@gmail.com', '2025-01-29', 1400.00, 'activo'),
+(7, '33218995', 'Isaac', 'Toro', 'Av. Principal #1', '0424-1314426', 'Isaac@email.com', '2026-01-15', 7777.00, 'activo');
 
 -- --------------------------------------------------------
 
@@ -1111,7 +1173,8 @@ INSERT INTO `nomina` (`id_nomina`, `fecha_inicio`, `fecha_fin`, `tipo`, `estado`
 (56, '2026-03-09', '2026-03-15', 'mensual', 'pagada', 'jhon', '2026-03-10 18:21:49'),
 (57, '2026-03-09', '2026-03-15', 'mensual', 'abierta', 'jhon', '2026-03-13 19:24:05'),
 (58, '2026-03-09', '2026-03-15', 'mensual', 'abierta', 'jhon', '2026-03-14 04:10:57'),
-(59, '2026-03-09', '2026-03-15', 'mensual', 'abierta', 'analista', '2026-03-14 04:12:02');
+(59, '2026-03-09', '2026-03-15', 'mensual', 'abierta', 'analista', '2026-03-14 04:12:02'),
+(60, '2026-04-13', '2026-04-19', 'mensual', 'pagada', 'jhon', '2026-04-14 00:33:09');
 
 -- --------------------------------------------------------
 
@@ -1142,7 +1205,8 @@ INSERT INTO `pagos` (`id_pago`, `id_nomina`, `fecha_pago`, `total_pagado`, `meto
 (7, 52, '2026-03-10', 89787.00, 'transferencia', ''),
 (8, 55, '2026-03-10', 87454.00, 'transferencia', ''),
 (9, 51, '2026-03-10', 51083.00, 'transferencia', ''),
-(10, 56, '2026-03-10', 87454.00, 'transferencia', '');
+(10, 56, '2026-03-10', 87454.00, 'transferencia', ''),
+(11, 60, '2026-04-14', 92114.50, 'transferencia', '');
 
 -- --------------------------------------------------------
 
@@ -1156,21 +1220,22 @@ CREATE TABLE `tipo_asignacion` (
   `tipo` enum('fijo','porcentaje') NOT NULL DEFAULT 'fijo',
   `porcentaje` decimal(10,2) NOT NULL DEFAULT 0.00,
   `descripcion` text DEFAULT NULL,
-  `aplica_a` varchar(20) DEFAULT 'todos'
+  `aplica_a` varchar(20) DEFAULT 'todos',
+  `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tipo_asignacion`
 --
 
-INSERT INTO `tipo_asignacion` (`id_asignacion`, `nombre`, `tipo`, `porcentaje`, `descripcion`, `aplica_a`) VALUES
-(1, 'Bono Alimentación', 'fijo', 0.00, 'Bono en monto fijo por política', 'todos'),
-(2, 'Bono por Responsabilidad', 'porcentaje', 10.00, '10% sobre salario base', 'todos'),
-(3, 'Horas extras (ejemplo)', 'fijo', 0.00, 'Asignación por horas extras - monto calculado manualmente', 'todos'),
-(4, 'Bono De Transporte', 'porcentaje', 10.00, 'Bono De Transporte', 'todos'),
-(5, 'Asignación personalizada', 'fijo', 0.00, 'Asignación creada directamente para empleado', 'todos'),
-(6, 'Bono De Guerra Economica', 'porcentaje', 50.00, '', 'todos'),
-(7, 'Bonito', 'fijo', 1.00, 'Nada', 'todos');
+INSERT INTO `tipo_asignacion` (`id_asignacion`, `nombre`, `tipo`, `porcentaje`, `descripcion`, `aplica_a`, `activo`) VALUES
+(1, 'Bono Alimentación', 'fijo', 0.00, 'Bono en monto fijo por política', 'todos', 1),
+(2, 'Bono por Responsabilidad', 'porcentaje', 10.00, '10% sobre salario base', 'todos', 1),
+(3, 'Horas extras (ejemplo)', 'fijo', 0.00, 'Asignación por horas extras - monto calculado manualmente', 'todos', 1),
+(4, 'Bono De Transporte', 'porcentaje', 10.00, 'Bono De Transporte', 'todos', 1),
+(5, 'Asignación personalizada', 'fijo', 0.00, 'Asignación creada directamente para empleado', 'todos', 1),
+(6, 'Bono De Guerra Economica', 'porcentaje', 50.00, '', 'todos', 1),
+(7, 'Bonito', 'fijo', 1.00, 'Nada', 'todos', 1);
 
 -- --------------------------------------------------------
 
@@ -1198,7 +1263,7 @@ INSERT INTO `tipo_deduccion` (`id_tipo`, `nombre`, `tipo`, `porcentaje`, `forma`
 (1, 'IVSS', 'legal', 4.00, 'porcentaje', 0.00, 1, 1, 'Seguro social - 4%'),
 (2, 'FAOV', 'legal', 1.00, 'porcentaje', 0.00, 1, 1, 'Fondo de Ahorro para la Vivienda - 1%'),
 (3, 'Paro Forzoso', 'legal', 0.50, 'porcentaje', 0.00, 1, 1, 'Paro Forzoso - 0.5%'),
-(4, 'poligel', 'legal', 10.00, 'porcentaje', 0.00, 1, 1, '');
+(4, 'poligel', 'legal', 10.00, 'porcentaje', 0.00, 1, 0, '');
 
 -- --------------------------------------------------------
 
@@ -1211,23 +1276,25 @@ CREATE TABLE `usuarios` (
   `usuario` varchar(50) NOT NULL,
   `clave` varchar(20) DEFAULT NULL,
   `cargo_id` int(11) DEFAULT NULL,
-  `nombre_apellido` varchar(50) NOT NULL
+  `nombre_apellido` varchar(50) NOT NULL,
+  `empleado_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`) VALUES
-(1, 'jhon', '123', 1, 'Jhoneyker Correa'),
-(2, 'empleado1', '123', 2, 'Juan Soto'),
-(7, 'criss', '123', 2, 'cristian castillo'),
-(8, 'ana', '123', 1, 'Ana Hernandez'),
-(9, 'admin', '123456', 1, 'Administrador Sistema'),
-(10, 'empleado', '123456', 2, 'Empleado Prueba'),
-(11, 'analista', '123456', 3, 'Analista Nomina'),
-(12, 'rrhh', '123456', 4, 'Usuario RRHH'),
-(13, 'finanzas', '123456', 5, 'Usuario Finanzas');
+INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`, `empleado_id`) VALUES
+(1, 'jhon', '123', 1, 'Jhoneyker Correa', NULL),
+(2, 'jhonadmin', '123', 2, 'Jhoneyker Correa', 1),
+(7, 'criss', '123', 2, 'cristian castillo', NULL),
+(8, 'ana', '123', 1, 'Ana Hernandez', NULL),
+(9, 'admin', '123456', 1, 'Administrador Sistema', NULL),
+(10, 'empleado', '123456', 2, 'Empleado Prueba', NULL),
+(11, 'analista', '123456', 3, 'Analista Nomina', NULL),
+(12, 'rrhh', '123456', 4, 'Usuario RRHH', NULL),
+(13, 'finanzas', '123456', 5, 'Usuario Finanzas', NULL),
+(14, 'Isaac123', '1234', 2, 'Isaac Toro', 7);
 
 -- --------------------------------------------------------
 
@@ -1265,7 +1332,8 @@ INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_f
 (13, 5, '2026-03-17', '2026-03-18', 2, 2, '', 'jhon', '2026-03-05 04:13:06', 'rechazado', NULL, NULL, NULL),
 (14, 5, '2026-03-17', '2026-03-18', 2, 2, '', 'jhon', '2026-03-05 04:14:02', 'aprobado', 'jhon', '2026-03-05 00:14:06', NULL),
 (15, 5, '2026-03-24', '2026-03-25', 2, 2, '', 'jhon', '2026-03-05 04:14:57', 'rechazado', 'jhon', '2026-03-05 00:15:01', 'asdas'),
-(16, 5, '2026-04-07', '2026-04-08', 2, 2, '', 'jhon', '2026-03-05 04:16:15', 'aprobado', 'jhon', '2026-03-05 00:16:18', NULL);
+(16, 5, '2026-04-07', '2026-04-08', 2, 2, '', 'jhon', '2026-03-05 04:16:15', 'aprobado', 'jhon', '2026-03-05 00:16:18', NULL),
+(17, 2, '2026-04-08', '2026-04-10', 3, 3, '', 'jhon', '2026-03-31 02:26:42', 'aprobado', 'jhon', '2026-03-30 22:26:46', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -1395,25 +1463,25 @@ ALTER TABLE `deduccion_empleado`
 -- AUTO_INCREMENT de la tabla `detalle_asignacion`
 --
 ALTER TABLE `detalle_asignacion`
-  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=501;
+  MODIFY `id_detalle_asig` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=537;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_deduccion`
 --
 ALTER TABLE `detalle_deduccion`
-  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=395;
+  MODIFY `id_detalle_ded` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=415;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_nomina`
 --
 ALTER TABLE `detalle_nomina`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `feriados`
@@ -1425,13 +1493,13 @@ ALTER TABLE `feriados`
 -- AUTO_INCREMENT de la tabla `nomina`
 --
 ALTER TABLE `nomina`
-  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id_nomina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_asignacion`
@@ -1449,13 +1517,13 @@ ALTER TABLE `tipo_deduccion`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `vacaciones`
 --
 ALTER TABLE `vacaciones`
-  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_vacacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Restricciones para tablas volcadas

@@ -27,7 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssi", $nombre, $usuario, $contraseña, $cargo);
 
     if ($stmt->execute()) {
-        $mensaje = "Usuario registrado con éxito.";
+    registrar_auditoria($conexion, 'CREAR', 'Usuarios', "Creó usuario '$usuario' con cargo_id $cargo");
+    $mensaje = "Usuario registrado con éxito.";
     } else {
         $mensaje = "Error al registrar usuario.";
     }

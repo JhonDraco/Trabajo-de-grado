@@ -142,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
 
             mysqli_commit($conexion);
+            registrar_auditoria($conexion, strtoupper($accion), 'Vacaciones', "Se $accion vacación ID $id_vacacion del empleado ID $empleado_id");
             header("Location: vacaciones.php?msg=aprobada");
             exit();
         }

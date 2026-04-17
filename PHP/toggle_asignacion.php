@@ -12,6 +12,10 @@ $nuevo = $fila['activo'] ? 0 : 1;
 
 mysqli_query($conexion, "UPDATE tipo_asignacion SET activo = $nuevo WHERE id_asignacion = $id");
 
+registrar_auditoria($conexion, 'TOGGLE', 'Asignaciones', "Toggle activo para asignación ID $id: $nuevo");
+
+
 header("Location: asignaciones.php");
+
 exit();
 ?>

@@ -49,11 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ";
 
     if (mysqli_query($conexion, $update)) {
-        header("Location: listar_empleados.php");
-        exit();
-    } else {
+    registrar_auditoria($conexion, 'EDITAR', 'Empleados', "Editó empleado ID $id: $nombre $apellido");
+    header("Location: listar_empleados.php");
+    exit();
+    }else {
         echo "Error al actualizar: " . mysqli_error($conexion);
     }
+
+    
 }
 ?>
 <!DOCTYPE html>

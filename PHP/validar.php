@@ -30,6 +30,8 @@ if ($filas) {
             $upd->close();
         }
 
+        
+
         $_SESSION['usuario']     = $usuario;
         $_SESSION['cargo_id']    = $filas['cargo_id'];
         $_SESSION['empleado_id'] = $filas['empleado_id'];
@@ -40,7 +42,9 @@ if ($filas) {
         elseif ($filas['cargo_id'] == 4)  header("Location: administrador.php");
         elseif ($filas['cargo_id'] == 5)  header("Location: administrador.php");
         exit();
+        
     }
+registrar_auditoria($conexion, 'LOGIN', 'Acceso', "Ingresó al sistema desde IP: " . $_SERVER['REMOTE_ADDR']);
 }
 
 echo "<script>

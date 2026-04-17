@@ -20,6 +20,7 @@ if (isset($_POST['crear_deduccion_general'])) {
         INSERT INTO tipo_deduccion (nombre, porcentaje, obligatorio, descripcion)
         VALUES ('$nombre', $porcentaje, $obligatorio, '$descripcion')
     ");
+    registrar_auditoria($conexion, 'CREAR', 'Deducciones', "Creó deducción general: $nombre");
 }
 
 /* =========================================
@@ -54,6 +55,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
             1
         )
     ");
+    registrar_auditoria($conexion, 'CREAR', 'Deducciones', "Asignó deducción '$nombre' al empleado ID $empleado_id");
 }
 ?>
 

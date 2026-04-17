@@ -13,6 +13,7 @@ $nuevo = $fila['activo'] ? 0 : 1;
 
 mysqli_query($conexion, "UPDATE tipo_deduccion SET activo = $nuevo WHERE id_tipo = $id");
 
+registrar_auditoria($conexion, 'TOGGLE', 'Deducciones', "Toggle activo para deducción ID $id: $nuevo");
 header("Location: deducciones.php");
 exit();
 ?>

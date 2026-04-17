@@ -18,6 +18,7 @@ $id = $_GET['id'];
 $consulta = "DELETE FROM usuarios WHERE id_usuario = $id";
 
 if (mysqli_query($conexion, $consulta)) {
+    registrar_auditoria($conexion, 'ELIMINAR', 'Usuarios', "Eliminó usuario ID $id");
     header("Location: listar_usuario.php");
     exit();
 } else {

@@ -18,11 +18,15 @@ $id = $_GET['id'];
 $consulta = "DELETE FROM empleados WHERE id = $id";
 
 if (mysqli_query($conexion, $consulta)) {
+    registrar_auditoria($conexion, 'ELIMINAR', 'Empleados', "Eliminó empleado ID $id");
     header("Location: listar_empleados.php");
     exit();
-} else {
+}
+else {
     echo "Error al eliminar: " . mysqli_error($conexion);
 }
+
+
 
 mysqli_close($conexion);
 ?>

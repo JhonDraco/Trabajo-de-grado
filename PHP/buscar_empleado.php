@@ -17,7 +17,7 @@ if (isset($_POST['cedula'])) {
     $cedula = trim($_POST['cedula']);
     
     // Consulta exacta
-    $query = "SELECT nombre, apellido, salario_base, fecha_ingreso FROM empleados WHERE cedula = '$cedula' LIMIT 1";
+    $query = "SELECT id, nombre, apellido, salario_base, fecha_ingreso FROM empleados WHERE cedula = '$cedula' LIMIT 1";
     $resultado = $conexion->query($query);
 
     if ($resultado && $resultado->num_rows > 0) {

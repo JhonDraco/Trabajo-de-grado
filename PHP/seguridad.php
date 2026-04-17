@@ -93,6 +93,24 @@ function puedeReportes(){
 function puedeEmpleado(){
     return $_SESSION['cargo_id'] == 2;
 }
+
+/* ============================
+   AUDITORÍA / BITÁCORA
+============================ */
+function registrar_auditoria($conexion, $accion, $modulo, $descripcion) {
+    $usuario     = $_SESSION['usuario']  ?? 'desconocido';
+    $cargo_id    = $_SESSION['cargo_id'] ?? 0;
+    $ip          = mysqli_real_escape_string($conexion, $_SERVER['REMOTE_ADDR'] ?? '');
+    $descripcion = mysqli_real_escape_string($conexion, $descripcion);
+    $accion      = mysqli_real_escape_string($conexion, $accion);
+    $modulo      = mysqli_real_escape_string($conexion, $modulo);
+
+    mysqli_query($conexion,
+        "INSERT INTO auditoria (usuario, cargo_id, accion, modulo, descripcion, ip)
+         VALUES ('$usuario', $cargo_id, '$accion', '$modulo', '$descripcion', '$ip')"
+    );
+}
+
 function bloquearSiNo($permiso){
 
     if(!$permiso){

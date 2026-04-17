@@ -29,11 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssssd", $cedula, $nombre, $apellido, $direccion, $telefono, $email, $fecha_ingreso, $salario_base);
 
     if ($stmt->execute()) {
-        $mensaje = "✅ Empleado registrado con éxito.";
+    registrar_auditoria($conexion, 'CREAR', 'Empleados', "Registró nuevo empleado: $nombre $apellido, C.I: $cedula");
+    $mensaje = "✅ Empleado registrado con éxito.";
     } else {
         $mensaje = "❌ Error al registrar el empleado: " . $stmt->error;
     }
 
+    
     $stmt->close();
 }
 ?>

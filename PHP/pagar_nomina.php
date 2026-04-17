@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // actualizar estado de nomina
     mysqli_query($conexion, "UPDATE nomina SET estado='pagada' WHERE id_nomina=$id_nomina");
+    registrar_auditoria($conexion, 'PAGAR', 'Nómina', "Pagó nómina ID $id_nomina — Total: $total_nomina Bs.");
 
     header("Location: pagos_nomina.php?ok=1");
     exit();

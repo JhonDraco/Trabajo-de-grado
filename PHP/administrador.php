@@ -58,6 +58,10 @@ bloquearSiNo(puedeAdministrador());
         <i class="ri-mail-line"></i> Email
     </a>
 
+    <a href="bitacora.php">
+     <i class="ri-file-shield-2-line"></i> Bitácora
+    </a>
+
 </aside>
 
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-04-2026 a las 15:20:37
+-- Tiempo de generación: 16-04-2026 a las 15:25:24
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -48,32 +48,7 @@ INSERT INTO `asignacion_empleado` (`id_asig_emp`, `empleado_id`, `id_asignacion`
 (7, 2, 5, 10000.00, 1, '2026-03-07 14:20:17'),
 (8, 2, 1, 10000.00, 1, '2026-03-09 15:35:50'),
 (9, 5, 5, 10000.00, 1, '2026-03-09 15:36:58'),
-(10, 5, 7, 10.00, 1, '2026-03-10 22:20:08'),
-(11, 2, 7, 155.00, 1, '2026-04-17 15:00:49');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `auditoria`
---
-
-CREATE TABLE `auditoria` (
-  `id` int(11) NOT NULL,
-  `usuario` varchar(100) NOT NULL,
-  `cargo_id` int(11) NOT NULL,
-  `accion` varchar(50) NOT NULL,
-  `modulo` varchar(80) NOT NULL,
-  `descripcion` text NOT NULL,
-  `ip` varchar(45) NOT NULL,
-  `fecha` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `auditoria`
---
-
-INSERT INTO `auditoria` (`id`, `usuario`, `cargo_id`, `accion`, `modulo`, `descripcion`, `ip`, `fecha`) VALUES
-(1, 'jhon', 1, 'CREAR', 'Asignaciones', 'Asignó asignación ID 7 al empleado ID 2', '::1', '2026-04-17 11:00:49');
+(10, 5, 7, 10.00, 1, '2026-03-10 22:20:08');
 
 -- --------------------------------------------------------
 
@@ -1147,28 +1122,6 @@ INSERT INTO `feriados` (`id_feriado`, `nombre`, `fecha`, `tipo`, `obligatorio`, 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `liquidaciones`
---
-
-CREATE TABLE `liquidaciones` (
-  `id_liquidacion` int(11) NOT NULL,
-  `empleado_id` int(11) NOT NULL,
-  `salario_base` decimal(12,2) NOT NULL,
-  `anos_servicio` int(11) NOT NULL DEFAULT 0,
-  `meses_adicionales` int(11) NOT NULL DEFAULT 0,
-  `prestaciones_sociales` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `utilidades_prop` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `bono_vacacional_prop` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `indemnizacion` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `total_liquidacion` decimal(12,2) NOT NULL DEFAULT 0.00,
-  `motivo` varchar(100) NOT NULL DEFAULT 'Retiro voluntario',
-  `despido_injustificado` tinyint(1) NOT NULL DEFAULT 0,
-  `fecha_liquidacion` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `nomina`
 --
 
@@ -1321,7 +1274,7 @@ INSERT INTO `tipo_deduccion` (`id_tipo`, `nombre`, `tipo`, `porcentaje`, `forma`
 CREATE TABLE `usuarios` (
   `id_usuario` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
-  `clave` varchar(255) DEFAULT NULL,
+  `clave` varchar(20) DEFAULT NULL,
   `cargo_id` int(11) DEFAULT NULL,
   `nombre_apellido` varchar(50) NOT NULL,
   `empleado_id` int(11) DEFAULT NULL
@@ -1332,12 +1285,12 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`, `empleado_id`) VALUES
-(1, 'jhon', '$2y$10$ebL1CzmALsWvFdsXLtPPue9x8Gb1Qf1GuP.1VhBYPherKeAeNu4jq', 1, 'Jhoneyker Correa', NULL),
+(1, 'jhon', '123', 1, 'Jhoneyker Correa', NULL),
 (2, 'jhonadmin', '123', 2, 'Jhoneyker Correa', 1),
-(7, 'Carlos123', '123', 2, 'cristian castillo', 2),
+(7, 'criss', '123', 2, 'cristian castillo', NULL),
 (8, 'ana', '123', 1, 'Ana Hernandez', NULL),
 (9, 'admin', '123456', 1, 'Administrador Sistema', NULL),
-(10, 'Emilio123', '123456', 2, 'Emilio Emiliano', 5),
+(10, 'empleado', '123456', 2, 'Empleado Prueba', NULL),
 (11, 'analista', '123456', 3, 'Analista Nomina', NULL),
 (12, 'rrhh', '123456', 4, 'Usuario RRHH', NULL),
 (13, 'finanzas', '123456', 5, 'Usuario Finanzas', NULL),
@@ -1372,7 +1325,7 @@ CREATE TABLE `vacaciones` (
 INSERT INTO `vacaciones` (`id_vacacion`, `empleado_id`, `fecha_inicio`, `fecha_fin`, `dias_solicitados`, `dias_habiles`, `observaciones`, `creada_por`, `creada_en`, `estado`, `aprobado_por`, `fecha_aprobacion`, `motivo_rechazo`) VALUES
 (7, 1, '2026-03-03', '2026-03-05', 3, 3, '', 'jhon', '2026-03-02 15:47:34', 'rechazado', NULL, NULL, NULL),
 (8, 1, '2026-03-10', '2026-03-28', 14, 14, '', 'jhon', '2026-03-02 19:34:55', 'aprobado', NULL, NULL, NULL),
-(9, 1, '2026-04-07', '2026-04-11', 4, 4, '', 'jhon', '2026-03-02 19:35:49', 'rechazado', 'jhon', '2026-04-17 22:10:07', 'no tienes dias habiles'),
+(9, 1, '2026-04-07', '2026-04-11', 4, 4, '', 'jhon', '2026-03-02 19:35:49', 'pendiente', NULL, NULL, NULL),
 (10, 1, '2026-03-05', '2026-03-05', 1, 1, '', 'jhon', '2026-03-05 03:48:37', 'aprobado', 'jhon', '2026-03-04 23:48:40', NULL),
 (11, 2, '2026-03-05', '2026-03-07', 2, 2, '', 'jhon', '2026-03-05 03:49:11', 'aprobado', 'jhon', '2026-03-04 23:49:19', NULL),
 (12, 5, '2026-03-05', '2026-03-07', 2, 2, '', 'jhon', '2026-03-05 03:55:31', 'aprobado', 'jhon', '2026-03-04 23:55:34', NULL),
@@ -1393,12 +1346,6 @@ ALTER TABLE `asignacion_empleado`
   ADD PRIMARY KEY (`id_asig_emp`),
   ADD KEY `empleado_id` (`empleado_id`),
   ADD KEY `fk_asig_tipo` (`id_asignacion`);
-
---
--- Indices de la tabla `auditoria`
---
-ALTER TABLE `auditoria`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `cargo`
@@ -1452,13 +1399,6 @@ ALTER TABLE `feriados`
   ADD PRIMARY KEY (`id_feriado`);
 
 --
--- Indices de la tabla `liquidaciones`
---
-ALTER TABLE `liquidaciones`
-  ADD PRIMARY KEY (`id_liquidacion`),
-  ADD KEY `empleado_id` (`empleado_id`);
-
---
 -- Indices de la tabla `nomina`
 --
 ALTER TABLE `nomina`
@@ -1505,13 +1445,7 @@ ALTER TABLE `vacaciones`
 -- AUTO_INCREMENT de la tabla `asignacion_empleado`
 --
 ALTER TABLE `asignacion_empleado`
-  MODIFY `id_asig_emp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT de la tabla `auditoria`
---
-ALTER TABLE `auditoria`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_asig_emp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `cargo`
@@ -1554,12 +1488,6 @@ ALTER TABLE `empleados`
 --
 ALTER TABLE `feriados`
   MODIFY `id_feriado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `liquidaciones`
---
-ALTER TABLE `liquidaciones`
-  MODIFY `id_liquidacion` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `nomina`
@@ -1635,12 +1563,6 @@ ALTER TABLE `detalle_deduccion`
 ALTER TABLE `detalle_nomina`
   ADD CONSTRAINT `detalle_nomina_ibfk_1` FOREIGN KEY (`id_nomina`) REFERENCES `nomina` (`id_nomina`) ON DELETE CASCADE,
   ADD CONSTRAINT `detalle_nomina_ibfk_2` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `liquidaciones`
---
-ALTER TABLE `liquidaciones`
-  ADD CONSTRAINT `liquidaciones_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`);
 
 --
 -- Filtros para la tabla `pagos`

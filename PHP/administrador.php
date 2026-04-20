@@ -219,13 +219,12 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
     <h3 class="system-title">KAO SHOP</h3>
 </div>
     <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
     <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-    <a href="dashboard.php"><i class="ri-pie-chart-2-line"></i> Dashboard</a>
     <?php if (esAdmin()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
     <?php endif; ?>
@@ -243,11 +242,6 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
 
     <div class="top-menu">
         <a href="dashboard.php" class="top-button"><i class="ri-pie-chart-2-line"></i> Dashboard Gerencial</a>
-        <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
-        <a href="registrar_empleado_usuario.php" class="top-button"><i class="ri-user-add-line"></i> Nuevo Empleado</a>
-        <?php if (esAdmin()): ?>
-        <a href="bitacora.php" class="top-button"><i class="ri-file-shield-2-line"></i> Bitácora</a>
-        <?php endif; ?>
     </div>
 
     <div class="contenido">

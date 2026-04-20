@@ -25,7 +25,7 @@ include("seguridad.php");
     <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="nomina.php">
+    <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
@@ -42,6 +42,9 @@ include("seguridad.php");
     <a href="reportes.php" class="active">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+    <?php if (esAdmin()): ?>
+    <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
              
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email

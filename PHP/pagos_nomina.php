@@ -1,8 +1,11 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) { header("Location: index.php"); exit(); }
+include("seguridad.php");
+
+verificarSesion();
+bloquearSiNo(puedeGenerarNomina());
 
 include("db.php");
+
 
 // 1. PROCESAR EL PAGO SI SE ENVÍA EL FORMULARIO (LOGICA POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_nomina'])) {
@@ -108,7 +111,7 @@ $nominas = mysqli_query($conexion, $consulta);
     <a href="administrador.php">
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="nomina.php" class="active">
+    <a href="generar_nomina.php" class="active">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
@@ -126,6 +129,9 @@ $nominas = mysqli_query($conexion, $consulta);
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+    <?php if (esAdmin()): ?>
+    <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
              
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email

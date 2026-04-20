@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-04-2026 a las 15:20:37
+-- Tiempo de generación: 20-04-2026 a las 21:09:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -1324,24 +1324,25 @@ CREATE TABLE `usuarios` (
   `clave` varchar(255) DEFAULT NULL,
   `cargo_id` int(11) DEFAULT NULL,
   `nombre_apellido` varchar(50) NOT NULL,
-  `empleado_id` int(11) DEFAULT NULL
+  `empleado_id` int(11) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`, `empleado_id`) VALUES
-(1, 'jhon', '$2y$10$ebL1CzmALsWvFdsXLtPPue9x8Gb1Qf1GuP.1VhBYPherKeAeNu4jq', 1, 'Jhoneyker Correa', NULL),
-(2, 'jhonadmin', '123', 2, 'Jhoneyker Correa', 1),
-(7, 'Carlos123', '123', 2, 'cristian castillo', 2),
-(8, 'ana', '123', 1, 'Ana Hernandez', NULL),
-(9, 'admin', '123456', 1, 'Administrador Sistema', NULL),
-(10, 'Emilio123', '123456', 2, 'Emilio Emiliano', 5),
-(11, 'analista', '123456', 3, 'Analista Nomina', NULL),
-(12, 'rrhh', '123456', 4, 'Usuario RRHH', NULL),
-(13, 'finanzas', '123456', 5, 'Usuario Finanzas', NULL),
-(14, 'Isaac123', '1234', 2, 'Isaac Toro', 7);
+INSERT INTO `usuarios` (`id_usuario`, `usuario`, `clave`, `cargo_id`, `nombre_apellido`, `empleado_id`, `activo`) VALUES
+(1, 'jhon', '$2y$10$ebL1CzmALsWvFdsXLtPPue9x8Gb1Qf1GuP.1VhBYPherKeAeNu4jq', 1, 'Jhoneyker Correa', NULL, 1),
+(2, 'jhonadmin', '123', 2, 'Jhoneyker Correa', 1, 1),
+(7, 'Carlos123', '$2y$10$neoy0ayoblwgvngdrRPMBO.EG77LkjoLONqCQYrnSLlOUB1NfboR6', 2, 'cristian castillo', 2, 1),
+(8, 'ana', '123', 1, 'Ana Hernandez', NULL, 1),
+(9, 'admin', '123456', 1, 'Administrador Sistema', NULL, 1),
+(10, 'Emilio123', '123456', 2, 'Emilio Emiliano', 5, 1),
+(11, 'analista', '123456', 3, 'Analista Nomina', NULL, 1),
+(12, 'rrhh', '123456', 4, 'Usuario RRHH', NULL, 1),
+(13, 'finanzas', '123456', 5, 'Usuario Finanzas', NULL, 1),
+(14, 'Isaac123', '1234', 2, 'Isaac Toro', 7, 1);
 
 -- --------------------------------------------------------
 

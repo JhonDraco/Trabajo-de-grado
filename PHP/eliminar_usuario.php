@@ -1,29 +1,16 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
-
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeListarUsuarios());
 include("db.php");
 
-if (!isset($_GET['id'])) {
-    echo "ID no recibido.";
-    exit();
-}
+$id = (int)($_GET['id'] ?? 0);
+if (!$id) { header("Location: listar_usuario.php"); exit(); }
 
-$id = $_GET['id'];
+// Borrado lógico — nunca eliminar usuarios reales
+mysqli_query($conexion, "UPDATE usuarios SET activo = 0 WHERE id_usuario = $id");
+registrar_auditoria($conexion, 'DESACTIVAR', 'Usuarios', "Desactivó usuario ID $id");
 
-$consulta = "DELETE FROM usuarios WHERE id_usuario = $id";
-
-if (mysqli_query($conexion, $consulta)) {
-    registrar_auditoria($conexion, 'ELIMINAR', 'Usuarios', "Eliminó usuario ID $id");
-    header("Location: listar_usuario.php");
-    exit();
-} else {
-    echo "Error al eliminar: " . mysqli_error($conexion);
-}
-
-mysqli_close($conexion);
+header("Location: listar_usuario.php");
+exit();
 ?>

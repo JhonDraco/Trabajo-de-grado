@@ -6,14 +6,13 @@ bloquearSiNo(puedeListarUsuarios());
 
 include("db.php");
 
-$consulta = "
-SELECT u.id_usuario,
-       u.nombre_apellido,
-       u.usuario,
-       c.nombre_cargo
-FROM usuarios u
-LEFT JOIN cargo c ON u.cargo_id = c.cargo_id
-";
+$consulta = "SELECT u.id_usuario, u.nombre_apellido, u.usuario, c.nombre_cargo,
+                    e.nombre AS emp_nombre, e.apellido AS emp_apellido
+             FROM usuarios u
+             LEFT JOIN cargo c ON u.cargo_id = c.cargo_id
+             LEFT JOIN empleados e ON e.id = u.empleado_id
+             WHERE u.activo = 1";
+
 
 $resultado = mysqli_query($conexion, $consulta);
 ?>
@@ -62,10 +61,14 @@ $resultado = mysqli_query($conexion, $consulta);
 </header>
 
 <div class="top-menu">
-<a href="usuarios.php" class="top-button">
-<i class="ri-user-add-line"></i> Registrar usuario
-</a>
+            <a href="registrar_empleado_usuario.php" class="top-button">
+                <i class="ri-user-add-line"></i> Registrar Empleado
+            </a>
+        <a href="registrar_empleado_usuario.php?tipo=vincular" class="top-button">
+            <i class="ri-links-line"></i> Vincular Existente
+        </a>
 </div>
+
 
 <div class="contenido">
 

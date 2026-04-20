@@ -73,12 +73,15 @@ $resultado = mysqli_query($conexion,
     <h3 class="system-title">KAO SHOP</h3>
 </div>
     <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
     <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
     <a href="listar_empleados.php" class="active"><i class="ri-team-line"></i> Empleados</a>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+    <?php if (esAdmin()): ?>
+    <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
     <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
 </aside>
 

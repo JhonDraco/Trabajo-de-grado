@@ -28,7 +28,7 @@ verificarSesion();
     <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="nomina.php" class="active">
+    <a href="generar_nomina.php" class="active">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
 
@@ -46,7 +46,9 @@ verificarSesion();
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
-             
+   <?php if (esAdmin()): ?>
+    <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email
     </a>

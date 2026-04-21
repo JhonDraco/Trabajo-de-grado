@@ -48,11 +48,27 @@ $total_general_asig = 0;
 $total_general_ded = 0;
 $total_general_pagar = 0;
 
+/* --------------------------------------------------------
+   FERIADOS EN EL PERÍODO
+---------------------------------------------------------*/
+$feriados_periodo = mysqli_fetch_all(mysqli_query($conexion,
+    "SELECT nombre, fecha FROM feriados
+     WHERE fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
+     AND obligatorio = 1
+     ORDER BY fecha ASC"
+), MYSQLI_ASSOC);
+$hay_feriados = count($feriados_periodo) > 0;
+$salario_dia  = 0; // se calcula por empleado más abajo
+
 while($emp = mysqli_fetch_assoc($empleados)) {
 
     $salario = round($emp['salario_base'] * $factor, 2);
+    // Salario diario para cálculo de recargo (Art. 120 LOTTT: 50% sobre salario diario)
+    $salario_dia = round($emp['salario_base'] / 30, 2);
+    $recargo_feriado = round($salario_dia * 0.50, 2); // 50% por día feriado trabajado
     $total_asig = 0;
     $total_ded = 0;
+    
 
     $id_emp = $emp['id'];
     $max_deducciones = round($salario * $TOPE_DEDUCCION, 2);
@@ -163,7 +179,9 @@ while($d = mysqli_fetch_assoc($qDed)){
         'ded'=>$total_ded_aplicada,
         'ded_detalle'=>$ded_list,
         'pagar'=>$total_pago,
-        'vac'=>$dias_vac
+        'vac'=>$dias_vac,
+        'recargo_dia' => $recargo_feriado,      
+        'num_feriados'=> count($feriados_periodo), 
     ];
 
     $total_general_asig += $total_asig;
@@ -192,19 +210,21 @@ if(isset($_POST['generar_nomina'])){
                  continue;
                 }
 
-            // insertar detalle_nomina
-            mysqli_query($conexion, "
-                INSERT INTO detalle_nomina
-                (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones, total_pagar)
-                VALUES (
-                    $id_nomina,
-                    {$emp['id']},
-                    {$emp['salario']},
-                    {$emp['asig']},
-                    {$emp['ded']},
-                    {$emp['pagar']}
-                )
-            ");
+            // ¿Trabajó en feriado? viene del checkbox del form
+                $trabajó_feriado = in_array($emp['id'], $_POST['feriados_trabajados'] ?? []) ? 1 : 0;
+                $monto_recargo   = $trabajó_feriado ? round($emp['recargo_dia'] * $emp['num_feriados'], 2) : 0;
+                $total_con_recargo = $emp['pagar'] + $monto_recargo;
+
+                mysqli_query($conexion, "
+                    INSERT INTO detalle_nomina
+                    (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones,
+                    total_pagar, feriados_trabajados, monto_recargo)
+                    VALUES (
+                        $id_nomina, {$emp['id']},
+                        {$emp['salario']}, {$emp['asig']}, {$emp['ded']},
+                        $total_con_recargo, $trabajó_feriado, $monto_recargo
+                    )
+                ");
             $id_detalle = mysqli_insert_id($conexion);
 
             // detalle_asignacion
@@ -489,6 +509,17 @@ placeholder="Buscar empleado...">
 <th>Asignaciones</th>
 <th>Deducciones</th>
 <th>Total a Pagar</th>
+
+<?php if ($hay_feriados): ?>         
+<th style="background:#7a5c00; color:white;">
+    ⚠️ ¿Trabajó feriado?<br>
+    <small style="font-weight:400; font-size:10px;">
+        <?= implode(', ', array_column($feriados_periodo, 'nombre')) ?>
+    </small>
+</th>
+<?php endif; ?>
+</tr>                                 
+
 </tr>
 
 </thead>
@@ -536,6 +567,18 @@ echo '<span class="estado activo">Activo</span>';
 <td><?= number_format($emp['asig'],2) ?> Bs</td>
 <td><?= number_format($emp['ded'],2) ?> Bs</td>
 <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
+
+<?php if ($hay_feriados): ?>       
+<td style="text-align:center;">
+    <label style="cursor:pointer; font-size:12px; color:#7a5c00; font-weight:600;">
+        <input type="checkbox"
+               name="feriados_trabajados[]"
+               value="<?= $emp['id'] ?>"
+               style="width:16px; height:16px; accent-color:#d97706;">
+        +Bs. <?= number_format($emp['recargo_dia'] * $emp['num_feriados'], 2) ?>
+    </label>
+</td>
+<?php endif; ?>
 
 </tr>
 

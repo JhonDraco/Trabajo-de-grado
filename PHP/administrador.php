@@ -229,6 +229,7 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
     <?php endif; ?>
     <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
+    <a href="feriados.php"><i class="ri-mail-line"></i> Feriados</a>
 </aside>
 
 <div class="main">

@@ -352,6 +352,8 @@ if(isset($_POST['generar_nomina'])){
 <i class="ri-subtract-line"></i> Deducciones
 </a>
 
+<a href="feriados.php"class="top-button">
+    <i class="ri-mail-line"></i> Feriados</a>
 
 <a href="ver_nomina.php" class="top-button">
 <i class="ri-file-list-line"></i> Ver Nóminas

@@ -114,7 +114,7 @@ $acciones = mysqli_fetch_all(mysqli_query($conexion, "SELECT DISTINCT accion FRO
     <h3 class="system-title">KAO SHOP</h3>
 </div>
     <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
     <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>

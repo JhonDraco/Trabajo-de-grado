@@ -291,6 +291,10 @@ $anios_bd = mysqli_fetch_all(mysqli_query($conexion,
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+    </a>
+        <?php if (esAdmin()): ?>
+        <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+        <?php endif; ?>
     <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
 </aside>
 
@@ -304,9 +308,27 @@ $anios_bd = mysqli_fetch_all(mysqli_query($conexion,
     </header>
 
     <div class="top-menu">
-        <a href="vacaciones.php" class="top-button"><i class="ri-sun-line"></i> Vacaciones</a>
-        <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
-        <a href="administrador.php" class="top-button"><i class="ri-home-4-line"></i> Panel</a>
+        <a href="asignaciones.php" class="top-button">
+            <i class="ri-add-circle-line"></i> Asignaciones
+        </a>
+
+        <a href="deducciones.php" class="top-button">
+        <i class="ri-subtract-line"></i> Deducciones
+        </a>
+
+
+        <a href="ver_nomina.php" class="top-button">
+        <i class="ri-file-list-line"></i> Ver Nóminas
+        </a>
+
+        <a href="pagar_nomina.php" class="top-button">
+        <i class="ri-eye-line"></i> Pagar Nóminas
+        </a>
+
+        <a href="historial_pagos.php" class="top-button">
+        <i class="ri-file-text-line"></i> Historial de Pagos
+        </a>
+
     </div>
 
     <div class="contenido">

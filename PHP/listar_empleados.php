@@ -103,10 +103,7 @@ if (!$resultado) {
         <a href="formulario_para_registrar_empleado.php" class="top-button">
             <i class="ri-user-add-line"></i> Registrar Empleado
         </a>
-        <a href="registrar_empleado_usuario.php" class="top-button">
-            <i class="ri-user-follow-line"></i> Registrar con Usuario
-        </a>
-       
+
     </div>
 
     <!-- CONTENIDO -->

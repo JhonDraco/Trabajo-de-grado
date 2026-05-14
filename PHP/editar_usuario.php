@@ -1,8 +1,56 @@
 <?php
 include("seguridad.php");
+include("db.php");
 
 verificarSesion();
 bloquearSiNo(puedeAdministrador());
+
+if (!isset($_GET['id'])) {
+    echo "ID de usuario no recibido.";
+    exit();
+}
+
+$id = intval($_GET['id']);
+
+$consulta = "SELECT * FROM usuarios WHERE id_usuario = $id";
+$resultado = mysqli_query($conexion, $consulta);
+$empleado = mysqli_fetch_assoc($resultado);
+
+$cargo = mysqli_query($conexion, "SELECT * FROM cargo");
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre_apellido = $_POST['nombre_apellido'];
+    $usuario = $_POST['usuario'];
+    $clave = $_POST['clave'];
+    $cargo = $_POST['cargo_id'];
+    $clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);
+
+    $update = "
+    UPDATE usuarios SET
+    usuario = '$usuario',
+    clave = '$clave',
+    nombre_apellido = '$nombre_apellido',
+    cargo_id = '$cargo'
+    WHERE id_usuario = $id
+    ";
+
+    if (mysqli_query($conexion, $update)) {
+
+        registrar_auditoria(
+            $conexion,
+            'EDITAR',
+            'usuario',
+            "Editó usuario ID $id"
+        );
+
+        header("Location: listar_usuario.php");
+        exit();
+
+    } else {
+        echo "Error al actualizar: " . mysqli_error($conexion);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -10,7 +58,7 @@ bloquearSiNo(puedeAdministrador());
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel del Administrador</title>
-<link rel="stylesheet" href="../css/administrador.css">
+<link rel="stylesheet" href="../css/editar_usuario.css">
 <!-- Iconos RemixIcon -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
@@ -81,7 +129,42 @@ bloquearSiNo(puedeAdministrador());
 
     <!-- CONTENIDO -->
     <div class="contenido">
-        
+        <div class="form-card">
+            <h2>Editar Roloes</h2>
+    <form method="POST">
+        <label><i class="ri-user-line"></i> Nombre y Apellido:</label>
+        <input type="text" name="nombre_apellido"
+        value="<?php echo $empleado['nombre_apellido']; ?>">
+
+        <label><i class="ri-id-card-line"></i> Usuario:</label>
+        <input type="text" name="usuario" value="<?php echo $empleado['usuario']; ?>"
+
+        <label><i class="ri-user-line"></i> Contraseña:</label>
+        <input type="password" name="clave"value="<?php echo $empleado['clave']; ?>">
+       
+
+            <select name="cargo_id">
+            <?php while($c = mysqli_fetch_assoc($cargo)): ?>
+
+            <option value="<?= $c['cargo_id'] ?>">
+
+            <?= htmlspecialchars($c['nombre_cargo']) ?>
+
+            </option>
+
+            <?php endwhile; ?>
+
+            </select>
+            
+        <div class="acciones">
+            <button type="submit"><i class="ri-save-line"></i> Guardar Cambios</button>
+            <a href="listar_usuario.php" class="cancel-btn"></i> Cancelar</a>
+        </div>
+
+    </form>
+</div>
+
+
 
         
 

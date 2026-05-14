@@ -173,20 +173,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <aside class="sidebar">
-<div class="sidebar-header">
-    <img src="../img/logo.png" alt="Logo" class="logo">
-    <h3 class="system-title">KAO SHOP</h3>
-</div>
-    <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-    <a href="nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
-    <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
-    <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
-    <a href="listar_empleados.php" class="active"><i class="ri-team-line"></i> Empleados</a>
-    <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
-    <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-    <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
-</aside>
 
+<div class="sidebar-header">
+<img src="../img/logo.png" class="logo">
+<h3 class="system-title">KAO SHOP</h3>
+</div>
+
+<a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
+<a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+<a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
+<a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+<a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+<a href="listar_usuario.php" class="active"><i class="ri-user-settings-line"></i> Roles</a>
+<a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+<?php if (esAdmin()): ?>
+<a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+<?php endif; ?>
+<a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
+
+</aside>
 <div class="main">
     <header>
         <h2><i class="ri-user-add-line"></i> Registro de Empleados y Usuarios</h2>
@@ -196,7 +201,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </header>
     <div class="top-menu">
-        <a href="listar_empleados.php" class="top-button"><i class="ri-team-line"></i> Lista de empleados</a>
         <a href="listar_usuario.php"   class="top-button"><i class="ri-user-settings-line"></i> Lista de usuarios</a>
     </div>
 

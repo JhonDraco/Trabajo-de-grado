@@ -64,9 +64,7 @@ $resultado = mysqli_query($conexion, $consulta);
 </header>
 
 <div class="top-menu">
-            <a href="registrar_empleado_usuario.php" class="top-button">
-                <i class="ri-user-add-line"></i> Registrar Empleado
-            </a>
+
         <a href="registrar_empleado_usuario.php?tipo=vincular" class="top-button">
             <i class="ri-links-line"></i> Vincular Existente
         </a>

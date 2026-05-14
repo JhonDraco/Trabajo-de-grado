@@ -249,12 +249,6 @@ $nominas = mysqli_fetch_all(mysqli_query($conexion, "
         <a href="editar_empleado.php?id=<?= $id ?>" class="top-button">
             <i class="ri-edit-2-line"></i> Editar Datos
         </a>
-        <a href="asignaciones.php" class="top-button">
-            <i class="ri-add-circle-line"></i> Gestionar Asignaciones
-        </a>
-        <a href="deducciones.php" class="top-button">
-            <i class="ri-subtract-line"></i> Gestionar Deducciones
-        </a>
     </div>
 
     <div class="contenido">

@@ -369,23 +369,14 @@ button:hover{
 
 .cancel-btn{
     display:block;
-
     text-align:center;
-
     margin-top:14px;
-
     padding:12px;
-
     border-radius:12px;
-
     background:#eef2f1;
-
     color:var(--green-mid);
-
     font-weight:600;
-
     text-decoration:none;
-
     transition:var(--transition);
 }
 .cancel-btn:hover{

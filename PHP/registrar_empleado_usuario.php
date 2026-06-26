@@ -329,16 +329,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
 const orden = ['completo','solo_empleado','solo_usuario','vincular'];
+
 function cambiarTipo(tipo) {
     document.getElementById('tipo_registro').value = tipo;
+
     orden.forEach(t => {
-        document.getElementById('panel_' + t).className = 'panel-oculto';
+        const panel = document.getElementById('panel_' + t);
+        const esActivo = (t === tipo);
+
+        // Mostrar u ocultar panel
+        panel.className = esActivo ? 'panel-visible' : 'panel-oculto';
+
+        // ✅ Deshabilitar inputs del panel oculto para que no se envíen
+        panel.querySelectorAll('input, select, textarea').forEach(el => {
+            el.disabled = !esActivo;
+        });
     });
-    document.getElementById('panel_' + tipo).className = 'panel-visible';
+
     document.querySelectorAll('.tipo-tab').forEach((tab, i) => {
         tab.classList.toggle('activo', orden[i] === tipo);
     });
 }
+
+// ✅ Al cargar la página, deshabilitar los paneles inactivos
+document.addEventListener('DOMContentLoaded', () => {
+    const tipoActual = document.getElementById('tipo_registro').value;
+    cambiarTipo(tipoActual);
+});
 </script>
 <?php mysqli_close($conexion); ?>
 </body>

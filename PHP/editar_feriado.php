@@ -1,5 +1,8 @@
 <?php
-session_start();
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeGestionarFeriados());
+
 include("db.php");
 
 if (!isset($_GET['id'])) {

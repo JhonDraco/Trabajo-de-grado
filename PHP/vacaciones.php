@@ -1,12 +1,10 @@
-
 <?php
 
 include("db.php");
-
 include("seguridad.php");
 
 verificarSesion();
-bloquearSiNo(puedeVacaciones());
+bloquearSiNo(puedeVerVacaciones());
 
 
 /* ======================================================
@@ -23,17 +21,11 @@ function calcularSaldo($conexion, $empleado_id) {
 
     $antiguedad = $fecha_ingreso->diff($hoy)->y;
 
-    // Si no ha cumplido 1 año, no tiene derecho
     if ($antiguedad < 1) return 0;
 
-    // 15 días el primer año
-    // +1 día por cada año adicional
     $dias_acumulados = 15 + ($antiguedad - 1);
-
-    // Tope máximo legal: 30 días
     $dias_acumulados = min(30, $dias_acumulados);
 
-    // Días ya disfrutados
     $q2 = mysqli_query($conexion, "
         SELECT SUM(dias_habiles) as total 
         FROM vacaciones 
@@ -94,12 +86,12 @@ function haySolapamiento($conexion, $empleado_id, $inicio, $fin) {
 }
 
 
-
-
 /* ======================================================
-   APROBAR / RECHAZAR
+   APROBAR / RECHAZAR   -> solo Admin y RRHH
 ====================================================== */
 if (isset($_GET['accion']) && isset($_GET['id'])) {
+
+    bloquearSiNo(puedeAprobarVacaciones());
 
     $id = intval($_GET['id']);
 
@@ -130,6 +122,8 @@ if (isset($_GET['accion']) && isset($_GET['id'])) {
                   motivo_rechazo=NULL
                 WHERE id_vacacion=$id
             ");
+
+            registrar_auditoria($conexion, 'APROBAR', 'Vacaciones', "Aprobó vacación ID $id");
         }
 
         if ($_GET['accion'] == "rechazar") {
@@ -144,6 +138,8 @@ if (isset($_GET['accion']) && isset($_GET['id'])) {
                         fecha_aprobacion=NOW()
                     WHERE id_vacacion=$id
                 ");
+
+                registrar_auditoria($conexion, 'RECHAZAR', 'Vacaciones', "Rechazó vacación ID $id — Motivo: $motivo");
         }
     }
 
@@ -152,9 +148,11 @@ if (isset($_GET['accion']) && isset($_GET['id'])) {
 }
 
 /* ======================================================
-   NUEVA SOLICITUD
+   NUEVA SOLICITUD   -> Admin, RRHH, Analista
 ====================================================== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    bloquearSiNo(puedeRegistrarVacaciones());
 
     $empleado_id = intval($_POST['empleado_id']);
     $fecha_inicio = $_POST['fecha_inicio'];
@@ -217,6 +215,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         )
     ");
 
+    registrar_auditoria($conexion, 'CREAR', 'Vacaciones', "Registró solicitud de vacaciones para empleado ID $empleado_id");
+
     header("Location: vacaciones.php?ok=1");
     exit();
 }
@@ -238,14 +238,12 @@ $empleados = mysqli_query($conexion, "
     WHERE estado='activo'
 ");
 
-/* filtro de estado */
 $filtro_estado = $_GET['estado'] ?? '';
 
 $where = "";
 if(in_array($filtro_estado,['pendiente','aprobado','rechazado'])){
     $where = "WHERE v.estado='$filtro_estado'";
 }
-/* filtro de estado */
 
 $vacaciones = mysqli_query($conexion, "
     SELECT v.*, e.nombre, e.apellido
@@ -276,13 +274,28 @@ $vacaciones = mysqli_query($conexion, "
 </div>
 
     <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
+    <?php if (puedeGenerarNomina()): ?>
     <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php endif; ?>
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
+    <?php endif; ?>
     <a href="vacaciones.php" class="active"><i class="ri-sun-line"></i> Vacaciones</a>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+    <?php endif; ?>
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
+    <?php endif; ?>
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-    <?php if (esAdmin()): ?>
+    <?php endif; ?>
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
     <?php endif; ?>
     <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
@@ -302,13 +315,13 @@ $vacaciones = mysqli_query($conexion, "
         <a href="vacaciones.php?estado=pendiente" class="top-button">Pendientes</a>
         <a href="vacaciones.php?estado=aprobado" class="top-button">Aprobadas</a>
         <a href="vacaciones.php?estado=rechazado" class="top-button">Rechazadas</a>
-        
-
     </div>
 
 <div class="contenido">
 
 <br>
+
+<?php if (puedeRegistrarVacaciones()): ?>
 <h3><i class="ri-sun-line"></i> Nueva Solicitud de Vacaciones</h3>
 
     <div class="form-compacto">
@@ -350,12 +363,12 @@ $vacaciones = mysqli_query($conexion, "
 
 </form>
 
-
-
 <p style="margin-top:10px;font-weight:600;color:#1f3a34;">
 <strong id="saldo">Saldo disponible: 0 días</strong>
-
 </p>
+
+<?php endif; ?>
+
 <table>
 <tr>
     <th>Empleado</th>
@@ -385,19 +398,25 @@ $puede_aprobar = $v['dias_habiles'] <= $saldo_actual;
     <td>
         <?php if ($v['estado'] == 'pendiente') { ?>
 
-            <?php if ($puede_aprobar) { ?>
-                <button class="top-button" onclick="confirmarAccion('aprobar', <?= $v['id_vacacion'] ?>)">
-                    Aprobar
-                </button>
-            <?php } else { ?>
-                <button class="top-button" style="background:red;" disabled>
-                    Sin saldo
-                </button>
-            <?php } ?>
+            <?php if (puedeAprobarVacaciones()): ?>
 
-            <button class="top-button" onclick="confirmarAccion('rechazar', <?= $v['id_vacacion'] ?>)">
-                Rechazar
-            </button>
+                <?php if ($puede_aprobar) { ?>
+                    <button class="top-button" onclick="confirmarAccion('aprobar', <?= $v['id_vacacion'] ?>)">
+                        Aprobar
+                    </button>
+                <?php } else { ?>
+                    <button class="top-button" style="background:red;" disabled>
+                        Sin saldo
+                    </button>
+                <?php } ?>
+
+                <button class="top-button" onclick="confirmarAccion('rechazar', <?= $v['id_vacacion'] ?>)">
+                    Rechazar
+                </button>
+
+            <?php else: ?>
+                <span style="color:#888;">Pendiente de aprobación</span>
+            <?php endif; ?>
 
         <?php } else { echo "---"; } ?>
 

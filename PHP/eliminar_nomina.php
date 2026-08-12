@@ -1,5 +1,7 @@
 <?php
-session_start();
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeEliminarNomina());
 
 include("db.php");
 
@@ -8,11 +10,12 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$id = $_GET['id'];
+$id = intval($_GET['id']);
 
 $consulta = "DELETE FROM nomina WHERE id_nomina = $id";
 
 if (mysqli_query($conexion, $consulta)) {
+    registrar_auditoria($conexion, 'ELIMINAR', 'Nómina', "Eliminó nómina ID $id");
     header("Location: ver_nomina.php");
     exit();
 } else {

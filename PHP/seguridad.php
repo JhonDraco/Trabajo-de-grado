@@ -14,85 +14,94 @@ function verificarSesion(){
 }
 
 /* ============================
-   ROLES
+   ROLES (cargo_id)
 ============================ */
+function esAdmin(){     return $_SESSION['cargo_id'] == 1; }
+function esEmpleado(){  return $_SESSION['cargo_id'] == 2; }
+function esAnalista(){  return $_SESSION['cargo_id'] == 3; }
+function esRRHH(){      return $_SESSION['cargo_id'] == 4; }
+function esFinanzas(){  return $_SESSION['cargo_id'] == 5; }
 
-function esAdmin(){
-    return $_SESSION['cargo_id'] == 1;
-}
+/* ============================================================
+   PERMISOS GRANULARES — un permiso por VERBO + ENTIDAD
+   Admin (1) siempre incluido: acceso total, nunca se le oculta nada.
+============================================================ */
 
-function esEmpleado(){
-    return $_SESSION['cargo_id'] == 2;
-}
+/* ----- EMPLEADOS ----- */
+function puedeListarEmpleados(){  return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeCrearEmpleado(){    return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEditarEmpleado(){   return in_array($_SESSION['cargo_id'], [1,4,3]); } // incluye activar/desactivar (campo estado)
+function puedeEliminarEmpleado(){ return $_SESSION['cargo_id'] == 1; }
 
-function esAnalista(){
-    return $_SESSION['cargo_id'] == 3;
-}
+/* ----- VACACIONES (panel de gestión, no el portal del trabajador) ----- */
+function puedeVerVacaciones(){        return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeRegistrarVacaciones(){  return in_array($_SESSION['cargo_id'], [1,4,3]); } // crear solicitud
+function puedeAprobarVacaciones(){    return in_array($_SESSION['cargo_id'], [1,4]); }   // aprobar / rechazar
+function puedeInicializarVacaciones(){return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function esRRHH(){
-    return $_SESSION['cargo_id'] == 4;
-}
+/* ----- PERMISOS / INCIDENCIAS ----- */
+function puedeRegistrarIncidencia(){ return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeAprobarPermiso(){      return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function esFinanzas(){
-    return $_SESSION['cargo_id'] == 5;
-}
+/* ----- ASIGNACIONES ----- */
+function puedeVerAsignaciones(){    return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeCrearAsignacion(){    return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEditarAsignacion(){   return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEliminarAsignacion(){ return in_array($_SESSION['cargo_id'], [1,4]); }
 
-/* ============================
-   PERMISOS
-============================ */
+/* ----- DEDUCCIONES ----- */
+function puedeVerDeducciones(){    return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeCrearDeduccion(){    return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEditarDeduccion(){   return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEliminarDeduccion(){ return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function puedeAdministrador(){
-    return in_array($_SESSION['cargo_id'], [1,3,4,5]);
-}
-function puedeVerNomina(){
-    return in_array($_SESSION['cargo_id'], [1,5,3,4]);
-}
+/* ----- HORAS EXTRA ----- */
+function puedeVerHorasExtra(){       return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeRegistrarHorasExtra(){ return in_array($_SESSION['cargo_id'], [1,4,3]); }
+function puedeEliminarHorasExtra(){  return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function puedeGenerarNomina(){
-    return in_array($_SESSION['cargo_id'], [1,4]);
-}
+/* ----- NÓMINA ----- */
+function puedeVerNomina(){        return in_array($_SESSION['cargo_id'], [1,4,5]); }
+function puedeGenerarNomina(){    return in_array($_SESSION['cargo_id'], [1,4]); }
+function puedeRecalcularNomina(){ return in_array($_SESSION['cargo_id'], [1,4]); }
+function puedePagarNomina(){      return in_array($_SESSION['cargo_id'], [1,5]); }
+function puedeConfirmarPago(){    return in_array($_SESSION['cargo_id'], [1,5]); }
+function puedeCerrarNomina(){     return $_SESSION['cargo_id'] == 1; }
+function puedeEliminarNomina(){   return $_SESSION['cargo_id'] == 1; }
 
-function puedeAsignaciones(){
-    return in_array($_SESSION['cargo_id'], [1,3]);
-}
+/* ----- LIQUIDACIÓN ----- */
+function puedeVerLiquidacion(){     return in_array($_SESSION['cargo_id'], [1,4,5]); }
+function puedeGenerarLiquidacion(){ return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function puedePagarNomina(){
-    return in_array($_SESSION['cargo_id'], [1,5]);
-}
+/* ----- FERIADOS ----- */
+function puedeGestionarFeriados(){ return in_array($_SESSION['cargo_id'], [1,4]); }
 
-function puedeVacaciones(){
-    return in_array($_SESSION['cargo_id'], [1,5]);
-}
-function puedeEliminarNomina(){
-    return $_SESSION['cargo_id'] == 1;
-}
+/* ----- USUARIOS / CONFIGURACIÓN (solo Admin) ----- */
+function puedeVerUsuarios(){     return in_array($_SESSION['cargo_id'], [1,4]); } // RRHH puede ver, no crear ni cambiar roles
+function puedeCrearUsuario(){    return $_SESSION['cargo_id'] == 1; }
+function puedeCambiarRoles(){    return $_SESSION['cargo_id'] == 1; }
+function puedeEliminarUsuario(){ return $_SESSION['cargo_id'] == 1; }
+function puedeConfiguracion(){   return $_SESSION['cargo_id'] == 1; }
 
-function puedeListarUsuarios(){
-    return in_array($_SESSION['cargo_id'], [1,4]);
-}
+/* ----- REPORTES / AUDITORÍA ----- */
+function puedeReportes(){        return in_array($_SESSION['cargo_id'], [1,3,4,5]); }
+function puedeVerBitacora(){     return $_SESSION['cargo_id'] == 1; }
+function puedeEliminarBitacora(){return $_SESSION['cargo_id'] == 1; }
 
-function puedeListarEmpleados(){
-    return in_array($_SESSION['cargo_id'], [1,4]);
-}
+/* ----- PORTAL DEL TRABAJADOR ----- */
+function puedeEmpleado(){ return $_SESSION['cargo_id'] == 2; }
 
-function puedeDeducciones(){
-    return in_array($_SESSION['cargo_id'], [1,4]);
-}
-
-function puedeSalariosArchivos(){
-    return in_array($_SESSION['cargo_id'], [1, 3, 4]);
-}
-
-function puedeReportes(){
-    return in_array($_SESSION['cargo_id'], [1,3,4,5]);
-}
-/* ============================
-   BLOQUEAR ACCESO
-============================ */
-
-function puedeEmpleado(){
-    return $_SESSION['cargo_id'] == 2;
-}
+/* ============================================================
+   ALIAS DE COMPATIBILIDAD (temporal)
+   Varios archivos todavía no migrados llaman a estos nombres viejos.
+   A medida que migremos cada módulo, vamos borrando su alias de aquí.
+============================================================ */
+function puedeAdministrador(){    return in_array($_SESSION['cargo_id'], [1,3,4,5]); } // todos menos Trabajador
+function puedeAsignaciones(){     return puedeVerAsignaciones(); }
+function puedeVacaciones(){       return puedeVerVacaciones(); }
+function puedeListarUsuarios(){   return puedeVerUsuarios(); }
+function puedeDeducciones(){      return puedeVerDeducciones(); }
+function puedeSalariosArchivos(){ return in_array($_SESSION['cargo_id'], [1,3,4]); }
 
 /* ============================
    AUDITORÍA / BITÁCORA
@@ -112,21 +121,15 @@ function registrar_auditoria($conexion, $accion, $modulo, $descripcion) {
 }
 
 function bloquearSiNo($permiso){
-
     if(!$permiso){
-
         echo "<script>
         alert('⛔ No tienes permiso para acceder a este módulo');
-
         if(document.referrer){
             window.history.back();
         }else{
             window.location='administrador.php';
         }
-
         </script>";
-
         exit();
     }
-
 }

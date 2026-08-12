@@ -1,6 +1,13 @@
 <?php
-session_start();
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerVacaciones() || puedeEmpleado());
 require('../librerias/fpdf.php');
+
+function _utf8fix($texto){
+    return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
+}
+
 include("db.php");
 
 if(!isset($_GET['id'])){
@@ -39,7 +46,7 @@ class PDF extends FPDF {
 
         // TÍTULO
         $this->SetFont('Arial','B',13);
-        $this->Cell(0,10,utf8_decode('CONSTANCIA DE VACACIONES'),0,1,'C');
+        $this->Cell(0,10,_utf8fix('CONSTANCIA DE VACACIONES'),0,1,'C');
 
         $this->Ln(5);
     }
@@ -55,7 +62,9 @@ $pdf->SetRightMargin(25);
 // ===== FECHA ACTUAL =====
 $pdf->SetFont('Arial','',11);
 $pdf->SetTextColor(0,0,0);
-$pdf->Cell(0,8,utf8_decode("Caracas, ".strftime('%d de %B de %Y')),0,1,'R');
+$meses_es = [1=>'enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+$fecha_hoy = "Caracas, " . date('d') . " de " . $meses_es[(int)date('n')] . " de " . date('Y');
+$pdf->Cell(0,8,_utf8fix($fecha_hoy),0,1,'R');
 
 $pdf->Ln(10);
 
@@ -72,15 +81,15 @@ $texto = "La empresa certifica que el trabajador "
         .", por un total de "
         .$datos['dias_habiles']." días hábiles.";
 
-$pdf->MultiCell(0,7,utf8_decode($texto),0,'J');
+$pdf->MultiCell(0,7,_utf8fix($texto),0,'J');
 
 $pdf->Ln(10);
 
 // ===== DATOS DE APROBACIÓN =====
 $pdf->SetFont('Arial','',11);
 
-$pdf->Cell(0,7,utf8_decode("Aprobado por: ".$datos['aprobado_por']),0,1);
-$pdf->Cell(0,7,utf8_decode("Fecha de aprobación: ".date('d/m/Y H:i', strtotime($datos['fecha_aprobacion']))),0,1);
+$pdf->Cell(0,7,_utf8fix("Aprobado por: ".$datos['aprobado_por']),0,1);
+$pdf->Cell(0,7,_utf8fix("Fecha de aprobación: ".date('d/m/Y H:i', strtotime($datos['fecha_aprobacion']))),0,1);
 
 $pdf->Ln(25);
 

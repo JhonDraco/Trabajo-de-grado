@@ -2,7 +2,7 @@
 include("seguridad.php");
 
 verificarSesion();
-bloquearSiNo(puedeDeducciones());
+bloquearSiNo(puedeVerDeducciones());
 
 include("db.php");
 
@@ -10,6 +10,7 @@ include("db.php");
    CREAR DEDUCCIÓN GENERAL
 ========================================= */
 if (isset($_POST['crear_deduccion_general'])) {
+    bloquearSiNo(puedeCrearDeduccion());
 
     $nombre      = mysqli_real_escape_string($conexion, $_POST['nombre']);
     $porcentaje  = floatval($_POST['porcentaje']);
@@ -27,6 +28,7 @@ if (isset($_POST['crear_deduccion_general'])) {
    CREAR DEDUCCIÓN POR EMPLEADO
 ========================================= */
 if (isset($_POST['crear_deduccion_empleado'])) {
+    bloquearSiNo(puedeCrearDeduccion());
 
     $empleado_id = intval($_POST['empleado_id']);
     $nombre      = mysqli_real_escape_string($conexion, $_POST['nombre']);
@@ -84,34 +86,52 @@ if (isset($_POST['crear_deduccion_empleado'])) {
     <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="generar_nomina.php"class="active">
+    <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
-    
+    <?php endif; ?>
+
+    <?php if (puedeVerVacaciones()): ?>
+    <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+    <?php endif; ?>
+
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
-    <?php if (esAdmin()): ?>
+    <?php endif; ?>
+
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
-    <?php endif; ?>    
+    <?php endif; ?>
+
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email
     </a>
-    
-   
-</a>
-
-   
 </aside>
 
 
@@ -128,17 +148,26 @@ if (isset($_POST['crear_deduccion_empleado'])) {
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
+       <?php if (puedeVerAsignaciones()): ?>
        <a href="asignaciones.php" class="top-button"><i class="ri-add-circle-line"></i> Asignaciones</a>
-       <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
+       <?php endif; ?>
+       <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+    <?php elseif (puedeVerNomina()): ?>
+           <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+    <?php endif; ?>
+       <?php if (puedePagarNomina()): ?>
        <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
-        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+       <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+       <?php endif; ?>
 
     </div>
 
     <!-- CONTENIDO -->
 <div class="contenido">
-        
+
+        <?php if (puedeCrearDeduccion()): ?>
         <h3><i class="ri-shield-star-line"></i> Deducciones Generales (Ley)</h3>
         <div class="form-compact-row">
             <form method="POST" class="form-inline">
@@ -163,6 +192,9 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                 <button type="submit" class="btn-accion">Guardar</button>
             </form>
         </div>
+        <?php else: ?>
+        <h3><i class="ri-shield-star-line"></i> Deducciones Generales (Ley)</h3>
+        <?php endif; ?>
 
         <table>
             <thead>
@@ -183,21 +215,22 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                 $btn_txt = $activo ? 'Activa' : 'Inactiva';
                 $btn_col = $activo ? '#28a745' : '#dc3545';
                 $btn_acc = $activo ? '¿Desactivar esta deducción?' : '¿Reactivar esta deducción?';
+                $accion_celda = puedeEliminarDeduccion()
+                    ? "<a href='toggle_deduccion.php?id={$d['id_tipo']}'
+                        onclick=\"return confirm('$btn_acc')\"
+                        style='background:$btn_col; color:white; padding:4px 12px;
+                                border-radius:20px; font-size:12px; font-weight:600;
+                                text-decoration:none;'>
+                        $btn_txt
+                        </a>"
+                    : "<span style='color:$btn_col; font-weight:600;'>$btn_txt</span>";
 
                 echo "<tr>
                     <td>{$d['nombre']}</td>
                     <td>{$d['porcentaje']}%</td>
                     <td>" . ($d['obligatorio'] ? 'Sí' : 'No') . "</td>
                     <td>{$d['descripcion']}</td>
-                    <td>
-                        <a href='toggle_deduccion.php?id={$d['id_tipo']}'
-                        onclick=\"return confirm('$btn_acc')\"
-                        style='background:$btn_col; color:white; padding:4px 12px;
-                                border-radius:20px; font-size:12px; font-weight:600;
-                                text-decoration:none;'>
-                        $btn_txt
-                        </a>
-                    </td>
+                    <td>$accion_celda</td>
                 </tr>";
                 }
                 ?>
@@ -206,6 +239,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
 
         <hr style="margin: 40px 0; border: 0; border-top: 1px solid var(--card-border);">
 
+        <?php if (puedeCrearDeduccion()): ?>
         <h3><i class="ri-user-shared-line"></i> Asignar Deducción Individual</h3>
         <div class="form-compact-row">
             <form method="POST" class="form-inline">
@@ -244,6 +278,7 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                 <button type="submit" class="btn-accion">Asignar</button>
             </form>
         </div>
+        <?php endif; ?>
 
         <h3><i class="ri-list-ordered"></i> Registro de Deducciones por Empleado</h3>
         <table>
@@ -268,19 +303,24 @@ if (isset($_POST['crear_deduccion_empleado'])) {
                 while ($d = mysqli_fetch_assoc($listado)) {
                     $clase = $d['activa'] ? 'status-active' : 'status-off';
                     $texto = $d['activa'] ? 'Activa' : 'Finalizada';
+
+                    $accion_celda = "—";
+                    if ($d['activa'] && puedeEliminarDeduccion()) {
+                        $accion_celda = "<a href='eliminar_deducciones_empleado.php?id={$d['id_deduccion_emp']}'
+                        onclick=\"return confirm('¿Desactivar esta deducción?')\">
+                        Desactivar
+                        </a>";
+                    } elseif ($d['activa']) {
+                        $accion_celda = "<span style='color:#888;'>Activa</span>";
+                    }
+
                     echo "<tr>
                     <td><strong>{$d['emp_nombre']} {$d['apellido']}</strong></td>
                     <td>{$d['nombre']}</td>
                     <td>" . number_format($d['monto'], 2) . "</td>
                     <td>{$d['cuota_actual']} / {$d['cuotas']}</td>
                     <td><span class='status-badge $clase'>$texto</span></td>
-                    <td>
-                        " . ($d['activa'] ? "
-                        <a href='eliminar_deduccion_empleado.php?id={$d['id_deduccion_emp']}'
-                        onclick=\"return confirm('¿Desactivar esta deducción?')\">
-                        Desactivar
-                        </a>" : "—") . "
-                    </td>
+                    <td>$accion_celda</td>
                 </tr>";
                 }
                 ?>

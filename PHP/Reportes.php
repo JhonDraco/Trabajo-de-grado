@@ -28,25 +28,46 @@ bloquearSiNo(puedeReportes());
     <a href="administrador.php">
         <i class="ri-home-4-line"></i> Inicio
     </a>
+    <?php if (puedeGenerarNomina()): ?>
     <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
     
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    <?php endif; ?>
+    <?php if (puedeVerVacaciones()): ?>
     <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
     
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <?php endif; ?>
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+    <?php endif; ?>
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php" class="active">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+    <?php endif; ?>
     <?php if (esAdmin()): ?>
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
     <?php endif; ?>
              
     <a href="contactar.php">

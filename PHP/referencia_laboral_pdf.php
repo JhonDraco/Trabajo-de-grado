@@ -1,5 +1,13 @@
 <?php
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerNomina() || puedeEmpleado());
 require('../librerias/fpdf.php');
+
+function _utf8fix($texto){
+    return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
+}
+
 
 date_default_timezone_set('America/Caracas');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'spanish');
@@ -39,7 +47,7 @@ $hora  = date('H:i');
 // ===== FECHA =====
 $pdf->SetFont('Arial','',11);
 $pdf->SetTextColor(0,0,0);
-$pdf->Cell(0,8,utf8_decode("Caracas, $fecha - $hora"),0,1,'R');
+$pdf->Cell(0,8,_utf8fix("Caracas, $fecha - $hora"),0,1,'R');
 
 $pdf->Ln(10);
 
@@ -60,7 +68,7 @@ $pdf->Ln(10);
 // ===== CUERPO =====
 $pdf->SetFont('Arial','',11);
 
-$texto1 = utf8_decode(
+$texto1 = _utf8fix(
 "Por medio de la presente, quien suscribe, hace constar que conoce al ciudadano $nombre $apellido, titular de la cédula de identidad Nº $cedula, y puede dar fe de que es una persona responsable, honesta y comprometida con sus labores."
 );
 
@@ -68,7 +76,7 @@ $pdf->MultiCell(0,7,$texto1,0,'J');
 
 $pdf->Ln(5);
 
-$texto2 = utf8_decode(
+$texto2 = _utf8fix(
 "Durante el tiempo en que mantuvo relación profesional con nuestra organización, demostró excelentes valores personales, buen trato interpersonal, capacidad de trabajo en equipo y alto sentido de responsabilidad."
 );
 
@@ -76,7 +84,7 @@ $pdf->MultiCell(0,7,$texto2,0,'J');
 
 $pdf->Ln(5);
 
-$texto3 = utf8_decode(
+$texto3 = _utf8fix(
 "Por lo anteriormente expuesto, se recomienda ampliamente para cualquier actividad laboral o profesional que se le asigne."
 );
 

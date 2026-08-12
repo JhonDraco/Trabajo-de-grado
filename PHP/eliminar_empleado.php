@@ -1,10 +1,8 @@
 <?php
-session_start();
+include("seguridad.php");
 
-if (!isset($_SESSION['usuario']) || $_SESSION['cargo'] != 1) {
-    header("Location: index.php");
-    exit();
-}
+verificarSesion();
+bloquearSiNo(puedeEliminarEmpleado());
 
 include("db.php");
 
@@ -13,7 +11,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$id = $_GET['id'];
+$id = intval($_GET['id']);
 
 $consulta = "DELETE FROM empleados WHERE id = $id";
 
@@ -21,12 +19,9 @@ if (mysqli_query($conexion, $consulta)) {
     registrar_auditoria($conexion, 'ELIMINAR', 'Empleados', "Eliminó empleado ID $id");
     header("Location: listar_empleados.php");
     exit();
-}
-else {
+} else {
     echo "Error al eliminar: " . mysqli_error($conexion);
 }
-
-
 
 mysqli_close($conexion);
 ?>

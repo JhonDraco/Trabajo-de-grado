@@ -1,6 +1,5 @@
 <?php
 include("db.php"); // incluye la conexión
-
 include("seguridad.php");
 
 verificarSesion();
@@ -26,13 +25,6 @@ $resultado = mysqli_query($conexion, $consulta);
 if (!$resultado) {
     die("Error en la consulta: " . mysqli_error($conexion));
 }
-
-$resultado = mysqli_query($conexion, $consulta);
-if (!$resultado) {
-    die("Error en la consulta: " . mysqli_error($conexion));
-}
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -59,32 +51,50 @@ if (!$resultado) {
     <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
+    <?php if (puedeGenerarNomina()): ?>
     <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
-    
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
-    
-    <a href="listar_empleados.php"  class="active">
+    <?php endif; ?>
+
+    <?php if (puedeVerVacaciones()): ?>
+    <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+
+    <a href="listar_empleados.php" class="active">
         <i class="ri-team-line"></i> Empleados
     </a>
 
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+    <?php endif; ?>
+
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
-    <?php if (esAdmin()): ?>
+    <?php endif; ?>
+
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
-    <?php endif; ?>  
+    <?php endif; ?>
+
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email
     </a>
-    
-   
 </aside>
 
 <div class="main">
@@ -100,10 +110,11 @@ if (!$resultado) {
 
     <!-- TOP MENU -->
     <div class="top-menu">
+        <?php if (puedeCrearEmpleado()): ?>
         <a href="formulario_para_registrar_empleado.php" class="top-button">
             <i class="ri-user-add-line"></i> Registrar Empleado
         </a>
-
+        <?php endif; ?>
     </div>
 
     <!-- CONTENIDO -->
@@ -148,10 +159,20 @@ if (!$resultado) {
                         style="background:#1f3a34; color:white;">
                             <i class="ri-folder-user-line"></i> Datos
                         </a>
+
+                        <?php if (puedeEditarEmpleado()): ?>
+                        <a class="btn" href="editar_empleado.php?id=<?php echo $fila['id']; ?>"
+                        style="background:#1a56db; color:white;">
+                            <i class="ri-edit-line"></i> Editar
+                        </a>
+                        <?php endif; ?>
+
+                        <?php if (puedeEliminarEmpleado()): ?>
                         <a class="btn eliminar" href="eliminar_empleado.php?id=<?php echo $fila['id']; ?>"
                         onclick="return confirm('¿Eliminar empleado?');">
                             <i class="ri-delete-bin-6-line"></i> Eliminar
                         </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php } ?>

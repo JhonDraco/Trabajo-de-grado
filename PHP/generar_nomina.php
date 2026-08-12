@@ -155,6 +155,15 @@ while($d = mysqli_fetch_assoc($qDed)){
                 ];
             }
 
+    /* ===== HORAS EXTRA (mismo período de la nómina) ===== */
+    $qHoras = mysqli_query($conexion, "
+        SELECT COALESCE(SUM(monto),0) AS total
+        FROM horas_extras
+        WHERE empleado_id = $id_emp
+        AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
+    ");
+    $total_horas_extra = round(mysqli_fetch_assoc($qHoras)['total'], 2);
+
     /* ===== VACACIONES (informativo) ===== */
     $vacaciones = mysqli_query($conexion, "
         SELECT dias_habiles FROM vacaciones
@@ -168,7 +177,7 @@ while($d = mysqli_fetch_assoc($qDed)){
         $dias_vac += intval($v['dias_habiles']);
     }
 
-    $total_pago = max(0, ($salario + $total_asig) - $total_ded_aplicada);
+    $total_pago = max(0, ($salario + $total_asig + $total_horas_extra) - $total_ded_aplicada);
 
     $lista_empleados[] = [
         'id'=>$id_emp,
@@ -178,6 +187,7 @@ while($d = mysqli_fetch_assoc($qDed)){
         'asig_detalle'=>$asig_list,
         'ded'=>$total_ded_aplicada,
         'ded_detalle'=>$ded_list,
+        'horas_extra'=>$total_horas_extra,
         'pagar'=>$total_pago,
         'vac'=>$dias_vac,
         'recargo_dia' => $recargo_feriado,      
@@ -197,10 +207,11 @@ if(isset($_POST['generar_nomina'])){
     mysqli_begin_transaction($conexion);
 
     try {
-        mysqli_query($conexion, "
+        $r = mysqli_query($conexion, "
             INSERT INTO nomina (fecha_inicio, fecha_fin, tipo, creada_por)
             VALUES ('$fecha_inicio','$fecha_fin','$tipo_nomina','{$_SESSION['usuario']}')
         ");
+        if (!$r) throw new Exception("INSERT nomina: ".mysqli_error($conexion));
         $id_nomina = mysqli_insert_id($conexion);
 
         foreach($lista_empleados as $emp){
@@ -215,43 +226,52 @@ if(isset($_POST['generar_nomina'])){
                 $monto_recargo   = $trabajó_feriado ? round($emp['recargo_dia'] * $emp['num_feriados'], 2) : 0;
                 $total_con_recargo = $emp['pagar'] + $monto_recargo;
 
-                mysqli_query($conexion, "
+                $r = mysqli_query($conexion, "
                     INSERT INTO detalle_nomina
-                    (id_nomina, empleado_id, salario_base, total_asignaciones, total_deducciones,
+                    (id_nomina, empleado_id, salario_base, total_asignaciones, total_horas_extra, total_deducciones,
                     total_pagar, feriados_trabajados, monto_recargo)
                     VALUES (
                         $id_nomina, {$emp['id']},
-                        {$emp['salario']}, {$emp['asig']}, {$emp['ded']},
+                        {$emp['salario']}, {$emp['asig']}, {$emp['horas_extra']}, {$emp['ded']},
                         $total_con_recargo, $trabajó_feriado, $monto_recargo
                     )
                 ");
+                if (!$r) throw new Exception("INSERT detalle_nomina (empleado {$emp['id']}): ".mysqli_error($conexion));
             $id_detalle = mysqli_insert_id($conexion);
 
             // detalle_asignacion
             foreach($emp['asig_detalle'] as $a){
-                mysqli_query($conexion, "
+                $r = mysqli_query($conexion, "
                     INSERT INTO detalle_asignacion
                     (id_detalle, id_asignacion, monto)
                     VALUES ($id_detalle, (SELECT id_asignacion FROM tipo_asignacion WHERE nombre='".mysqli_real_escape_string($conexion,$a['nombre'])."'), {$a['monto']})
                 ");
+                if (!$r) throw new Exception("INSERT detalle_asignacion ({$a['nombre']}): ".mysqli_error($conexion));
             }
 
             // detalle_deduccion
             foreach($emp['ded_detalle'] as $d){
-                mysqli_query($conexion, "
+                $r = mysqli_query($conexion, "
                     INSERT INTO detalle_deduccion
                     (id_detalle, id_tipo, monto)
                     VALUES ($id_detalle, (SELECT id_tipo FROM tipo_deduccion WHERE nombre='".mysqli_real_escape_string($conexion,$d['nombre'])."'), {$d['monto']})
                 ");
+                if (!$r) throw new Exception("INSERT detalle_deduccion ({$d['nombre']}): ".mysqli_error($conexion));
             }
         }
 
         mysqli_commit($conexion);
+        registrar_auditoria($conexion, 'CREAR', 'Nómina', "Generó nómina ID $id_nomina ($fecha_inicio a $fecha_fin)");
         header("Location: ver_nomina.php?id=$id_nomina");
         exit();
     } catch(Exception $e){
         mysqli_rollback($conexion);
-        die("Error al generar nómina: ".$e->getMessage());
+        die("<div style='font-family:sans-serif;padding:20px;background:#fdecea;border:1px solid #f5c2c0;border-radius:8px;max-width:700px;margin:40px auto;'>
+                <h3 style='color:#c0392b;'>⚠ No se pudo generar la nómina</h3>
+                <p><strong>Detalle técnico:</strong> ".htmlspecialchars($e->getMessage())."</p>
+                <p>No se guardó nada (se revirtió la transacción). Corrige esto y vuelve a intentar.</p>
+                <a href='generar_nomina.php'>&larr; Volver</a>
+             </div>");
     }
 }
 
@@ -290,31 +310,52 @@ if(isset($_POST['generar_nomina'])){
 <i class="ri-home-4-line"></i> Inicio
 </a>
 
-<a href="generar_nomina.php" class="active">
+<?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php">
 <i class="ri-money-dollar-circle-line"></i> Nómina
 </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+<i class="ri-money-dollar-circle-line"></i> Nómina
+</a>
+    <?php endif; ?>
 
+<?php if (puedeVerLiquidacion()): ?>
 <a href="liquidacion.php">
 <i class="ri-ball-pen-line"></i> Liquidación
 </a>
+<?php endif; ?>
 
+<?php if (puedeVerVacaciones()): ?>
 <a href="vacaciones.php">
 <i class="ri-sun-line"></i> Vacaciones
 </a>
+<?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
 
+<?php if (puedeListarEmpleados()): ?>
 <a href="listar_empleados.php">
 <i class="ri-team-line"></i> Empleados
 </a>
+<?php endif; ?>
 
+<?php if (puedeVerUsuarios()): ?>
 <a href="listar_usuario.php">
 <i class="ri-user-settings-line"></i> Roles
 </a>
+<?php endif; ?>
 
+<?php if (puedeReportes()): ?>
 <a href="reportes.php">
 <i class="ri-bar-chart-line"></i> Reportes
 </a>
+<?php endif; ?>
 <?php if (esAdmin()): ?>
+<?php if (puedeVerBitacora()): ?>
 <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+<?php endif; ?>
 <?php endif; ?>
 <a href="contactar.php">
 <i class="ri-mail-line"></i> Email
@@ -344,28 +385,40 @@ if(isset($_POST['generar_nomina'])){
 
 <div class="top-menu">
 
+<?php if (puedeVerAsignaciones()): ?>
 <a href="asignaciones.php" class="top-button">
 <i class="ri-add-circle-line"></i> Asignaciones
 </a>
+<?php endif; ?>
 
+<?php if (puedeVerDeducciones()): ?>
 <a href="deducciones.php" class="top-button">
 <i class="ri-subtract-line"></i> Deducciones
 </a>
+<?php endif; ?>
 
+<?php if (puedeGestionarFeriados()): ?>
 <a href="feriados.php"class="top-button">
     <i class="ri-mail-line"></i> Feriados</a>
+<?php endif; ?>
 
+<?php if (puedeVerNomina()): ?>
 <a href="ver_nomina.php" class="top-button">
 <i class="ri-file-list-line"></i> Ver Nóminas
 </a>
+<?php endif; ?>
 
+<?php if (puedePagarNomina()): ?>
 <a href="pagar_nomina.php" class="top-button">
 <i class="ri-eye-line"></i> Pagar Nóminas
 </a>
+<?php endif; ?>
 
+<?php if (puedeVerNomina()): ?>
 <a href="historial_pagos.php" class="top-button">
 <i class="ri-file-text-line"></i> Historial de Pagos
 </a>
+<?php endif; ?>
 
 </div>
 
@@ -509,6 +562,7 @@ placeholder="Buscar empleado...">
 <th>Estado</th>
 <th>Salario Base</th>
 <th>Asignaciones</th>
+<th>Horas Extra</th>
 <th>Deducciones</th>
 <th>Total a Pagar</th>
 
@@ -537,10 +591,13 @@ placeholder="Buscar empleado...">
 <input type="checkbox"
 class="check-empleado"
 data-asig="<?= $emp['asig'] ?>"
+data-horas-extra="<?= $emp['horas_extra'] ?>"
 data-ded="<?= $emp['ded'] ?>"
 data-total="<?= $emp['pagar'] ?>"
+data-recargo="<?= $emp['recargo_dia'] * $emp['num_feriados'] ?>"
 name="empleados[]"
 value="<?= $emp['id'] ?>"
+id="chk-<?= $emp['id'] ?>"
 checked>
 
 </td>
@@ -567,6 +624,7 @@ echo '<span class="estado activo">Activo</span>';
 
 <td><?= number_format($emp['salario'],2) ?> Bs</td>
 <td><?= number_format($emp['asig'],2) ?> Bs</td>
+<td><?= number_format($emp['horas_extra'],2) ?> Bs</td>
 <td><?= number_format($emp['ded'],2) ?> Bs</td>
 <td><strong><?= number_format($emp['pagar'],2) ?> Bs</strong></td>
 
@@ -576,6 +634,8 @@ echo '<span class="estado activo">Activo</span>';
         <input type="checkbox"
                name="feriados_trabajados[]"
                value="<?= $emp['id'] ?>"
+               id="feriado-<?= $emp['id'] ?>"
+               onchange="actualizarTotales()"
                style="width:16px; height:16px; accent-color:#d97706;">
         +Bs. <?= number_format($emp['recargo_dia'] * $emp['num_feriados'], 2) ?>
     </label>
@@ -689,41 +749,8 @@ document.getElementById("overlay").onclick = cerrarPanel;
 
 function actualizarTotales(){
 
-        let totalAsig = 0;
-        let totalDed = 0;
-        let totalPagar = 0;
-
-        document.querySelectorAll(".check-empleado").forEach(check => {
-
-        if(check.checked){
-
-        totalAsig += parseFloat(check.dataset.asig);
-        totalDed += parseFloat(check.dataset.ded);
-        totalPagar += parseFloat(check.dataset.total);
-
-        }
-
-        });
-
-        document.getElementById("total_asig").innerText = totalAsig.toFixed(2);
-        document.getElementById("total_ded").innerText = totalDed.toFixed(2);
-        document.getElementById("total_pagar").innerText = totalPagar.toFixed(2);
-
-        }
-
-        document.querySelectorAll(".check-empleado").forEach(check => {
-
-        check.addEventListener("change", actualizarTotales);
-
-        });
-
-</script>
-
-<script>
-
-function actualizarTotales(){
-
 let totalAsig = 0;
+let totalHorasExtra = 0;
 let totalDed = 0;
 let totalPagar = 0;
 
@@ -735,8 +762,18 @@ document.querySelectorAll(".check-empleado").forEach(check => {
 if(check.checked){
 
 totalAsig += parseFloat(check.dataset.asig);
+totalHorasExtra += parseFloat(check.dataset.horasExtra || 0);
 totalDed += parseFloat(check.dataset.ded);
-totalPagar += parseFloat(check.dataset.total);
+
+let totalFila = parseFloat(check.dataset.total);
+
+// si el empleado tiene checkbox de feriado marcado, sumar el recargo
+const chkFeriado = document.getElementById('feriado-' + check.value);
+if (chkFeriado && chkFeriado.checked) {
+    totalFila += parseFloat(check.dataset.recargo || 0);
+}
+
+totalPagar += totalFila;
 
 incluidos++;
 

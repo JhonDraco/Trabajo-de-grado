@@ -2,6 +2,7 @@
 include("seguridad.php");
 
 verificarSesion();
+bloquearSiNo(puedeAprobarVacaciones());
 
 include("db.php");
 

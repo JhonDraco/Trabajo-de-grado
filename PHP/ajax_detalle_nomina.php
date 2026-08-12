@@ -1,4 +1,8 @@
 <?php
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerNomina());
+
 include("db.php");
 
 $id_nomina = intval($_GET['id'] ?? 0);

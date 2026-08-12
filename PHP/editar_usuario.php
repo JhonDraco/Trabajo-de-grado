@@ -3,7 +3,7 @@ include("seguridad.php");
 include("db.php");
 
 verificarSesion();
-bloquearSiNo(puedeAdministrador());
+bloquearSiNo(puedeCambiarRoles());
 
 if (!isset($_GET['id'])) {
     echo "ID de usuario no recibido.";
@@ -20,18 +20,25 @@ $cargo = mysqli_query($conexion, "SELECT * FROM cargo");
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre_apellido = $_POST['nombre_apellido'];
-    $usuario = $_POST['usuario'];
-    $clave = $_POST['clave'];
-    $cargo = $_POST['cargo_id'];
-    $clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);
+    $nombre_apellido = mysqli_real_escape_string($conexion, $_POST['nombre_apellido']);
+    $usuario = mysqli_real_escape_string($conexion, $_POST['usuario']);
+    $cargo_id = intval($_POST['cargo_id']);
+
+    // Solo se re-hashea la clave si el usuario escribió una nueva.
+    // Antes esto rehasheaba el hash ya guardado en cada edición, dejando
+    // la cuenta sin poder iniciar sesión con la clave real.
+    $clave_sql = "";
+    if (!empty($_POST['clave'])) {
+        $clave_nueva = password_hash($_POST['clave'], PASSWORD_BCRYPT);
+        $clave_sql = ", clave = '$clave_nueva'";
+    }
 
     $update = "
     UPDATE usuarios SET
     usuario = '$usuario',
-    clave = '$clave',
     nombre_apellido = '$nombre_apellido',
-    cargo_id = '$cargo'
+    cargo_id = $cargo_id
+    $clave_sql
     WHERE id_usuario = $id
     ";
 
@@ -40,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         registrar_auditoria(
             $conexion,
             'EDITAR',
-            'usuario',
+            'Usuarios',
             "Editó usuario ID $id"
         );
 
@@ -67,9 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <!-- SIDEBAR -->
-<!-- SIDEBAR -->
 <aside class="sidebar">
-    
+
 <div class="sidebar-header">
     <img src="../img/logo.png" alt="Logo" class="logo">
     <h3 class="system-title">KAO SHOP</h3>
@@ -78,32 +84,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <i class="ri-home-4-line"></i> Inicio
     </a>
 
+    <?php if (puedeGenerarNomina()): ?>
     <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php">
         <i class="ri-ball-pen-line"></i> Liquidacion
     </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerVacaciones()): ?>
     <a href="vacaciones.php">
         <i class="ri-sun-line"></i> Vacaciones
     </a>
-    
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <?php endif; ?>
 
     <a href="listar_usuario.php"  class="active">
         <i class="ri-user-settings-line"></i> Roles
     </a>
 
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
-    <?php if (esAdmin()): ?>
+    <?php endif; ?>
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
-    <?php endif; ?>         
+    <?php endif; ?>
     <a href="contactar.php">
         <i class="ri-mail-line"></i> Email
     </a>
@@ -130,23 +153,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- CONTENIDO -->
     <div class="contenido">
         <div class="form-card">
-            <h2>Editar Roloes</h2>
+            <h2>Editar Usuario</h2>
     <form method="POST">
         <label><i class="ri-user-line"></i> Nombre y Apellido:</label>
         <input type="text" name="nombre_apellido"
-        value="<?php echo $empleado['nombre_apellido']; ?>">
+        value="<?php echo htmlspecialchars($empleado['nombre_apellido']); ?>">
 
         <label><i class="ri-id-card-line"></i> Usuario:</label>
-        <input type="text" name="usuario" value="<?php echo $empleado['usuario']; ?>"
+        <input type="text" name="usuario" value="<?php echo htmlspecialchars($empleado['usuario']); ?>">
 
-        <label><i class="ri-user-line"></i> Contraseña:</label>
-        <input type="password" name="clave"value="<?php echo $empleado['clave']; ?>">
-       
+        <label><i class="ri-user-line"></i> Nueva Contraseña:</label>
+        <input type="password" name="clave" placeholder="Dejar en blanco para no cambiarla">
+
 
             <select name="cargo_id">
             <?php while($c = mysqli_fetch_assoc($cargo)): ?>
 
-            <option value="<?= $c['cargo_id'] ?>">
+            <option value="<?= $c['cargo_id'] ?>" <?= $c['cargo_id'] == $empleado['cargo_id'] ? 'selected' : '' ?>>
 
             <?= htmlspecialchars($c['nombre_cargo']) ?>
 
@@ -173,4 +196,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
-

@@ -3,8 +3,9 @@
 include("db.php");
 include("seguridad.php");
 verificarSesion();
+bloquearSiNo(puedeEliminarAsignacion());
 
-$id = $_GET['id'];
+$id = intval($_GET['id']);
 
 mysqli_query($conexion,"
 
@@ -15,5 +16,5 @@ WHERE id_asig_emp = $id
 ");
 registrar_auditoria($conexion, 'ELIMINAR', 'Asignaciones', "Desactivó asignación_empleado ID $id");
 header("Location: asignaciones.php");
-
+exit();
 ?>

@@ -1,5 +1,13 @@
 <?php
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerNomina() || puedeEmpleado());
 require('../librerias/fpdf.php');
+
+function _utf8fix($texto){
+    return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
+}
+
 
 date_default_timezone_set('America/Caracas');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'spanish');
@@ -41,7 +49,7 @@ $hora  = date('H:i');
 // Fecha alineada derecha
 $pdf->SetFont('Arial','',11);
 $pdf->SetTextColor(0,0,0);
-$pdf->Cell(0,8,utf8_decode("Caracas, $fecha - $hora"),0,1,'R');
+$pdf->Cell(0,8,_utf8fix("Caracas, $fecha - $hora"),0,1,'R');
 
 $pdf->Ln(10);
 
@@ -60,7 +68,7 @@ $pdf->Ln(10);
 // Texto
 $pdf->SetFont('Arial','',11);
 
-$texto1 = utf8_decode(
+$texto1 = _utf8fix(
 "   Mediante la presente se hace constar que el ciudadano $nombre $apellido, 
 titular de la cédula de identidad N° $cedula, 
 laboró en nuestra empresa desempeñándose como Ayudante de Banca y gestión de tesorería,
@@ -71,7 +79,7 @@ $pdf->MultiCell(0,7,$texto1,0,'J');
 
 $pdf->Ln(5);
 
-$texto2 = utf8_decode(
+$texto2 = _utf8fix(
 "Durante su permanencia en la empresa, demostró responsabilidad, compromiso, excelente trato interpersonal y habilidades de liderazgo."
 );
 

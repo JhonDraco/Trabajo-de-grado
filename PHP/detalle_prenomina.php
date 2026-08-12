@@ -1,4 +1,7 @@
 <?php
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerNomina());
 include("db.php");
 
 $id = intval($_GET['id']);
@@ -58,6 +61,18 @@ AND activa = 1
 ");
 
 $total_ded = 0;
+
+/* ======================================================
+   HORAS EXTRA DEL PERÍODO
+======================================================*/
+$total_horas_extra = 0;
+
+$horas_extra = mysqli_query($conexion,"
+SELECT fecha, horas, tipo, monto
+FROM horas_extras
+WHERE empleado_id = $id
+AND fecha BETWEEN '$inicio' AND '$fin'
+");
 ?>
 <div class="detalle-dashboard">
 
@@ -110,6 +125,41 @@ $total_asig += $a['monto'];
 
 Total
 <?= number_format($total_asig,2) ?> Bs
+
+</div>
+
+</div>
+
+<!-- HORAS EXTRA -->
+
+<div class="detalle-box asignaciones">
+
+<h4>🕒 Horas Extra</h4>
+
+<div class="detalle-list">
+
+<?php while($h = mysqli_fetch_assoc($horas_extra)) {
+$total_horas_extra += $h['monto'];
+?>
+
+<div class="fila">
+
+<span><?= $h['fecha'] ?> — <?= $h['horas'] ?>h (<?= $h['tipo'] ?>)</span>
+
+<strong class="positivo">
+<?= number_format($h['monto'],2) ?> Bs
+</strong>
+
+</div>
+
+<?php } ?>
+
+</div>
+
+<div class="box-total positivo">
+
+Total
+<?= number_format($total_horas_extra,2) ?> Bs
 
 </div>
 
@@ -186,7 +236,7 @@ Total
 
 <strong>
 
-<?= number_format(($salario+$total_asig)-$total_ded,2) ?> Bs
+<?= number_format(($salario+$total_asig+$total_horas_extra)-$total_ded,2) ?> Bs
 
 </strong>
 

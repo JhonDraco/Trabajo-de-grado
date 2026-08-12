@@ -1,7 +1,7 @@
 <?php
 include("seguridad.php");
 verificarSesion();
-bloquearSiNo(puedeDeducciones());
+bloquearSiNo(puedeEliminarDeduccion());
 include("db.php");
 
 $id = (int)$_GET['id'];

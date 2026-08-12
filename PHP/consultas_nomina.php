@@ -1,6 +1,10 @@
 <?php
 require 'db.php';
 
+// Si una consulta falla, que lance una excepción visible en vez de
+// romper la página con "Call to a member function fetch_assoc() on bool".
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 /* =========================
    CABECERA DEL RECIBO
 =========================*/
@@ -21,6 +25,7 @@ function obtenerNomina($id_detalle)
 
                 dn.salario_base AS salario_nomina,
                 dn.total_asignaciones,
+                dn.total_horas_extra,
                 dn.total_deducciones,
                 dn.total_pagar
 
@@ -67,6 +72,31 @@ function obtenerDeducciones($id_detalle)
                 ON td.id_tipo = dd.id_tipo
 
             WHERE dd.id_detalle = $id_detalle";
+
+    return $conexion->query($sql);
+}
+
+/* =========================
+   HORAS EXTRA DEL PERÍODO
+   (detalle día por día, usando el empleado + rango de fechas
+   de la nómina a la que pertenece este id_detalle)
+=========================*/
+function obtenerHorasExtra($id_detalle)
+{
+    global $conexion;
+
+    $sql = "SELECT
+                h.fecha,
+                h.horas,
+                h.tipo,
+                h.monto
+            FROM detalle_nomina dn
+            INNER JOIN nomina n ON n.id_nomina = dn.id_nomina
+            INNER JOIN horas_extras h
+                ON h.empleado_id = dn.empleado_id
+                AND h.fecha BETWEEN n.fecha_inicio AND n.fecha_fin
+            WHERE dn.id_detalle = $id_detalle
+            ORDER BY h.fecha";
 
     return $conexion->query($sql);
 }

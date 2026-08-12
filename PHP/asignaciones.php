@@ -3,22 +3,25 @@
 include("seguridad.php");
 
 verificarSesion();
+bloquearSiNo(puedeVerAsignaciones());
 
 include("db.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
+    bloquearSiNo(puedeCrearAsignacion());
+
     $nombre = mysqli_real_escape_string($conexion, $_POST['nombre']);
     $tipo = ($_POST['tipo'] === 'porcentaje') ? 'porcentaje' : 'fijo';
     $porcentaje = floatval($_POST['porcentaje']);
     $desc = mysqli_real_escape_string($conexion, $_POST['descripcion']);
     mysqli_query($conexion, "INSERT INTO tipo_asignacion (nombre, tipo, porcentaje, descripcion) VALUES ('$nombre','$tipo',$porcentaje,'$desc')");
+    registrar_auditoria($conexion, 'CREAR', 'Asignaciones', "Creó tipo de asignación: $nombre");
     header("Location: asignaciones.php");
     exit();
 }
 
 /* res para ordenar por activas primero*/
 $res = mysqli_query($conexion, "SELECT * FROM tipo_asignacion ORDER BY activo DESC, nombre ASC");
-$res2 = mysqli_query($conexion, "SELECT * FROM tipo_asignacion WHERE activo = 1");
 
 $empleados = mysqli_query($conexion, "SELECT id, nombre FROM empleados ORDER BY nombre");
 
@@ -70,34 +73,52 @@ $asignaciones_emp = mysqli_query($conexion, "
     <a href="administrador.php" >
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="generar_nomina.php"class="active">
+    <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
-    <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
-    
+    <?php endif; ?>
+
+    <?php if (puedeVerVacaciones()): ?>
+    <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+    <?php endif; ?>
+
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
-    <?php if (esAdmin()): ?>
+    <?php endif; ?>
+
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
     <?php endif; ?>
+
     <a href="contactar.php">
       <i class="ri-mail-line"></i> Email
     </a>
-    
-   
-</a>
-
-   
 </aside>
 
 
@@ -114,17 +135,26 @@ $asignaciones_emp = mysqli_query($conexion, "
 
     <!-- TOP MENU HORIZONTAL -->
     <div class="top-menu">
-      
+       <?php if (puedeVerDeducciones()): ?>
        <a href="deducciones.php" class="top-button"><i class="ri-subtract-line"></i> Deducciónes</a>
-       <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
+       <?php endif; ?>
+       <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+    <?php elseif (puedeVerNomina()): ?>
+           <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+    <?php endif; ?>
+       <?php if (puedePagarNomina()): ?>
        <a href="pagar_nomina.php" class="top-button"><i class="ri-eye-line"></i> Pagar Nominas</a>
-        <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+       <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+       <?php endif; ?>
 
     </div>
 
     <!-- CONTENIDO -->
  <div class="contenido">
+
+    <?php if (puedeCrearAsignacion()): ?>
     <h3><i class="ri-add-box-line"></i> Nueva Asignación</h3>
 
     <div class="form-group-compact">
@@ -169,6 +199,8 @@ $asignaciones_emp = mysqli_query($conexion, "
             </button>
         </form>
     </div>
+    <?php endif; ?>
+
     <h3>Lista de Asignaciones</h3>
     <table border="1" cellpadding="5">
 <tr><th>Nombre</th><th>Tipo</th><th>porcentaje</th><th>Acción</th></tr>
@@ -184,6 +216,7 @@ $asignaciones_emp = mysqli_query($conexion, "
   <td><?= $d['tipo'] ?></td>
   <td><?= number_format($d['porcentaje'],2) ?><?= $d['tipo']=='porcentaje' ? '%' : '' ?></td>
   <td>
+    <?php if (puedeEliminarAsignacion()): ?>
     <a href="toggle_asignacion.php?id=<?= $d['id_asignacion'] ?>"
        onclick="return confirm('<?= $btn_acc ?>')"
        style="background:<?= $btn_col ?>; color:white; padding:4px 12px;
@@ -191,15 +224,15 @@ $asignaciones_emp = mysqli_query($conexion, "
               text-decoration:none;">
        <?= $btn_txt ?>
     </a>
+    <?php else: ?>
+       <span style="color:<?= $btn_col ?>; font-weight:600;"><?= $btn_txt ?></span>
+    <?php endif; ?>
   </td>
 </tr>
 <?php } ?>
 </table>
-    </div>
 
-
-</div>
-
+<?php if (puedeCrearAsignacion()): ?>
 <h3><i class="ri-user-add-line"></i> Asignar a Empleado</h3>
 
 <div class="form-container-compact">
@@ -225,16 +258,13 @@ $asignaciones_emp = mysqli_query($conexion, "
 
     </div>
 
-    
-
-
     <div class="form-group-compact">
     <label>Asignación</label>
 
     <select name="asignacion_id" id="asignacion_select" required>
 
     <?php
-    $res2 = mysqli_query($conexion,"SELECT * FROM tipo_asignacion");
+    $res2 = mysqli_query($conexion,"SELECT * FROM tipo_asignacion WHERE activo = 1");
 
     while($as = mysqli_fetch_assoc($res2)){
     ?>
@@ -266,10 +296,9 @@ $asignaciones_emp = mysqli_query($conexion, "
     </form>
 
 </div>
+<?php endif; ?>
 
     <h3><i class="ri-team-line"></i> Asignaciones a Empleados</h3>
-
-    
 
             <table border="1" cellpadding="5">
 
@@ -295,7 +324,7 @@ $asignaciones_emp = mysqli_query($conexion, "
 
             <td>
 
-        
+            <?php if (puedeEliminarAsignacion()): ?>
             <a href="eliminar_asignacion_empleado.php?id=<?= $a['id_asig_emp'] ?>"
             onclick="return confirm('¿Desactivar esta asignación al empleado?')"
             style="background:#dc3545; color:white; padding:4px 12px;
@@ -303,6 +332,7 @@ $asignaciones_emp = mysqli_query($conexion, "
                     text-decoration:none;">
             Eliminar
             </a>
+            <?php endif; ?>
 
             </td>
 
@@ -312,28 +342,23 @@ $asignaciones_emp = mysqli_query($conexion, "
 
             </table>
 </div>
+</div>
             <script>
 
 const selectAsignacion = document.getElementById("asignacion_select");
 const campoMonto = document.getElementById("campo_monto");
 
-selectAsignacion.addEventListener("change", function(){
-
-let tipo = this.options[this.selectedIndex].dataset.tipo;
-
-if(tipo === "porcentaje"){
-
-campoMonto.style.display = "none";
-
-}else{
-
-campoMonto.style.display = "block";
-
+if (selectAsignacion) {
+    selectAsignacion.addEventListener("change", function(){
+        let tipo = this.options[this.selectedIndex].dataset.tipo;
+        if(tipo === "porcentaje"){
+            campoMonto.style.display = "none";
+        }else{
+            campoMonto.style.display = "block";
+        }
+    });
 }
-
-});
 
 </script>
 </body>
 </html>
-

@@ -219,14 +219,33 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
     <h3 class="system-title">KAO SHOP</h3>
 </div>
     <a href="administrador.php" class="active"><i class="ri-home-4-line"></i> Inicio</a>
+    <?php if (puedeGenerarNomina()): ?>
     <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php endif; ?>
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
+    <?php endif; ?>
+    <?php if (puedeVerVacaciones()): ?>
     <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+    <?php endif; ?>
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php"><i class="ri-user-settings-line"></i> Roles</a>
+    <?php endif; ?>
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
+    <?php endif; ?>
     <?php if (esAdmin()): ?>
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
     <?php endif; ?>
     <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
     
@@ -264,6 +283,7 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
         <!-- KPIs -->
         <div class="kpi-grid">
 
+            <?php if (puedeListarEmpleados()): ?>
             <a href="listar_empleados.php" class="kpi-card">
                 <div class="kpi-icon verde"><i class="ri-team-line"></i></div>
                 <div>
@@ -272,7 +292,9 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
                     <div class="kpi-sub">En plantilla</div>
                 </div>
             </a>
+            <?php endif; ?>
 
+            <?php if (puedeVerNomina()): ?>
             <a href="ver_nomina.php" class="kpi-card">
                 <div class="kpi-icon azul"><i class="ri-money-dollar-circle-line"></i></div>
                 <div>
@@ -281,7 +303,9 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
                     <div class="kpi-sub">Total neto pagado</div>
                 </div>
             </a>
+            <?php endif; ?>
 
+            <?php if (puedeVerDeducciones()): ?>
             <a href="deducciones.php" class="kpi-card">
                 <div class="kpi-icon naranja"><i class="ri-subtract-line"></i></div>
                 <div>
@@ -290,7 +314,9 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
                     <div class="kpi-sub">Total descontado</div>
                 </div>
             </a>
+            <?php endif; ?>
 
+            <?php if (puedeVerVacaciones()): ?>
             <a href="vacaciones.php" class="kpi-card">
                 <div class="kpi-icon rojo"><i class="ri-sun-line"></i></div>
                 <div>
@@ -299,6 +325,7 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
                     <div class="kpi-sub">Por aprobar</div>
                 </div>
             </a>
+            <?php endif; ?>
 
         </div>
 
@@ -366,9 +393,11 @@ if (mysqli_num_rows($hay_auditoria) > 0) {
         <?php if (!empty($ultimas_acciones)): ?>
         <div class="dash-section" style="margin-bottom:20px;">
             <h3><i class="ri-file-shield-2-line"></i> Actividad reciente del sistema
+                <?php if (puedeVerBitacora()): ?>
                 <a href="bitacora.php" style="margin-left:auto; font-size:11px; color:#2b4a42; font-weight:600; text-decoration:none;">
                     Ver todo →
                 </a>
+                <?php endif; ?>
             </h3>
             <?php foreach ($ultimas_acciones as $a): ?>
             <div class="log-item">

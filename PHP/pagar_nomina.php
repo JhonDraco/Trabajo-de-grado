@@ -1,8 +1,9 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) { header("Location: index.php"); exit(); }
-
+include("seguridad.php");
 include("db.php");
+
+verificarSesion();
+bloquearSiNo(puedePagarNomina());
 
 if (!isset($_GET['id'])) {
     header("Location: pagos_nomina.php");
@@ -19,6 +20,8 @@ $total_nomina = $data['total'] ?? 0;
 
 // registrar pago
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    bloquearSiNo(puedeConfirmarPago());
 
     $fecha = $_POST['fecha_pago'];
     $metodo = mysqli_real_escape_string($conexion, $_POST['metodo']);
@@ -43,8 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Pagar Nómina</title>
-
-
 </head>
 <body>
 
@@ -73,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Registrar Pago</button>
 
 </form>
+
+<a href="pagos_nomina.php">← Volver</a>
 
 </body>
 </html>

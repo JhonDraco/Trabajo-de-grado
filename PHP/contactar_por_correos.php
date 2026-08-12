@@ -1,6 +1,7 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+include("seguridad.php"); verificarSesion();
 
 require __DIR__ . '/../list/vendor/autoload.php';
 

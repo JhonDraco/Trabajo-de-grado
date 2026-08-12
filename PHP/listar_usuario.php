@@ -2,7 +2,7 @@
 include("seguridad.php");
 
 verificarSesion();
-bloquearSiNo(puedeListarUsuarios());
+bloquearSiNo(puedeVerUsuarios());
 
 include("db.php");
 
@@ -40,13 +40,28 @@ $resultado = mysqli_query($conexion, $consulta);
 </div>
 
 <a href="administrador.php"><i class="ri-home-4-line"></i> Inicio</a>
-<a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+<?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php"><i class="ri-money-dollar-circle-line"></i> Nómina</a>
+    <?php endif; ?>
+<?php if (puedeVerLiquidacion()): ?>
 <a href="liquidacion.php"><i class="ri-ball-pen-line"></i> Liquidación</a>
+<?php endif; ?>
+<?php if (puedeVerVacaciones()): ?>
 <a href="vacaciones.php"><i class="ri-sun-line"></i> Vacaciones</a>
+<?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
+<?php if (puedeListarEmpleados()): ?>
 <a href="listar_empleados.php"><i class="ri-team-line"></i> Empleados</a>
+<?php endif; ?>
 <a href="listar_usuario.php" class="active"><i class="ri-user-settings-line"></i> Roles</a>
+<?php if (puedeReportes()): ?>
 <a href="reportes.php"><i class="ri-bar-chart-line"></i> Reportes</a>
-<?php if (esAdmin()): ?>
+<?php endif; ?>
+<?php if (puedeVerBitacora()): ?>
 <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
 <?php endif; ?>
 <a href="contactar.php"><i class="ri-mail-line"></i> Email</a>
@@ -65,9 +80,14 @@ $resultado = mysqli_query($conexion, $consulta);
 
 <div class="top-menu">
 
+    <?php if (puedeCrearUsuario()): ?>
+        <a href="usuarios.php" class="top-button">
+            <i class="ri-user-add-line"></i> Crear Usuario
+        </a>
         <a href="registrar_empleado_usuario.php?tipo=vincular" class="top-button">
             <i class="ri-links-line"></i> Vincular Existente
         </a>
+    <?php endif; ?>
 </div>
 
 
@@ -96,10 +116,13 @@ $resultado = mysqli_query($conexion, $consulta);
 
 <td class="acciones">
 
+<?php if (puedeCambiarRoles()): ?>
 <a class="btn editar" href="editar_usuario.php?id=<?= $fila['id_usuario']; ?>">
 <i class="ri-edit-2-line"></i> Editar
 </a>
+<?php endif; ?>
 
+<?php if (puedeEliminarUsuario()): ?>
 <a class="btn eliminar"
 href="eliminar_usuario.php?id=<?= $fila['id_usuario']; ?>"
 onclick="return confirm('¿Eliminar usuario?');">
@@ -107,6 +130,7 @@ onclick="return confirm('¿Eliminar usuario?');">
 <i class="ri-delete-bin-6-line"></i> Eliminar
 
 </a>
+<?php endif; ?>
 
 </td>
 

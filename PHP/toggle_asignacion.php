@@ -1,7 +1,7 @@
 <?php
 include("seguridad.php");
 verificarSesion();
-bloquearSiNo(puedeAsignaciones());
+bloquearSiNo(puedeEliminarAsignacion());
 include("db.php");
 
 $id = (int)$_GET['id'];
@@ -14,8 +14,6 @@ mysqli_query($conexion, "UPDATE tipo_asignacion SET activo = $nuevo WHERE id_asi
 
 registrar_auditoria($conexion, 'TOGGLE', 'Asignaciones', "Toggle activo para asignación ID $id: $nuevo");
 
-
 header("Location: asignaciones.php");
-
 exit();
 ?>

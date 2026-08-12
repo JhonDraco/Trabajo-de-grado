@@ -2,13 +2,15 @@
 include("seguridad.php");
 
 verificarSesion();
-bloquearSiNo(puedeGenerarNomina());
+bloquearSiNo(puedeVerNomina());
 
 include("db.php");
 
 
 // 1. PROCESAR EL PAGO SI SE ENVÍA EL FORMULARIO (LOGICA POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_nomina'])) {
+    bloquearSiNo(puedeConfirmarPago());
+
     $id_nomina = intval($_POST['id_nomina']);
     $fecha = $_POST['fecha_pago'];
     $metodo = mysqli_real_escape_string($conexion, $_POST['metodo']);
@@ -80,7 +82,7 @@ while($emp = mysqli_fetch_assoc($empleados_nomina)){
     }
 
 }
-    header("Location: pagar_nomina.php?ok=1");
+    header("Location: pagos_nomina.php?ok=1");
     exit();
 }
 
@@ -111,26 +113,47 @@ $nominas = mysqli_query($conexion, $consulta);
     <a href="administrador.php">
         <i class="ri-home-4-line"></i> Inicio
     </a>
-    <a href="generar_nomina.php" class="active">
+    <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php">
         <i class="ri-money-dollar-circle-line"></i> Nómina
     </a>
+    <?php elseif (puedeVerNomina()): ?>
+    <a href="ver_nomina.php">
+        <i class="ri-money-dollar-circle-line"></i> Nómina
+    </a>
+    <?php endif; ?>
 
     
+    <?php if (puedeVerLiquidacion()): ?>
     <a href="liquidacion.php"><i class="ri-ball-pen-line"></i>Liquidacion</a>
+    <?php endif; ?>
+    <?php if (puedeVerVacaciones()): ?>
     <a href="vacaciones.php">  <i class="ri-sun-line"></i></i> Vacaciones</a>
+    <?php endif; ?>
+    <?php if (puedeVerHorasExtra()): ?>
+    <a href="horas_extras.php"><i class="ri-time-line"></i> Horas Extra</a>
+    <?php endif; ?>
     
+    <?php if (puedeListarEmpleados()): ?>
     <a href="listar_empleados.php">
         <i class="ri-team-line"></i> Empleados
     </a>
+    <?php endif; ?>
 
+    <?php if (puedeVerUsuarios()): ?>
     <a href="listar_usuario.php">
         <i class="ri-user-settings-line"></i> Roles
     </a>
+    <?php endif; ?>
+    <?php if (puedeReportes()): ?>
     <a href="reportes.php">
         <i class="ri-bar-chart-line"></i> Reportes
     </a>
+    <?php endif; ?>
     <?php if (esAdmin()): ?>
+    <?php if (puedeVerBitacora()): ?>
     <a href="bitacora.php"><i class="ri-file-shield-2-line"></i> Bitácora</a>
+    <?php endif; ?>
     <?php endif; ?>
              
     <a href="contactar.php">
@@ -150,11 +173,22 @@ $nominas = mysqli_query($conexion, $consulta);
     </header>
 
     <div class="top-menu">
+       <?php if (puedeVerAsignaciones()): ?>
        <a href="asignaciones.php" class="top-button"><i class="ri-add-circle-line"></i> Asignaciones</a>
+       <?php endif; ?>
+       <?php if (puedeVerDeducciones()): ?>
        <a href="deducciones.php" class="top-button"><i class="ri-subtract-line"></i> Deducciónes</a>
-       <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
+       <?php endif; ?>
+       <?php if (puedeGenerarNomina()): ?>
+    <a href="generar_nomina.php" class="top-button"><i class="ri-file-text-line"></i> Generar Nómina</a>
+    <?php elseif (puedeVerNomina()): ?>
+        <?php endif; ?>
+       <?php if (puedeVerNomina()): ?>
        <a href="ver_nomina.php" class="top-button"><i class="ri-eye-line"></i> Ver Nóminas</a>
+       <?php endif; ?>
+        <?php if (puedeVerNomina()): ?>
         <a href="historial_pagos.php" class="top-button"><i class="ri-file-text-line"></i> Ver Historial de Pagos</a>
+        <?php endif; ?>
 
     </div>
 

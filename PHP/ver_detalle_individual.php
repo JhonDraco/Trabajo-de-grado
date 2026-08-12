@@ -1,18 +1,38 @@
 <?php
+include("seguridad.php");
+verificarSesion();
+bloquearSiNo(puedeVerNomina() || puedeEmpleado());
 require('../librerias/fpdf.php');
 require('consultas_nomina.php');
 
-$id_detalle = $_GET['id_detalle'];
+$id_detalle = intval($_GET['id_detalle'] ?? 0);
 
-$nomina = obtenerNomina($id_detalle);
-$asignaciones = obtenerAsignaciones($id_detalle);
-$deducciones = obtenerDeducciones($id_detalle);
+try {
+    $nomina = obtenerNomina($id_detalle);
+    $asignaciones = obtenerAsignaciones($id_detalle);
+    $deducciones = obtenerDeducciones($id_detalle);
+    $horas_extra = obtenerHorasExtra($id_detalle);
+} catch (mysqli_sql_exception $e) {
+    die("<div style='font-family:sans-serif;padding:20px;background:#fdecea;border:1px solid #f5c2c0;border-radius:8px;max-width:700px;margin:40px auto;'>
+            <h3 style='color:#c0392b;'>⚠ No se pudo generar el recibo</h3>
+            <p><strong>Detalle técnico:</strong> ".htmlspecialchars($e->getMessage())."</p>
+         </div>");
+}
+
+if (!$nomina) {
+    die("<div style='font-family:sans-serif;padding:20px;background:#fdecea;border:1px solid #f5c2c0;border-radius:8px;max-width:700px;margin:40px auto;'>
+            <h3 style='color:#c0392b;'>⚠ No se encontró el detalle de nómina #$id_detalle</h3>
+         </div>");
+}
 
 /* =========================
    FUNCIÓN PARA UTF-8
+   (utf8_decode() fue ELIMINADA en PHP 8.2 — esta es la
+   reemplazante moderna, misma función: UTF-8 -> Latin1
+   para que FPDF muestre bien las tildes/ñ)
 =========================*/
 function t($texto){
-    return utf8_decode($texto);
+    return mb_convert_encoding((string)$texto, 'ISO-8859-1', 'UTF-8');
 }
 
 /* =========================
@@ -91,6 +111,17 @@ $total_asig = 0;
 while($row = $asignaciones->fetch_assoc())
 {
     $pdf->Cell(100,6,t($row['concepto']),1);
+    $pdf->Cell(40,6,number_format($row['monto'],2),1,0,'R');
+    $pdf->Cell(40,6,'0.00',1,1,'R');
+
+    $total_asig += $row['monto'];
+}
+
+/* ========= HORAS EXTRA (reales del módulo, se suman a Asignaciones) =========*/
+while($row = $horas_extra->fetch_assoc())
+{
+    $concepto = "Horas extra ".$row['fecha']." (".$row['horas']."h ".$row['tipo'].")";
+    $pdf->Cell(100,6,t($concepto),1);
     $pdf->Cell(40,6,number_format($row['monto'],2),1,0,'R');
     $pdf->Cell(40,6,'0.00',1,1,'R');
 

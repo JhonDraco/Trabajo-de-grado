@@ -5,31 +5,33 @@ ini_set('display_errors', 0);
 
 header('Content-Type: application/json');
 
-// Prueba de conexión
-$conexion = new mysqli("localhost", "root", "", "rrhh");
-
-if ($conexion->connect_error) {
-    echo json_encode(['error' => 'Error de conexion a BD']);
+include("seguridad.php");
+verificarSesion();
+if (!puedeListarEmpleados()) {
+    echo json_encode(['error' => 'Sin permiso']);
     exit;
 }
 
+include("db.php");
+
 if (isset($_POST['cedula'])) {
     $cedula = trim($_POST['cedula']);
-    
-    // Consulta exacta
-    $query = "SELECT id, nombre, apellido, salario_base, fecha_ingreso FROM empleados WHERE cedula = '$cedula' LIMIT 1";
-    $resultado = $conexion->query($query);
 
-    if ($resultado && $resultado->num_rows > 0) {
-        $empleado = $resultado->fetch_assoc();
+    $stmt = mysqli_prepare($conexion, "SELECT id, nombre, apellido, salario_base, fecha_ingreso FROM empleados WHERE cedula = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "s", $cedula);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
+
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        $empleado = mysqli_fetch_assoc($resultado);
         echo json_encode($empleado);
     } else {
         // Si no hay resultados, enviamos un objeto vacío que no rompa el fetch
-        echo json_encode([]); 
+        echo json_encode([]);
     }
 } else {
     echo json_encode(['error' => 'No se recibio cedula']);
 }
 
-$conexion->close();
+mysqli_close($conexion);
 ?>
